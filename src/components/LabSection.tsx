@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { projectsData, Project } from "@/data/projects";
 import { soundFx } from "@/utils/sound";
 import {
@@ -61,22 +62,30 @@ export default function LabSection() {
         </p>
       </div>
 
-      {/* Category Filter Pills */}
+      {/* Category Filter Pills with Fluid Motion Slider */}
       <div className="flex items-center justify-center flex-wrap gap-2 mb-12">
-        {CATEGORIES.map((category) => (
-          <button
-            key={category}
-            type="button"
-            onClick={() => handleTabChange(category)}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
-              selectedCategory === category
-                ? "bg-sky-500 text-white shadow-md shadow-sky-500/25 border border-sky-400"
-                : "bg-white/[0.02] text-slate-400 hover:text-white hover:bg-white/[0.06] border border-white/[0.06]"
-            }`}
-          >
-            {category}
-          </button>
-        ))}
+        {CATEGORIES.map((category) => {
+          const isSelected = selectedCategory === category;
+          return (
+            <button
+              key={category}
+              type="button"
+              onClick={() => handleTabChange(category)}
+              className="relative px-4 py-1.5 rounded-full text-xs font-mono transition-colors cursor-pointer text-slate-300 hover:text-white"
+            >
+              {isSelected && (
+                <motion.div
+                  layoutId="activeLabPill"
+                  className="absolute inset-0 rounded-full bg-sky-500 shadow-md shadow-sky-500/25 border border-sky-400"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
+              <span className={`relative z-10 ${isSelected ? "text-white font-bold" : "text-slate-400"}`}>
+                {category}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Dynamic State: Empty Lab vs Populated Projects */}
