@@ -162,3 +162,7 @@ export const capabilitiesData: Capability[] = [
     icon: "Sparkles",
   },
 ];
+
+export type CapabilityItem = Capability;
+export const coreCapabilities = capabilitiesData;
+

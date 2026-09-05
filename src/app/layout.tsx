@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import NeuralField from "@/components/NeuralField";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 export const metadata: Metadata = {
   title: "Sam Codes — AI Developer & Automation Builder",
@@ -58,6 +59,9 @@ export default function RootLayout({
       <body className="relative bg-[#06080f] text-slate-100 antialiased selection:bg-sky-500/20 selection:text-white min-h-screen">
         {/* Background Neural Canvas */}
         <NeuralField />
+
+        {/* Global Privacy Telemetry */}
+        <AnalyticsTracker />
 
         {/* Ambient Top Glow Orbs */}
         <div

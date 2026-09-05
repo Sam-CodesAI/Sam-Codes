@@ -14,7 +14,10 @@ import {
   MessageSquare,
   Clock,
   ExternalLink,
+  Loader2,
+  CheckCircle2,
 } from "lucide-react";
+import { trackEvent } from "@/lib/analytics-client";
 
 // Crisp inline SVGs for brand socials
 function InstagramIcon({ className }: { className?: string }) {
@@ -126,6 +129,10 @@ export default function ContactSection() {
     service: "AI Chatbots & Assistants",
     message: "",
   });
+  const [honeypot, setHoneypot] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(CONTACT_CONFIG.EMAIL_ADDRESS);
@@ -141,16 +148,45 @@ export default function ContactSection() {
     setTimeout(() => setCopiedHandle(null), 2500);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    soundFx.playChime(640, 0.1);
+    if (honeypot) return; // Silent discard for automated bot submissions
 
-    const subject = encodeURIComponent(`Project Inquiry: ${formState.service} (${formState.name})`);
-    const body = encodeURIComponent(
-      `Hello Sam,\n\nName: ${formState.name}\nEmail: ${formState.email}\nTopic: ${formState.service}\n\nProject Details:\n${formState.message}\n\nSent from SAM CODES portfolio.`
-    );
+    setIsSubmitting(true);
+    setSubmissionError(null);
+    trackEvent("contact_form_submit", "contact", { service: formState.service });
 
-    window.location.href = `mailto:${CONTACT_CONFIG.EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formState.name,
+          email: formState.email,
+          serviceRequested: formState.service,
+          message: formState.message,
+          contactMethod: `Email (${formState.email})`,
+        }),
+      });
+
+      if (res.ok) {
+        soundFx.playChime(720, 0.12);
+        setIsSubmitted(true);
+      } else {
+        throw new Error("Server submission failed");
+      }
+    } catch {
+      // Graceful fallback to client mailto link so no inquiry is ever lost
+      soundFx.playChime(640, 0.1);
+      const subject = encodeURIComponent(`Project Inquiry: ${formState.service} (${formState.name})`);
+      const body = encodeURIComponent(
+        `Hello Sam,\n\nName: ${formState.name}\nEmail: ${formState.email}\nTopic: ${formState.service}\n\nProject Details:\n${formState.message}\n\nSent from SAM CODES portfolio.`
+      );
+      window.location.href = `mailto:${CONTACT_CONFIG.EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
+      setIsSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -309,85 +345,134 @@ export default function ContactSection() {
 
         {/* Right Column: Project Inquiry Form (7 cols) */}
         <div className="lg:col-span-7">
-          <form
-            onSubmit={handleFormSubmit}
-            className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm space-y-5"
-          >
-            <h3 className="text-lg font-bold text-white mb-2">Send a Message</h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="name" className="block text-xs font-mono text-slate-400 mb-1.5">
-                  YOUR NAME
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  required
-                  placeholder="Your Name"
-                  value={formState.name}
-                  onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors min-h-[44px]"
-                />
+          {isSubmitted ? (
+            <div className="p-8 sm:p-10 rounded-3xl bg-white/[0.02] border border-emerald-500/30 backdrop-blur-sm space-y-4 text-center">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto">
+                <CheckCircle2 size={24} />
               </div>
-
-              <div>
-                <label htmlFor="email" className="block text-xs font-mono text-slate-400 mb-1.5">
-                  YOUR EMAIL
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  required
-                  placeholder="your.email@example.com"
-                  value={formState.email}
-                  onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors min-h-[44px]"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="service" className="block text-xs font-mono text-slate-400 mb-1.5">
-                WHAT DO YOU WANT TO BUILD OR AUTOMATE?
-              </label>
-              <select
-                id="service"
-                value={formState.service}
-                onChange={(e) => setFormState({ ...formState, service: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-[#090d1a] border border-white/[0.08] text-white text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors cursor-pointer min-h-[44px]"
+              <h3 className="text-xl font-bold text-white">Inquiry Dispatched Successfully</h3>
+              <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
+                Thank you, <span className="text-white font-semibold">{formState.name}</span>. Your project brief has been logged in the Command Center. Sam will review your scope and follow up directly to <span className="text-sky-400 font-mono">{formState.email}</span> within 24 hours.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSubmitted(false);
+                  setFormState({
+                    name: "",
+                    email: "",
+                    service: "AI Chatbots & Assistants",
+                    message: "",
+                  });
+                }}
+                className="mt-4 px-6 py-2.5 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-xs font-mono text-slate-300 hover:text-white transition-colors cursor-pointer min-h-[44px]"
               >
-                <option value="AI Chatbots & Assistants">AI Chatbot or Customer Assistant</option>
-                <option value="Workflow & Business Automation">Workflow &amp; Business Process Automation</option>
-                <option value="Websites & Web Applications">Website or Modern Web Application</option>
-                <option value="Rapid Prototypes & MVPs">Rapid Working Prototype / MVP</option>
-                <option value="General Collaboration">General / Academic Inquiry</option>
-              </select>
+                Send Another Message
+              </button>
             </div>
-
-            <div>
-              <label htmlFor="message" className="block text-xs font-mono text-slate-400 mb-1.5">
-                BRIEF DETAILS
-              </label>
-              <textarea
-                id="message"
-                required
-                rows={4}
-                placeholder="Describe what needs to work, what you're trying to solve, or what you want to build..."
-                value={formState.message}
-                onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors resize-none"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-4 px-6 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-sky-500/20 cursor-pointer min-h-[48px]"
+          ) : (
+            <form
+              onSubmit={handleFormSubmit}
+              className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm space-y-5"
             >
-              <Send size={15} />
-              <span>Send Message to Sam</span>
-            </button>
-          </form>
+              <h3 className="text-lg font-bold text-white mb-2">Send a Message</h3>
+
+              {/* Honeypot field for spam bots */}
+              <input
+                type="text"
+                name="user_anti_spam_field"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                style={{ display: "none" }}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+              />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="name" className="block text-xs font-mono text-slate-400 mb-1.5">
+                    YOUR NAME
+                  </label>
+                  <input
+                    id="name"
+                    type="text"
+                    required
+                    placeholder="Your Name"
+                    value={formState.name}
+                    onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors min-h-[44px]"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-xs font-mono text-slate-400 mb-1.5">
+                    YOUR EMAIL
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    placeholder="your.email@example.com"
+                    value={formState.email}
+                    onChange={(e) => setFormState({ ...formState, email: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors min-h-[44px]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="service" className="block text-xs font-mono text-slate-400 mb-1.5">
+                  WHAT DO YOU WANT TO BUILD OR AUTOMATE?
+                </label>
+                <select
+                  id="service"
+                  value={formState.service}
+                  onChange={(e) => setFormState({ ...formState, service: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl bg-[#090d1a] border border-white/[0.08] text-white text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors cursor-pointer min-h-[44px]"
+                >
+                  <option value="AI Chatbots & Assistants">AI Chatbot or Customer Assistant</option>
+                  <option value="Workflow & Business Automation">Workflow &amp; Business Process Automation</option>
+                  <option value="Websites & Web Applications">Website or Modern Web Application</option>
+                  <option value="Rapid Prototypes & MVPs">Rapid Working Prototype / MVP</option>
+                  <option value="General Collaboration">General / Academic Inquiry</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="message" className="block text-xs font-mono text-slate-400 mb-1.5">
+                  BRIEF DETAILS
+                </label>
+                <textarea
+                  id="message"
+                  required
+                  rows={4}
+                  placeholder="Describe what needs to work, what you're trying to solve, or what you want to build..."
+                  value={formState.message}
+                  onChange={(e) => setFormState({ ...formState, message: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors resize-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-4 px-6 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-sky-500/20 cursor-pointer min-h-[48px] disabled:opacity-70"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={15} className="animate-spin" />
+                    <span>Dispatching Brief...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send size={15} />
+                    <span>Send Message to Sam</span>
+                  </>
+                )}
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </section>
