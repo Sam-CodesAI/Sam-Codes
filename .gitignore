@@ -27,3 +27,5 @@ out/
 build/
 dist/
 .vercel/
+.vercel
+.env*
