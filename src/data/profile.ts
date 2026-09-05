@@ -24,45 +24,51 @@ export const profileData: ProfileData = {
   preferredName: "Sam",
   fullName: "Samarth Nimangre",
   age: 17,
-  title: "AI Developer · Automation Builder · Next-Gen Web Engineer",
+  title: "Student • AI Developer • Automation Builder • Digital Creator",
   location: "Karnataka, India",
   identityTags: [
-    "17-Year-Old Builder",
-    "AI-Native Developer",
-    "Automation Specialist",
+    "Student & Builder",
+    "AI Systems",
+    "Business Automation",
     "Next.js & React",
-    "Rapid MVPs",
+    "Rapid Prototypes",
   ],
-  heroHeadline: "Building intelligent digital experiences that actually work.",
+  heroHeadline: "Building thoughtful digital experiences that actually work.",
   heroSubheadline:
-    "I'm Sam — a 17-year-old AI developer and builder from Karnataka, India. I create custom AI assistants, automated business workflows, and fast modern web apps for founders and teams who value speed, craft, and direct collaboration.",
-  statementHeadline: "Why work with an independent AI builder over a bloated agency?",
+    "I'm Sam — a student and builder from Karnataka, India exploring what happens when AI, automation, and software come together to turn ideas into useful systems.",
+  statementHeadline: "Why collaborate with Sam?",
   statementDescription:
-    "Traditional agencies charge hefty retainers, hide behind account managers, and take weeks just to schedule kickoffs. When you work with me, you collaborate directly with the developer writing the code — getting working prototypes and automations shipped in days.",
+    "Focused engineering with direct communication. No agency overhead, no inflated retainers, and no layers of middle management — just clean craft and honest progress.",
   aboutStory: [
-    "I'm Samarth (Sam) — an ambitious 17-year-old developer and builder based in Karnataka, India.",
-    "Growing up alongside the rise of large language models and modern development environments, I learned to build natively with AI from day one. I don't treat AI as a gimmick or marketing buzzword; I use it as a force multiplier to compress build cycles, eliminate repetitive busywork, and deliver production-ready software faster than traditional engineering teams.",
-    "My focus is simple: understand your actual business problem, strip away the fluff, and build a clean, reliable system that delivers immediate leverage — whether that's an automated lead pipeline, an intelligent domain assistant, or a sleek, responsive web application.",
+    "I'm Sam — a student and builder based in Karnataka, India. I'm deeply curious about what becomes possible when human creativity, AI, automation, and software engineering intersect.",
+    "Rather than treating AI as a buzzword or building for unnecessary complexity, I focus on understanding the core problem first. I use modern AI tools as a genuine force multiplier to compress build cycles, test ideas quickly, and ship clean, dependable software.",
+    "From automated workflows that eliminate repetitive busywork to custom AI assistants and responsive web applications, I care about honest craftsmanship, fast feedback loops, and building systems that are practical and intuitive.",
   ],
-  availabilityStatus: "Open for Select Client Projects & Collaborations",
+  availabilityStatus: "Open for interesting builds & collaborations",
   whyWorkWithMe: [
     {
-      title: "Direct Access, Zero Bureaucracy",
+      title: "AI as a Force Multiplier",
       description:
-        "No account managers, no junior-dev handoffs, no corporate red tape. You speak directly to me, and feedback is implemented immediately.",
-      tag: "SPEED & CLARITY",
+        "Modern AI tools are used to accelerate exploration and implementation without sacrificing code quality or architecture.",
+      tag: "VELOCITY",
     },
     {
-      title: "AI-Native Velocity",
+      title: "Problem-First Thinking",
       description:
-        "By leveraging frontier AI tooling with deep engineering discipline, I ship working prototypes and automations in days rather than months.",
-      tag: "10X LEVERAGE",
+        "Start with what actually needs to work in the real world, then choose the simplest, most dependable technology to solve it.",
+      tag: "CLARITY",
     },
     {
-      title: "Clean Craft, Honest Code",
+      title: "Transparent Building",
       description:
-        "Strict TypeScript, responsive mobile layouts, resilient error handling, and zero fabricated claims. Everything built is designed to last.",
-      tag: "RELIABILITY",
+        "Clear scope, visible milestone progress, honest communication, and absolutely zero fabricated claims or hidden surprises.",
+      tag: "HONESTY",
+    },
+    {
+      title: "Built to Evolve",
+      description:
+        "Systems are structured cleanly with modular code so the first working version can scale naturally as requirements grow.",
+      tag: "LONGEVITY",
     },
   ],
 };

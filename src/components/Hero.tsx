@@ -70,7 +70,7 @@ export default function Hero() {
             onClick={() => soundFx.playChime(500, 0.08)}
             className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-sm transition-all shadow-lg shadow-sky-500/20 hover:shadow-sky-500/35 flex items-center justify-center gap-2 cursor-pointer"
           >
-            <span>Explore The Lab</span>
+            <span>Explore my work</span>
             <ArrowUpRight size={16} />
           </motion.a>
         </MagneticButton>
@@ -81,9 +81,9 @@ export default function Hero() {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => soundFx.playHover()}
-            className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] text-slate-200 hover:text-white font-medium text-sm transition-all flex items-center justify-center gap-2 backdrop-blur-md cursor-pointer"
+            className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] text-slate-200 hover:text-white font-medium text-sm transition-all flex items-center justify-center gap-2 backdrop-blur-md cursor-pointer min-h-[48px]"
           >
-            <span>Work with me directly</span>
+            <span>Work with me</span>
           </motion.a>
         </MagneticButton>
       </motion.div>

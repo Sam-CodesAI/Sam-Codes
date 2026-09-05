@@ -16,11 +16,11 @@ interface ChatMessage {
 }
 
 const DEFAULT_CHIPS = [
-  "Why hire Sam over an agency?",
-  "What can Sam build for me?",
-  "How fast can Sam deliver?",
-  "How do I contact Sam directly?",
-  "Who is Sam?",
+  "What does Sam build?",
+  "How can Sam help?",
+  "What is Sam currently exploring?",
+  "Show me Sam's work.",
+  "How can I work with Sam?",
 ];
 
 export default function AskSamAssistant() {
@@ -30,7 +30,7 @@ export default function AskSamAssistant() {
     {
       id: "welcome",
       sender: "assistant",
-      text: "Hello! I am Sam's grounded assistant. Ask me anything about how Sam works with clients, his turnaround speed, or why collaborating with an independent 17-year-old AI builder is a major advantage.",
+      text: "Hello! I am Sam's portfolio assistant. Ask me anything about what Sam builds, his approach to automation and web systems, or how to get in touch.",
       timestamp: "Just now",
     },
   ]);

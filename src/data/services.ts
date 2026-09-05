@@ -8,55 +8,55 @@ export interface ServiceOffering {
 
 export const servicesData: ServiceOffering[] = [
   {
-    id: "ai-agents-systems",
+    id: "ai-assistants",
     title: "AI Chatbots & Assistants",
-    tagline: "Custom intelligent assistants trained on your business data",
+    tagline: "Helpful conversational tools grounded in your real business information",
     description:
-      "24/7 assistants tailored to your company documentation, product catalog, or FAQs. Provide instant, accurate answers and collect user leads automatically.",
+      "Custom assistants for your website or app that answer user questions, explain products, guide visitors, and gather inquiries around the clock.",
     deliverables: [
-      "Custom conversational chatbot with grounded responses",
-      "Knowledge base retrieval from your documents or website",
-      "Structured output formatting & lead capture",
-      "Seamless embed on your website or dashboard",
+      "Custom system prompt tailored to your brand voice",
+      "Knowledge retrieval from your documents, FAQs, or site",
+      "Lead collection and structured inquiry handoff",
+      "Clean embed widget matching your website's design",
     ],
   },
   {
     id: "business-automation",
     title: "Workflow & Business Automation",
-    tagline: "Connecting your tools to eliminate repetitive manual tasks",
+    tagline: "Connecting your software so repetitive tasks run themselves",
     description:
-      "Smart pipelines that automatically route incoming leads, update CRMs, send instant notifications, and synchronize spreadsheets without manual effort.",
+      "Automated pipelines that connect your tools — automatically qualifying leads, routing notifications, syncing spreadsheets, and updating databases.",
     deliverables: [
       "Multi-app triggers (Stripe, Slack, Notion, Airtable, Sheets)",
-      "Instant lead qualification and email/SMS alerts",
+      "Automated lead triage and notification routing",
       "Scheduled data syncs and background batch processing",
-      "Clean error logging and failure alerts",
+      "Reliable error handling and alert notifications",
     ],
   },
   {
-    id: "modern-web-apps",
-    title: "Websites & Landing Pages",
-    tagline: "Fast, sleek, and conversion-focused web experiences",
+    id: "websites-webapps",
+    title: "Websites & Modern Web Applications",
+    tagline: "Fast, responsive web experiences designed with care",
     description:
-      "Modern, mobile-native landing pages and web apps built with Next.js 16 and Tailwind CSS. Designed to make a memorable impression and turn visitors into clients.",
+      "Modern, mobile-friendly landing pages and interactive web applications built with Next.js and Tailwind CSS. Focused on clarity, speed, and turning visitors into conversations.",
     deliverables: [
-      "Mobile-first, 100% responsive user interface",
-      "Modern aesthetic with subtle micro-interactions",
-      "SEO metadata & social share cards configured",
-      "Frictionless global hosting on Vercel with custom domain",
+      "Mobile-first, responsive layouts tested across screen sizes",
+      "Performance-conscious web engineering with zero bloat",
+      "Clean metadata, OpenGraph tags, and SEO foundations",
+      "Global deployment on Vercel with custom domain setup",
     ],
   },
   {
-    id: "rapid-prototyping",
-    title: "Rapid MVP Prototyping",
-    tagline: "From whiteboard idea to clickable working software in days",
+    id: "rapid-mvps",
+    title: "Rapid Prototypes & Working MVPs",
+    tagline: "From concept to interactive software to validate your idea",
     description:
-      "For founders and innovators who need to validate an idea quickly. I build functional, interactive MVPs you can put directly in front of customers or investors.",
+      "For founders, creators, and teams who want to test a concept with real users. I build functional, clickable working prototypes in days so you can gather real feedback.",
     deliverables: [
-      "Fast turnaround from concept to working build",
-      "Interactive flows and realistic core features",
-      "Clean TypeScript code you can scale later",
-      "Live preview link for immediate stakeholder feedback",
+      "Quick turnaround from idea to functional demo link",
+      "Interactive core flows to test with real users",
+      "Clean, modular TypeScript code structured to grow",
+      "Direct collaboration and regular preview updates",
     ],
   },
 ];

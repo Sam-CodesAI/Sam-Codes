@@ -3,12 +3,13 @@ import "./globals.css";
 import NeuralField from "@/components/NeuralField";
 
 export const metadata: Metadata = {
-  title: "SAM CODES | Samarth Nimangre — AI Developer & Systems Builder",
+  title: "Sam Codes — AI Developer & Automation Builder",
   description:
-    "Building intelligent digital experiences. AI applications, agentic workflows, business automations, and modern web engineering by Samarth Nimangre (Sam), Karnataka, India.",
+    "Samarth Nimangre — student, AI developer and automation builder creating AI systems, workflows, web experiences and digital experiments.",
   keywords: [
     "Sam Codes",
     "Samarth Nimangre",
+    "Samarth Nimangre Karnataka",
     "AI Developer",
     "Automation Builder",
     "AI Agents",
@@ -18,21 +19,21 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Samarth Nimangre (Sam)" }],
   creator: "Samarth Nimangre",
-  metadataBase: new URL("https://samcodes.dev"),
+  metadataBase: new URL("https://sam-codes.vercel.app"),
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://samcodes.dev",
-    title: "SAM CODES | Samarth Nimangre — AI Developer & Systems Builder",
+    url: "https://sam-codes.vercel.app",
+    title: "Sam Codes — AI Developer & Automation Builder",
     description:
-      "Turning ambitious ideas into functional digital systems through AI applications, agentic workflows, business automations, and modern web engineering.",
-    siteName: "SAM CODES",
+      "Samarth Nimangre — student, AI developer and automation builder creating AI systems, workflows, web experiences and digital experiments.",
+    siteName: "Sam Codes",
   },
   twitter: {
     card: "summary_large_image",
-    title: "SAM CODES | Samarth Nimangre",
+    title: "Sam Codes — AI Developer & Automation Builder",
     description:
-      "Building intelligent digital experiences through AI applications, automations, and modern web engineering.",
+      "Samarth Nimangre — student, AI developer and automation builder creating AI systems, workflows, web experiences and digital experiments.",
   },
   robots: {
     index: true,

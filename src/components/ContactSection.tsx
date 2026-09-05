@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { socialsData, SocialLink } from "@/data/socials";
+import { socialsData, CONTACT_CONFIG } from "@/data/socials";
 import { soundFx } from "@/utils/sound";
 import SpotlightCard from "@/components/SpotlightCard";
 import MotionReveal from "@/components/MotionReveal";
@@ -12,7 +12,6 @@ import {
   Send,
   Sparkles,
   MessageSquare,
-  ArrowUpRight,
   Clock,
   ExternalLink,
 } from "lucide-react";
@@ -91,11 +90,29 @@ function RedditIcon({ className }: { className?: string }) {
   );
 }
 
+function GithubIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+      <path d="M9 18c-4.51 2-5-2-7-2" />
+    </svg>
+  );
+}
+
 const BRAND_ICONS: Record<string, React.FC<{ className?: string }>> = {
   Instagram: InstagramIcon,
   Linkedin: LinkedinIcon,
   Twitter: TwitterIcon,
   Reddit: RedditIcon,
+  Github: GithubIcon,
   Mail: Mail,
 };
 
@@ -111,7 +128,7 @@ export default function ContactSection() {
   });
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText("contact@samcodes.dev");
+    navigator.clipboard.writeText(CONTACT_CONFIG.EMAIL_ADDRESS);
     soundFx.playChime(600, 0.08);
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2500);
@@ -130,10 +147,10 @@ export default function ContactSection() {
 
     const subject = encodeURIComponent(`Project Inquiry: ${formState.service} (${formState.name})`);
     const body = encodeURIComponent(
-      `Hello Sam,\n\nName: ${formState.name}\nEmail: ${formState.email}\nProject Type: ${formState.service}\n\nProject Details:\n${formState.message}\n\nSent from samcodes.dev portfolio.`
+      `Hello Sam,\n\nName: ${formState.name}\nEmail: ${formState.email}\nTopic: ${formState.service}\n\nProject Details:\n${formState.message}\n\nSent from SAM CODES portfolio.`
     );
 
-    window.location.href = `mailto:contact@samcodes.dev?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${CONTACT_CONFIG.EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -145,31 +162,31 @@ export default function ContactSection() {
       <MotionReveal className="flex flex-col items-center text-center mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-sky-400 mb-4 uppercase tracking-wider">
           <MessageSquare size={13} className="text-sky-400" />
-          Direct Communication Channels
+          Start a Conversation
         </div>
 
         <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
-          Have Something Worth Building? Let&apos;s Talk.
+          Have Something Worth Building?
         </h2>
 
-        <p className="text-base sm:text-lg text-slate-400 max-w-2xl">
-          I don&apos;t make you wait days for an email reply. Drop me a DM on X or Instagram for the fastest response, connect on LinkedIn, or shoot me a direct email.
+        <p className="text-base sm:text-lg text-slate-300 max-w-2xl font-normal leading-relaxed">
+          The fastest way to reach me is via direct message on Instagram, LinkedIn, or X. For project briefs or scopes, feel free to send an email.
         </p>
       </MotionReveal>
 
-      {/* Primary Social Pathways Grid (Prioritized as requested) */}
+      {/* Primary Social Pathways Grid (Prioritized as requested: Insta, LinkedIn, X, Reddit, Github) */}
       <div className="mb-14">
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
-            Fastest Pathways: Direct Messaging (DMs Open)
+            Preferred Channels (Direct Messaging)
           </span>
           <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1.5">
             <Clock size={12} />
-            <span>Usually replies within 2–4 hours</span>
+            <span>Fastest reply on Instagram &amp; LinkedIn</span>
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {socialsData
             .filter((s) => s.platform !== "Email")
             .map((item) => {
@@ -193,13 +210,19 @@ export default function ContactSection() {
                       )}
                     </div>
 
-                    <h4 className="text-base font-bold text-white mb-0.5">
+                    <h4 className="text-sm font-bold text-white mb-0.5">
                       {item.platform}
                     </h4>
 
-                    <div className="text-xs font-mono text-slate-400 mb-4">
+                    <div className="text-[11px] font-mono text-slate-400 mb-3 truncate">
                       {item.handleOrLabel}
                     </div>
+
+                    {item.description && (
+                      <p className="text-[11px] text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                        {item.description}
+                      </p>
+                    )}
                   </div>
 
                   <div className="pt-3 border-t border-white/[0.04] flex items-center gap-2">
@@ -208,10 +231,10 @@ export default function ContactSection() {
                       target="_blank"
                       rel="noreferrer"
                       onClick={() => soundFx.playHover()}
-                      className="flex-1 py-2 px-3 rounded-lg bg-white/[0.05] hover:bg-white text-slate-200 hover:text-slate-950 font-mono text-xs text-center font-medium transition-all flex items-center justify-center gap-1 cursor-pointer min-h-[44px]"
+                      className="flex-1 py-2 px-3 rounded-lg bg-white/[0.05] hover:bg-white text-slate-200 hover:text-slate-950 font-mono text-[11px] text-center font-medium transition-all flex items-center justify-center gap-1 cursor-pointer min-h-[44px]"
                     >
-                      <span>Open {item.platform.split(" ")[0]}</span>
-                      <ExternalLink size={12} />
+                      <span>{item.directActionLabel}</span>
+                      <ExternalLink size={11} />
                     </a>
 
                     <button
@@ -233,14 +256,14 @@ export default function ContactSection() {
         </div>
       </div>
 
-      {/* Secondary Direct Form & Email Box */}
+      {/* Direct Email & Brief Form */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column: Direct Email & Builder Location (5 cols) */}
+        {/* Left Column: Direct Email & Direct Builder Transparency (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
           <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm space-y-6">
-            <h3 className="text-lg font-bold text-white">Direct Email &amp; Proposals</h3>
+            <h3 className="text-lg font-bold text-white">Direct Email</h3>
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-              If you have a formal project specification, RFP, or detailed scope, email is great. I read every email personally.
+              If you have a formal project specification or detailed scope, email is great. I read and reply to inquiries personally.
             </p>
 
             {/* Email Copy Card */}
@@ -248,7 +271,7 @@ export default function ContactSection() {
               <div className="flex items-center gap-2.5 overflow-hidden">
                 <Mail size={16} className="text-sky-400 shrink-0" />
                 <span className="text-xs sm:text-sm font-mono text-white truncate">
-                  contact@samcodes.dev
+                  {CONTACT_CONFIG.EMAIL_ADDRESS}
                 </span>
               </div>
 
@@ -278,7 +301,7 @@ export default function ContactSection() {
                 <span>DIRECT BUILDER GUARANTEE</span>
               </div>
               <p className="leading-relaxed">
-                Based in Karnataka, India (IST UTC+5:30). Open to global remote clients. No agency overhead, no account managers — just direct, fast collaboration.
+                Based in Karnataka, India (IST UTC+5:30). Open to remote collaboration. You talk directly with the builder writing the code.
               </p>
             </div>
           </div>
@@ -290,7 +313,7 @@ export default function ContactSection() {
             onSubmit={handleFormSubmit}
             className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm space-y-5"
           >
-            <h3 className="text-lg font-bold text-white mb-2">Send a Direct Message</h3>
+            <h3 className="text-lg font-bold text-white mb-2">Send a Message</h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -301,7 +324,7 @@ export default function ContactSection() {
                   id="name"
                   type="text"
                   required
-                  placeholder="Alex Rivera"
+                  placeholder="Your Name"
                   value={formState.name}
                   onChange={(e) => setFormState({ ...formState, name: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors min-h-[44px]"
@@ -316,7 +339,7 @@ export default function ContactSection() {
                   id="email"
                   type="email"
                   required
-                  placeholder="alex@example.com"
+                  placeholder="your.email@example.com"
                   value={formState.email}
                   onChange={(e) => setFormState({ ...formState, email: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors min-h-[44px]"
@@ -326,7 +349,7 @@ export default function ContactSection() {
 
             <div>
               <label htmlFor="service" className="block text-xs font-mono text-slate-400 mb-1.5">
-                WHAT ARE YOU LOOKING TO BUILD?
+                WHAT DO YOU WANT TO BUILD OR AUTOMATE?
               </label>
               <select
                 id="service"
@@ -335,22 +358,22 @@ export default function ContactSection() {
                 className="w-full px-4 py-3 rounded-xl bg-[#090d1a] border border-white/[0.08] text-white text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors cursor-pointer min-h-[44px]"
               >
                 <option value="AI Chatbots & Assistants">AI Chatbot or Customer Assistant</option>
-                <option value="Business Automation">Workflow &amp; Business Process Automation</option>
-                <option value="Web Apps & Landing Pages">Modern Website or Next.js Web App</option>
-                <option value="Rapid MVP Prototyping">Rapid Working MVP (Validate in Days)</option>
-                <option value="General Collaboration">Collaboration or Academic Inquiry</option>
+                <option value="Workflow & Business Automation">Workflow &amp; Business Process Automation</option>
+                <option value="Websites & Web Applications">Website or Modern Web Application</option>
+                <option value="Rapid Prototypes & MVPs">Rapid Working Prototype / MVP</option>
+                <option value="General Collaboration">General / Academic Inquiry</option>
               </select>
             </div>
 
             <div>
               <label htmlFor="message" className="block text-xs font-mono text-slate-400 mb-1.5">
-                BRIEF PROJECT CONTEXT
+                BRIEF DETAILS
               </label>
               <textarea
                 id="message"
                 required
                 rows={4}
-                placeholder="What is your product idea or current operational bottleneck? What would success look like?"
+                placeholder="Describe what needs to work, what you're trying to solve, or what you want to build..."
                 value={formState.message}
                 onChange={(e) => setFormState({ ...formState, message: e.target.value })}
                 className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors resize-none"
@@ -362,7 +385,7 @@ export default function ContactSection() {
               className="w-full py-4 px-6 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-sky-500/20 cursor-pointer min-h-[48px]"
             >
               <Send size={15} />
-              <span>Send Message Directly to Sam</span>
+              <span>Send Message to Sam</span>
             </button>
           </form>
         </div>

@@ -5,33 +5,33 @@ import { servicesData, ServiceOffering } from "@/data/services";
 import { soundFx } from "@/utils/sound";
 import SpotlightCard from "@/components/SpotlightCard";
 import MotionReveal from "@/components/MotionReveal";
-import { Briefcase, ArrowUpRight, Check } from "lucide-react";
+import { Wrench, ArrowUpRight, Check } from "lucide-react";
 
 export default function ServicesSection() {
   return (
     <section
       id="services"
-      aria-label="Services & Commercial Offerings"
+      aria-label="Services & Systems"
       className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.06]"
     >
       <MotionReveal className="flex flex-col items-center text-center mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-indigo-400 mb-4 uppercase tracking-wider">
-          <Briefcase size={13} className="text-indigo-400" />
-          Collaboration
+          <Wrench size={13} className="text-indigo-400" />
+          What I Can Build For You
         </div>
 
         <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
-          Ways We Can Work Together
+          Services &amp; Systems
         </h2>
 
-        <p className="text-base sm:text-lg text-slate-400 max-w-2xl">
-          Focused engineering engagements for founders, teams, and individuals who value speed, technical craft, and clear communication.
+        <p className="text-base sm:text-lg text-slate-300 max-w-2xl font-normal leading-relaxed">
+          I build focused digital systems for people who have something worth automating, improving, or launching.
         </p>
       </MotionReveal>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {servicesData.map((svc: ServiceOffering, idx: number) => (
-          <MotionReveal key={svc.id} delay={idx * 0.1}>
+          <MotionReveal key={svc.id} delay={idx * 0.08}>
             <SpotlightCard
               onMouseEnter={() => soundFx.playHover()}
               spotlightColor="rgba(129, 140, 248, 0.15)"
@@ -41,10 +41,10 @@ export default function ServicesSection() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-mono text-indigo-400 uppercase tracking-wider">
-                    SERVICE // 0{servicesData.indexOf(svc) + 1}
+                    SYSTEM // 0{idx + 1}
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-400">
-                    Direct Collaboration
+                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-300">
+                    Direct With Sam
                   </span>
                 </div>
 
@@ -62,12 +62,12 @@ export default function ServicesSection() {
 
                 <div className="space-y-2 mb-6">
                   <span className="text-[11px] font-mono text-slate-400 block uppercase tracking-wider">
-                    Deliverables Include:
+                    Includes:
                   </span>
-                  <ul className="space-y-1.5 text-xs text-slate-300 font-mono">
+                  <ul className="space-y-2 text-xs text-slate-300 font-mono">
                     {svc.deliverables.map((item, dIdx) => (
-                      <li key={dIdx} className="flex items-center gap-2">
-                        <Check size={13} className="text-emerald-400 shrink-0" />
+                      <li key={dIdx} className="flex items-start gap-2">
+                        <Check size={14} className="text-emerald-400 shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -77,14 +77,14 @@ export default function ServicesSection() {
 
               <div className="pt-6 border-t border-white/[0.04] flex items-center justify-between">
                 <span className="text-xs font-mono text-slate-400">
-                  Scope-based timeline &amp; deliverables
+                  Agreed scope &amp; direct collaboration
                 </span>
                 <a
                   href={`#contact?service=${encodeURIComponent(svc.title)}`}
                   onClick={() => soundFx.playChime(500, 0.06)}
-                  className="px-4 py-2 rounded-full bg-white/[0.05] hover:bg-white text-slate-200 hover:text-slate-950 text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2.5 rounded-full bg-white/[0.05] hover:bg-white text-slate-200 hover:text-slate-950 text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer min-h-[44px]"
                 >
-                  <span>Inquire</span>
+                  <span>Start a conversation</span>
                   <ArrowUpRight size={13} />
                 </a>
               </div>
