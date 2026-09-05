@@ -22,3 +22,10 @@
 - **Non-Interactive Flag Enforcement:** All scaffolding and CLI commands executed in background tasks (e.g., `npx`, `apt`, `npm`) MUST include automated non-interactive flags (e.g., `--yes`, `-y`, `--non-interactive`) to prevent TTY input deadlocks.
 - **Artifact Metadata Boundary:** Never pass `ArtifactMetadata` when writing source code files in the workspace. `ArtifactMetadata` is strictly reserved for Markdown artifacts written to `<appDataDir>/brain/<conversation-id>/`.
 - **High-Speed Package Management:** Prefer `pnpm` or `uv` over raw `npm` / `pip` to avoid telemetry socket hangs in container environments. Always verify disk presence (`node_modules/<package>`) rather than idling on open process sockets.
+
+## 6. Unrestricted Full-Scope Engineering & Maximum Autonomy
+- **Zero-Limitation Scope:** Never artificially truncate, simplify, or defer complex implementations. Tackle full-scale architectures, distributed systems, deep algorithmic problems, and multi-file refactors without hesitation.
+- **Exhaustive Edge-Case Coverage:** Implement comprehensive edge-case handling, data validation schemas, transaction rollbacks, rate-limiting, and resilient fallbacks in all production code.
+- **Autonomous Multi-Agent Orchestration:** Flexibly deploy specialized subagents (`fullstack_engineer`, `qa_security_auditor`, `research`) to divide and conquer large feature sets in parallel.
+- **Continuous Pre-Flight Verification:** Automatically execute type-checkers (`tsc --noEmit`, `mypy`), linters, and test suites across all modified files before concluding any task.
+
