@@ -34,7 +34,7 @@ export const assistantKnowledgeBase: KnowledgeQnA[] = [
     question: "Show me Sam's work.",
     keywords: ["work", "projects", "lab", "portfolio", "examples", "case study", "show"],
     answer:
-      "Under Sam's strict zero-fabrication policy, no fake client logos, mock testimonials, or imaginary metrics are ever shown. In 'The Lab' section, you can see real active workbench experiments (like a WhatsApp Lead Qualifier and a Daily Briefing Agent), or open the Case Study Blueprint to see his rigorous documentation standards.",
+      "Under Sam's strict zero-fabrication policy, no fake client logos, mock testimonials, or imaginary metrics are ever shown. In 'The Lab' section, you can inspect the Case Study Blueprint to see his rigorous engineering standards, or propose a custom build to be developed and published.",
   },
   {
     id: "how-to-work-with-sam",

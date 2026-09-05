@@ -166,7 +166,7 @@ export default function LabSection() {
             </SpotlightCard>
           ))}
         </div>
-      ) : (
+      ) : filteredExperiments.length > 0 ? (
         /* The Lab Active Experiments State */
         <div className="space-y-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -260,6 +260,66 @@ export default function LabSection() {
                 <span className="text-slate-500 block text-[9px] uppercase">Handoff</span>
                 <span className="text-slate-200">Clean Documentation</span>
               </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* Empty Lab Active R&D State */
+        <div className="relative rounded-3xl bg-gradient-to-b from-white/[0.03] to-white/[0.01] border border-white/[0.08] p-8 sm:p-12 text-center max-w-3xl mx-auto overflow-hidden">
+          {/* Subtle ambient glows */}
+          <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-sky-500/10 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
+
+          {/* Status Indicator */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-mono mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-ping" />
+            <span>LAB_STATUS: ACTIVE_R&amp;D</span>
+          </div>
+
+          <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+            Active R&amp;D in Progress
+          </h3>
+
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl mx-auto mb-8">
+            Case studies, production benchmarks, and interactive experiments are undergoing testing before release. In line with the zero-fabrication standard, only genuinely verified systems are published here.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              type="button"
+              onClick={() => {
+                soundFx.playChime(520, 0.08);
+                setBlueprintModalOpen(true);
+              }}
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.12] text-slate-200 hover:text-white text-xs font-mono transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
+            >
+              <Code2 size={15} className="text-sky-400" />
+              <span>Preview Case Study Blueprint</span>
+            </button>
+
+            <a
+              href="#contact"
+              onClick={() => soundFx.playHover()}
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-sky-500/20 min-h-[44px]"
+            >
+              <span>Propose a build with Sam</span>
+              <ArrowUpRight size={14} />
+            </a>
+          </div>
+
+          {/* Standards Guarantee */}
+          <div className="mt-10 pt-8 border-t border-white/[0.05] grid grid-cols-1 sm:grid-cols-3 gap-4 text-left font-mono text-[11px] text-slate-400">
+            <div>
+              <span className="text-slate-500 block text-[9px] uppercase">Standard</span>
+              <span className="text-slate-200">Zero Fabricated Proof</span>
+            </div>
+            <div>
+              <span className="text-slate-500 block text-[9px] uppercase">Engineering</span>
+              <span className="text-slate-200">Production Performance</span>
+            </div>
+            <div>
+              <span className="text-slate-500 block text-[9px] uppercase">Handoff</span>
+              <span className="text-slate-200">Clean Documentation</span>
             </div>
           </div>
         </div>
