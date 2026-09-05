@@ -1,0 +1,341 @@
+"use client";
+
+import React, { useState } from "react";
+import { projectsData, Project } from "@/data/projects";
+import { soundFx } from "@/utils/sound";
+import {
+  FlaskConical,
+  Sparkles,
+  ArrowUpRight,
+  Code2,
+  Cpu,
+  Layers,
+  CheckCircle2,
+  X,
+  ExternalLink,
+} from "lucide-react";
+
+const CATEGORIES = [
+  "All",
+  "AI Application",
+  "Agentic Workflow",
+  "Automation",
+  "Web System",
+  "Prototype",
+] as const;
+
+export default function LabSection() {
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [blueprintModalOpen, setBlueprintModalOpen] = useState<boolean>(false);
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
+
+  const filteredProjects = projectsData.filter((project: Project) => {
+    if (selectedCategory === "All") return true;
+    return project.category === selectedCategory;
+  });
+
+  const handleTabChange = (category: string) => {
+    soundFx.playHover();
+    setSelectedCategory(category);
+  };
+
+  return (
+    <section
+      id="lab"
+      aria-label="The Lab & Projects"
+      className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.06]"
+    >
+      {/* Section Header */}
+      <div className="flex flex-col items-center text-center mb-12">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-sky-400 mb-4 uppercase tracking-wider">
+          <FlaskConical size={13} className="text-sky-400 animate-pulse" />
+          The Digital Laboratory
+        </div>
+
+        <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
+          The Lab // Selected Systems
+        </h2>
+
+        <p className="text-base sm:text-lg text-slate-400 max-w-2xl">
+          An ongoing archive of functional AI experiments, autonomous workflows, and custom web builds engineered for performance and practical utility.
+        </p>
+      </div>
+
+      {/* Category Filter Pills */}
+      <div className="flex items-center justify-center flex-wrap gap-2 mb-12">
+        {CATEGORIES.map((category) => (
+          <button
+            key={category}
+            type="button"
+            onClick={() => handleTabChange(category)}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
+              selectedCategory === category
+                ? "bg-sky-500 text-white shadow-md shadow-sky-500/25 border border-sky-400"
+                : "bg-white/[0.02] text-slate-400 hover:text-white hover:bg-white/[0.06] border border-white/[0.06]"
+            }`}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
+      {/* Dynamic State: Empty Lab vs Populated Projects */}
+      {filteredProjects.length === 0 ? (
+        <div className="relative rounded-3xl bg-gradient-to-b from-white/[0.03] to-white/[0.01] border border-white/[0.08] p-8 sm:p-12 text-center max-w-3xl mx-auto overflow-hidden">
+          {/* Subtle background glow */}
+          <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-sky-500/10 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
+
+          {/* Status Indicator */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-mono mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-ping" />
+            <span>LAB_STATUS: COMPILING_BUILDS</span>
+          </div>
+
+          <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+            Active R&amp;D in Progress
+          </h3>
+
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl mx-auto mb-8">
+            Case studies, production benchmarks, and interactive agent sandboxes are actively undergoing verification before live release. I believe in demonstrating working systems rather than hypothetical claims.
+          </p>
+
+          {/* Blueprint Schema Preview Button */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              type="button"
+              onClick={() => {
+                soundFx.playChime(520, 0.08);
+                setBlueprintModalOpen(true);
+              }}
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.12] text-slate-200 hover:text-white text-xs font-mono transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Code2 size={15} className="text-sky-400" />
+              <span>Preview Case Study Blueprint</span>
+            </button>
+
+            <a
+              href="#contact"
+              onClick={() => soundFx.playHover()}
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-sky-500/20"
+            >
+              <span>Commission a Custom Build</span>
+              <ArrowUpRight size={14} />
+            </a>
+          </div>
+
+          {/* Technical Specs Guarantee */}
+          <div className="mt-10 pt-8 border-t border-white/[0.05] grid grid-cols-1 sm:grid-cols-3 gap-4 text-left font-mono text-[11px] text-slate-400">
+            <div>
+              <span className="text-slate-500 block text-[9px] uppercase">Standard</span>
+              <span className="text-slate-200">Zero Fabricated Data</span>
+            </div>
+            <div>
+              <span className="text-slate-500 block text-[9px] uppercase">Telemetry</span>
+              <span className="text-slate-200">Live Production Links</span>
+            </div>
+            <div>
+              <span className="text-slate-500 block text-[9px] uppercase">Velocity</span>
+              <span className="text-slate-200">Sub-2s Speed Verification</span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* Populated Grid for when projects are added */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredProjects.map((proj: Project) => (
+            <div
+              key={proj.slug}
+              onClick={() => {
+                soundFx.playChime(440, 0.05);
+                setActiveProject(proj);
+              }}
+              className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-sky-500/30 hover:bg-white/[0.04] transition-all cursor-pointer group flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-3">
+                  <span className="text-sky-400">{proj.category}</span>
+                  <span className="uppercase text-[10px]">{proj.status}</span>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-sky-300 transition-colors">
+                  {proj.title}
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                  {proj.shortDescription}
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-white/[0.04] flex items-center justify-between">
+                <div className="flex flex-wrap gap-1">
+                  {proj.technologies.slice(0, 3).map((t: string, idx: number) => (
+                    <span
+                      key={idx}
+                      className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.02] text-slate-400"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                <ArrowUpRight size={14} className="text-slate-500 group-hover:text-sky-400 group-hover:translate-x-0.5 transition-all" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Blueprint Preview Modal */}
+      {blueprintModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+        >
+          <div className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl bg-[#0a0f1d] border border-white/[0.12] p-6 sm:p-8 shadow-2xl">
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => setBlueprintModalOpen(false)}
+              className="absolute top-5 right-5 p-2 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <X size={16} />
+            </button>
+
+            <div className="flex items-center gap-2 text-xs font-mono text-sky-400 mb-2">
+              <Cpu size={14} />
+              <span>SCHEMA VERIFICATION // CASE_STUDY_BLUEPRINT</span>
+            </div>
+
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">
+              Production Case Study Standard
+            </h3>
+
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-6">
+              Every system published in The Lab complies with this rigorous engineering schema. No vague summaries or vanity metrics.
+            </p>
+
+            <div className="space-y-4 text-xs font-mono">
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                <div className="text-sky-400 font-bold mb-1 flex items-center gap-2">
+                  <CheckCircle2 size={13} className="text-sky-400" />
+                  <span>1. PROBLEM FORMULATION</span>
+                </div>
+                <div className="text-slate-400">
+                  Explicit definition of the operational bottleneck, friction point, or user challenge.
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                <div className="text-emerald-400 font-bold mb-1 flex items-center gap-2">
+                  <Layers size={13} className="text-emerald-400" />
+                  <span>2. ARCHITECTURE &amp; WORKFLOW</span>
+                </div>
+                <div className="text-slate-400">
+                  State machine diagram, LLM prompt loops, tool calling protocols, database schemas, and edge runtime routing.
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                <div className="text-indigo-400 font-bold mb-1 flex items-center gap-2">
+                  <Sparkles size={13} className="text-indigo-400" />
+                  <span>3. VERIFIABLE METRICS</span>
+                </div>
+                <div className="text-slate-400">
+                  Quantitative speed benchmarks (TTFT, PageSpeed 95+, token cost reduction, automation cycle time).
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                <div className="text-purple-400 font-bold mb-1 flex items-center gap-2">
+                  <ExternalLink size={13} className="text-purple-400" />
+                  <span>4. REPRODUCIBILITY &amp; DEMO</span>
+                </div>
+                <div className="text-slate-400">
+                  Live interactive deployment URL or recorded telemetry sandbox for client verification.
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-white/[0.06] flex justify-end">
+              <button
+                type="button"
+                onClick={() => setBlueprintModalOpen(false)}
+                className="px-5 py-2 rounded-full bg-white text-slate-950 font-medium text-xs hover:bg-sky-300 transition-colors cursor-pointer"
+              >
+                Close Blueprint
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Populated Project Modal */}
+      {activeProject && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+        >
+          <div className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl bg-[#0a0f1d] border border-white/[0.12] p-6 sm:p-8 shadow-2xl">
+            <button
+              type="button"
+              onClick={() => setActiveProject(null)}
+              className="absolute top-5 right-5 p-2 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <X size={16} />
+            </button>
+
+            <span className="text-xs font-mono text-sky-400 uppercase tracking-wider block mb-2">
+              {activeProject.category}
+            </span>
+
+            <h3 className="text-2xl font-bold text-white mb-2">
+              {activeProject.title}
+            </h3>
+
+            <p className="text-sm text-slate-300 mb-6">
+              {activeProject.fullDescription || activeProject.shortDescription}
+            </p>
+
+            <div className="space-y-4 text-xs">
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                <span className="text-slate-400 font-mono font-bold block mb-1">Problem</span>
+                <p className="text-slate-300">{activeProject.problem}</p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                <span className="text-sky-400 font-mono font-bold block mb-1">Approach</span>
+                <p className="text-slate-300">{activeProject.approach}</p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+                <span className="text-emerald-400 font-mono font-bold block mb-1">Result</span>
+                <p className="text-slate-300">{activeProject.result}</p>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-white/[0.06] flex items-center justify-between">
+              {activeProject.liveUrl && (
+                <a
+                  href={activeProject.liveUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-4 py-2 rounded-full bg-sky-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 hover:bg-sky-400 transition-colors"
+                >
+                  <span>Launch Live Demo</span>
+                  <ExternalLink size={13} />
+                </a>
+              )}
+              <button
+                type="button"
+                onClick={() => setActiveProject(null)}
+                className="px-4 py-2 rounded-full bg-white/[0.06] text-slate-300 text-xs hover:text-white transition-colors ml-auto cursor-pointer"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
