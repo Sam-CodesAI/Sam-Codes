@@ -27,5 +27,5 @@ out/
 build/
 dist/
 .vercel/
-.vercel
 .env*
+.profile-repo/
