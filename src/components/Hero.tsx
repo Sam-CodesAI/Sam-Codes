@@ -42,7 +42,7 @@ export default function Hero() {
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-indigo-300 to-emerald-300">
           intelligent digital
         </span>{" "}
-        experiences.
+        systems that actually work.
       </motion.h1>
 
       {/* Subheadline */}
@@ -68,7 +68,7 @@ export default function Hero() {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => soundFx.playChime(500, 0.08)}
-            className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-sm transition-all shadow-lg shadow-sky-500/20 hover:shadow-sky-500/35 flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-sm transition-all shadow-lg shadow-sky-500/20 hover:shadow-sky-500/35 flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>Explore The Lab</span>
             <ArrowUpRight size={16} />
@@ -81,9 +81,9 @@ export default function Hero() {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => soundFx.playHover()}
-            className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] text-slate-200 hover:text-white font-medium text-sm transition-all flex items-center justify-center gap-2 backdrop-blur-md cursor-pointer"
+            className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] text-slate-200 hover:text-white font-medium text-sm transition-all flex items-center justify-center gap-2 backdrop-blur-md cursor-pointer"
           >
-            <span>Work with me</span>
+            <span>Work with me directly</span>
           </motion.a>
         </MagneticButton>
       </motion.div>
@@ -98,9 +98,9 @@ export default function Hero() {
         <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-sky-500/30 transition-colors flex items-center gap-2.5 backdrop-blur-sm group">
           <Cpu size={14} className="text-sky-400 group-hover:rotate-90 transition-transform duration-500" />
           <div>
-            <div className="text-slate-500 text-[9px] uppercase">Architecture</div>
+            <div className="text-slate-500 text-[9px] uppercase">Craft</div>
             <div className="text-slate-200">
-              <TextScramble text="AI-Native Systems" />
+              <TextScramble text="AI & Modern Web" />
             </div>
           </div>
         </div>
@@ -108,9 +108,9 @@ export default function Hero() {
         <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-emerald-500/30 transition-colors flex items-center gap-2.5 backdrop-blur-sm group">
           <Zap size={14} className="text-emerald-400 group-hover:scale-125 transition-transform duration-300" />
           <div>
-            <div className="text-slate-500 text-[9px] uppercase">Focus</div>
+            <div className="text-slate-500 text-[9px] uppercase">Advantage</div>
             <div className="text-slate-200">
-              <TextScramble text="Autonomous Agents" />
+              <TextScramble text="Days, Not Months" />
             </div>
           </div>
         </div>
@@ -118,8 +118,8 @@ export default function Hero() {
         <div className="col-span-2 md:col-span-1 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-indigo-500/30 transition-colors flex items-center gap-2.5 backdrop-blur-sm group">
           <Terminal size={14} className="text-indigo-400" />
           <div>
-            <div className="text-slate-500 text-[9px] uppercase">Base</div>
-            <div className="text-slate-200">{profileData.location}</div>
+            <div className="text-slate-500 text-[9px] uppercase">Builder</div>
+            <div className="text-slate-200">Sam (17, India)</div>
           </div>
         </div>
       </motion.div>

@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { socialsData, SocialLink } from "@/data/socials";
 import { soundFx } from "@/utils/sound";
+import SpotlightCard from "@/components/SpotlightCard";
+import MotionReveal from "@/components/MotionReveal";
 import {
   Mail,
   Copy,
@@ -10,10 +12,12 @@ import {
   Send,
   Sparkles,
   MessageSquare,
-  AlertCircle,
+  ArrowUpRight,
+  Clock,
+  ExternalLink,
 } from "lucide-react";
 
-// Crisp inline SVGs for brand socials to avoid deprecation issues
+// Crisp inline SVGs for brand socials
 function InstagramIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -97,12 +101,12 @@ const BRAND_ICONS: Record<string, React.FC<{ className?: string }>> = {
 
 export default function ContactSection() {
   const [copiedEmail, setCopiedEmail] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [copiedHandle, setCopiedHandle] = useState<string | null>(null);
 
   const [formState, setFormState] = useState({
     name: "",
     email: "",
-    service: "AI Agents & Systems",
+    service: "AI Chatbots & Assistants",
     message: "",
   });
 
@@ -113,15 +117,11 @@ export default function ContactSection() {
     setTimeout(() => setCopiedEmail(false), 2500);
   };
 
-  const handleSocialClick = (e: React.MouseEvent, item: SocialLink) => {
-    if (item.isPlaceholder) {
-      e.preventDefault();
-      soundFx.playHover();
-      setToastMessage(
-        `${item.platform} handle is currently being activated. You can reach out directly via email at contact@samcodes.dev!`
-      );
-      setTimeout(() => setToastMessage(null), 4000);
-    }
+  const handleCopyHandle = (handle: string) => {
+    navigator.clipboard.writeText(handle);
+    soundFx.playChime(500, 0.06);
+    setCopiedHandle(handle);
+    setTimeout(() => setCopiedHandle(null), 2500);
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -142,28 +142,105 @@ export default function ContactSection() {
       aria-label="Contact Sam"
       className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.06]"
     >
-      <div className="flex flex-col items-center text-center mb-16">
+      <MotionReveal className="flex flex-col items-center text-center mb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-sky-400 mb-4 uppercase tracking-wider">
           <MessageSquare size={13} className="text-sky-400" />
-          Get in Touch
+          Direct Communication Channels
         </div>
 
         <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
-          Have Something Worth Building?
+          Have Something Worth Building? Let&apos;s Talk.
         </h2>
 
         <p className="text-base sm:text-lg text-slate-400 max-w-2xl">
-          Whether you need a custom AI agent, an automated workflow pipeline, or a high-performance web experience — let&apos;s build something intelligent.
+          I don&apos;t make you wait days for an email reply. Drop me a DM on X or Instagram for the fastest response, connect on LinkedIn, or shoot me a direct email.
         </p>
+      </MotionReveal>
+
+      {/* Primary Social Pathways Grid (Prioritized as requested) */}
+      <div className="mb-14">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+            Fastest Pathways: Direct Messaging (DMs Open)
+          </span>
+          <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1.5">
+            <Clock size={12} />
+            <span>Usually replies within 2–4 hours</span>
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {socialsData
+            .filter((s) => s.platform !== "Email")
+            .map((item) => {
+              const Icon = BRAND_ICONS[item.iconName] || Mail;
+
+              return (
+                <SpotlightCard
+                  key={item.platform}
+                  spotlightColor="rgba(56, 189, 248, 0.12)"
+                  className="p-5 flex flex-col justify-between group cursor-default"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-slate-300 group-hover:text-sky-400 group-hover:bg-sky-500/10 transition-colors">
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      {item.priorityBadge && (
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                          {item.priorityBadge}
+                        </span>
+                      )}
+                    </div>
+
+                    <h4 className="text-base font-bold text-white mb-0.5">
+                      {item.platform}
+                    </h4>
+
+                    <div className="text-xs font-mono text-slate-400 mb-4">
+                      {item.handleOrLabel}
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-white/[0.04] flex items-center gap-2">
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={() => soundFx.playHover()}
+                      className="flex-1 py-2 px-3 rounded-lg bg-white/[0.05] hover:bg-white text-slate-200 hover:text-slate-950 font-mono text-xs text-center font-medium transition-all flex items-center justify-center gap-1 cursor-pointer min-h-[44px]"
+                    >
+                      <span>Open {item.platform.split(" ")[0]}</span>
+                      <ExternalLink size={12} />
+                    </a>
+
+                    <button
+                      type="button"
+                      onClick={() => handleCopyHandle(item.handleOrLabel)}
+                      title={`Copy ${item.handleOrLabel}`}
+                      className="p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] text-slate-400 hover:text-white transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    >
+                      {copiedHandle === item.handleOrLabel ? (
+                        <Check size={14} className="text-emerald-400" />
+                      ) : (
+                        <Copy size={14} />
+                      )}
+                    </button>
+                  </div>
+                </SpotlightCard>
+              );
+            })}
+        </div>
       </div>
 
+      {/* Secondary Direct Form & Email Box */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column: Direct Outreach & Socials (5 cols) */}
+        {/* Left Column: Direct Email & Builder Location (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
           <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm space-y-6">
-            <h3 className="text-lg font-bold text-white">Direct Communication</h3>
+            <h3 className="text-lg font-bold text-white">Direct Email &amp; Proposals</h3>
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-              I prioritize fast, clear, and asynchronous communication. Feel free to copy my direct email or connect across networks.
+              If you have a formal project specification, RFP, or detailed scope, email is great. I read every email personally.
             </p>
 
             {/* Email Copy Card */}
@@ -179,7 +256,7 @@ export default function ContactSection() {
                 type="button"
                 onClick={handleCopyEmail}
                 aria-label="Copy email address"
-                className="px-3 py-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                className="px-4 py-2 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 min-h-[44px]"
               >
                 {copiedEmail ? (
                   <>
@@ -195,40 +272,14 @@ export default function ContactSection() {
               </button>
             </div>
 
-            {/* Social Channels List */}
-            <div className="space-y-2 pt-2">
-              <span className="text-xs font-mono text-slate-500 block uppercase tracking-wider">
-                Digital Footprint
-              </span>
-
-              <div className="grid grid-cols-2 gap-2">
-                {socialsData
-                  .filter((s) => s.platform !== "Email")
-                  .map((item) => {
-                    const Icon = BRAND_ICONS[item.iconName] || Mail;
-
-                    return (
-                      <a
-                        key={item.platform}
-                        href={item.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={(e) => handleSocialClick(e, item)}
-                        className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-sky-500/30 hover:bg-white/[0.05] transition-all flex items-center gap-2.5 text-xs text-slate-300 hover:text-white group"
-                      >
-                        <Icon className="w-4 h-4 text-slate-400 group-hover:text-sky-400 shrink-0 transition-colors" />
-                        <span className="truncate">{item.platform}</span>
-                      </a>
-                    );
-                  })}
+            <div className="p-4 rounded-xl bg-sky-500/5 border border-sky-500/15 text-[11px] font-mono text-slate-400 space-y-2">
+              <div className="flex items-center gap-2 text-sky-400 font-bold">
+                <Sparkles size={14} />
+                <span>DIRECT BUILDER GUARANTEE</span>
               </div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-sky-500/5 border border-sky-500/15 text-[11px] font-mono text-slate-400 flex items-start gap-2.5">
-              <Sparkles size={14} className="text-sky-400 shrink-0 mt-0.5" />
-              <span>
-                Based in Karnataka, India (IST UTC+5:30). Open to global collaboration and remote engagements.
-              </span>
+              <p className="leading-relaxed">
+                Based in Karnataka, India (IST UTC+5:30). Open to global remote clients. No agency overhead, no account managers — just direct, fast collaboration.
+              </p>
             </div>
           </div>
         </div>
@@ -239,7 +290,7 @@ export default function ContactSection() {
             onSubmit={handleFormSubmit}
             className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm space-y-5"
           >
-            <h3 className="text-lg font-bold text-white mb-2">Send a Message</h3>
+            <h3 className="text-lg font-bold text-white mb-2">Send a Direct Message</h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -253,7 +304,7 @@ export default function ContactSection() {
                   placeholder="Alex Rivera"
                   value={formState.name}
                   onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors min-h-[44px]"
                 />
               </div>
 
@@ -268,66 +319,54 @@ export default function ContactSection() {
                   placeholder="alex@example.com"
                   value={formState.email}
                   onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors"
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors min-h-[44px]"
                 />
               </div>
             </div>
 
             <div>
               <label htmlFor="service" className="block text-xs font-mono text-slate-400 mb-1.5">
-                INTERESTED SERVICE / DOMAIN
+                WHAT ARE YOU LOOKING TO BUILD?
               </label>
               <select
                 id="service"
                 value={formState.service}
                 onChange={(e) => setFormState({ ...formState, service: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl bg-[#090d1a] border border-white/[0.08] text-white text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors cursor-pointer"
+                className="w-full px-4 py-3 rounded-xl bg-[#090d1a] border border-white/[0.08] text-white text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors cursor-pointer min-h-[44px]"
               >
-                <option value="AI Agents & Systems">AI Agents &amp; Systems</option>
-                <option value="Business Automation">Business Process Automation</option>
-                <option value="Web Apps & Dashboards">Web Experiences &amp; Next.js</option>
-                <option value="Rapid Prototyping">Rapid Prototyping &amp; MVP</option>
-                <option value="General Collaboration">General / Academic Inquiry</option>
+                <option value="AI Chatbots & Assistants">AI Chatbot or Customer Assistant</option>
+                <option value="Business Automation">Workflow &amp; Business Process Automation</option>
+                <option value="Web Apps & Landing Pages">Modern Website or Next.js Web App</option>
+                <option value="Rapid MVP Prototyping">Rapid Working MVP (Validate in Days)</option>
+                <option value="General Collaboration">Collaboration or Academic Inquiry</option>
               </select>
             </div>
 
             <div>
               <label htmlFor="message" className="block text-xs font-mono text-slate-400 mb-1.5">
-                PROJECT CONTEXT / BRIEF
+                BRIEF PROJECT CONTEXT
               </label>
               <textarea
                 id="message"
                 required
                 rows={4}
-                placeholder="Describe what you want to build, current challenges, or goals..."
+                placeholder="What is your product idea or current operational bottleneck? What would success look like?"
                 value={formState.message}
                 onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors resize-none"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors resize-none"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-sky-500/20 cursor-pointer"
+              className="w-full py-4 px-6 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-sky-500/20 cursor-pointer min-h-[48px]"
             >
               <Send size={15} />
-              <span>Send Message</span>
+              <span>Send Message Directly to Sam</span>
             </button>
           </form>
         </div>
       </div>
-
-      {/* Floating Toast Notification */}
-      {toastMessage && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="fixed bottom-6 right-6 z-50 max-w-sm p-4 rounded-2xl bg-[#0b1020] border border-sky-400/40 text-slate-200 text-xs shadow-2xl flex items-start gap-3 animate-fade-in"
-        >
-          <AlertCircle size={16} className="text-sky-400 shrink-0 mt-0.5" />
-          <div className="flex-1 leading-relaxed">{toastMessage}</div>
-        </div>
-      )}
     </section>
   );
 }

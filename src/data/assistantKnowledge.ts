@@ -7,46 +7,53 @@ export interface KnowledgeQnA {
 
 export const assistantKnowledgeBase: KnowledgeQnA[] = [
   {
+    id: "why-hire-sam",
+    question: "Why should I work with Sam over an agency?",
+    keywords: ["why", "agency", "hire", "benefit", "better", "advantage", "cost"],
+    answer:
+      "Unlike traditional agencies that assign account managers and charge high retainers, you work directly with Sam. As a 17-year-old AI-native developer, Sam uses modern AI tools to ship working software and automations in days rather than weeks — with clear communication and zero bureaucratic overhead.",
+  },
+  {
     id: "what-builds",
-    question: "What does Sam build?",
-    keywords: ["build", "create", "what", "services", "capabilities", "skills"],
+    question: "What can Sam build for me?",
+    keywords: ["build", "create", "what", "services", "capabilities", "skills", "product"],
     answer:
-      "Sam builds intelligent digital systems, including AI applications, business automation workflows, autonomous agents, modern web interfaces, and rapid prototypes. He works across modern stacks including Python, Next.js, and generative AI APIs.",
+      "Sam builds custom AI chatbots, business automation workflows (syncing leads, spreadsheets, and CRMs), modern responsive web apps (Next.js & React), and fast clickable MVPs to validate your ideas.",
   },
   {
-    id: "help-business",
-    question: "How can Sam help my business?",
-    keywords: ["help", "business", "company", "clients", "value", "automate"],
+    id: "turnaround-speed",
+    question: "How fast can Sam deliver a project?",
+    keywords: ["fast", "speed", "timeline", "turnaround", "how long", "time", "delivery"],
     answer:
-      "Sam helps businesses eliminate repetitive work through automated workflows, connect disparate APIs, and build intelligent client-facing tools like 24/7 assistants, custom dashboards, and high-performance landing pages.",
+      "Most rapid prototypes and automation workflows can be delivered in 3 to 7 days. Because Sam builds with AI-accelerated workflows, iteration cycles are fast, and you get continuous preview updates throughout the build.",
   },
   {
-    id: "exploring-now",
-    question: "What is Sam currently exploring?",
-    keywords: ["exploring", "learning", "research", "interests", "current"],
+    id: "contact-socials",
+    question: "What is the best way to contact Sam?",
+    keywords: ["contact", "reach", "dm", "social", "x", "twitter", "instagram", "linkedin", "email", "reddit"],
     answer:
-      "Sam is actively researching autonomous AI agents, multi-agent workflows, generative AI function calling, sub-200ms RAG pipelines, and modern web architectures like Next.js 16 and Tailwind CSS v4.",
+      "For the fastest response, send a direct message to Sam on X (Twitter) or Instagram (@samcodes), or connect on LinkedIn (Samarth Nimangre). For formal project briefs, you can email contact@samcodes.dev.",
   },
   {
-    id: "projects-show",
-    question: "Show me Sam's projects.",
-    keywords: ["projects", "lab", "portfolio", "work", "examples"],
+    id: "pricing-scoping",
+    question: "How does pricing and scoping work?",
+    keywords: ["price", "cost", "quote", "rate", "fee", "budget", "scope", "charging"],
     answer:
-      "Sam's project lab is currently in active development. In accordance with an authentic, zero-fabrication policy, project case studies are published only as they reach full implementation and verification. Explore 'The Lab' section on this page to see the upcoming architecture.",
-  },
-  {
-    id: "how-work",
-    question: "How can I work with Sam?",
-    keywords: ["work", "hire", "contact", "collaborate", "start", "reach"],
-    answer:
-      "You can start a conversation directly through the 'Work With Me' section below or via social channels (LinkedIn, Instagram, X, Reddit) or email. Sam is open to building custom AI systems, automation pipelines, and functional prototypes.",
+      "Sam works on clear, milestone-based project scopes rather than open-ended retainers. You agree on specific deliverables upfront with honest, transparent terms suited for startups, small businesses, and founders.",
   },
   {
     id: "who-is-sam",
     question: "Who is Sam?",
-    keywords: ["who", "sam", "samarth", "background", "about", "location", "student"],
+    keywords: ["who", "sam", "samarth", "background", "about", "location", "student", "age", "years old"],
     answer:
-      "Sam (Samarth Nimangre) is a student and AI-native builder based in Karnataka, India. He focuses on practical software engineering, using modern AI tools to accelerate the path from raw idea to functional digital system.",
+      "Sam (Samarth Nimangre) is a 17-year-old AI developer and builder from Karnataka, India. He combines deep technical curiosity with modern AI environments to build practical software, automations, and clean interfaces.",
+  },
+  {
+    id: "projects-show",
+    question: "Show me Sam's projects.",
+    keywords: ["projects", "lab", "portfolio", "work", "examples", "case study"],
+    answer:
+      "Sam maintains a strict zero-fabrication policy — no fake client logos or mock testimonials. Real builds and interactive sandboxes are actively underway in 'The Lab' section. You can also view the Case Study Blueprint on the page to see his engineering standards.",
   },
 ];
 
@@ -63,12 +70,9 @@ export function queryDeterministicAssistant(query: string): string {
 
   for (const item of assistantKnowledgeBase) {
     let score = 0;
-    if (normalized.includes(item.question.toLowerCase())) {
-      score += 10;
-    }
     for (const kw of item.keywords) {
       if (normalized.includes(kw)) {
-        score += 2;
+        score += kw.length; // Weigh longer specific words higher
       }
     }
     if (score > highestScore) {
@@ -77,9 +81,9 @@ export function queryDeterministicAssistant(query: string): string {
     }
   }
 
-  if (bestMatch && highestScore > 0) {
+  if (bestMatch && highestScore > 2) {
     return bestMatch.answer;
   }
 
-  return "I can answer verified questions about Sam's capabilities, what he builds, his development process, current research areas, and how to collaborate. Feel free to choose one of the suggested prompts or inquire directly!";
+  return "I don't have that specific detail in Sam's verified notes, but Sam is always open to chatting! The fastest way to ask directly is via DM on X or Instagram (@samcodes), or via email at contact@samcodes.dev.";
 }

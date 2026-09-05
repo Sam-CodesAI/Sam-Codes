@@ -64,7 +64,7 @@ export default function CinematicIntro() {
 
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-sky-400 mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-          <span>SYSTEM_BOOT // KERNEL v1.0</span>
+          <span>SAM_CODES // WORKSPACE</span>
         </div>
 
         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-3">
@@ -72,10 +72,10 @@ export default function CinematicIntro() {
         </h1>
 
         <p className="text-xs sm:text-sm font-mono text-slate-400 tracking-wider uppercase h-6">
-          {step === 0 && "Initializing Neural Substrates..."}
-          {step === 1 && "Calibrating Agentic Pipelines..."}
-          {step === 2 && "Synchronizing Digital Identity..."}
-          {step >= 3 && "Environment Ready."}
+          {step === 0 && "Booting Workspace..."}
+          {step === 1 && "Loading Systems & The Lab..."}
+          {step === 2 && "Welcome to SAM CODES..."}
+          {step >= 3 && "Ready."}
         </p>
 
         {/* Progress Bar */}

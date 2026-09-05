@@ -16,11 +16,11 @@ interface ChatMessage {
 }
 
 const DEFAULT_CHIPS = [
+  "Why hire Sam over an agency?",
   "What can Sam build for me?",
-  "How can Sam help my business?",
+  "How fast can Sam deliver?",
+  "How do I contact Sam directly?",
   "Who is Sam?",
-  "Show me Sam's projects",
-  "How can I work with Sam?",
 ];
 
 export default function AskSamAssistant() {
@@ -30,7 +30,7 @@ export default function AskSamAssistant() {
     {
       id: "welcome",
       sender: "assistant",
-      text: "Hello! I am Sam's digital assistant. Ask me anything about Sam's technical capabilities, background, or how he can help your business.",
+      text: "Hello! I am Sam's grounded assistant. Ask me anything about how Sam works with clients, his turnaround speed, or why collaborating with an independent 17-year-old AI builder is a major advantage.",
       timestamp: "Just now",
     },
   ]);
@@ -145,17 +145,17 @@ export default function AskSamAssistant() {
                   onClick={handleResetChat}
                   title="Reset conversation"
                   aria-label="Reset conversation"
-                  className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.05] transition-colors cursor-pointer"
+                  className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.05] transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
-                  <RotateCcw size={15} />
+                  <RotateCcw size={16} />
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
                   aria-label="Close assistant"
-                  className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.05] transition-colors cursor-pointer"
+                  className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.05] transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
-                  <X size={17} />
+                  <X size={18} />
                 </button>
               </div>
             </div>
@@ -231,17 +231,17 @@ export default function AskSamAssistant() {
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask about Sam's stack, capabilities, or process..."
-                className="flex-1 px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors"
+                placeholder="Ask about turnaround, scoping, or how Sam builds..."
+                className="flex-1 px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors min-h-[44px]"
               />
 
               <button
                 type="submit"
                 disabled={!inputValue.trim()}
                 aria-label="Send question"
-                className="p-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 disabled:opacity-40 disabled:pointer-events-none text-slate-950 font-bold transition-all cursor-pointer"
+                className="p-3 rounded-xl bg-sky-500 hover:bg-sky-400 disabled:opacity-40 disabled:pointer-events-none text-slate-950 font-bold transition-all cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
               >
-                <Send size={15} />
+                <Send size={16} />
               </button>
             </form>
           </div>

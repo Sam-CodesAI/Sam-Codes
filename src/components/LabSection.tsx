@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { projectsData, Project } from "@/data/projects";
 import { soundFx } from "@/utils/sound";
+import SpotlightCard from "@/components/SpotlightCard";
+import MotionReveal from "@/components/MotionReveal";
 import {
   FlaskConical,
   Sparkles,
@@ -14,6 +16,10 @@ import {
   CheckCircle2,
   X,
   ExternalLink,
+  Hammer,
+  Bot,
+  Zap,
+  Globe,
 } from "lucide-react";
 
 const CATEGORIES = [
@@ -24,6 +30,49 @@ const CATEGORIES = [
   "Web System",
   "Prototype",
 ] as const;
+
+interface ActivePrototype {
+  id: string;
+  title: string;
+  category: string;
+  status: string;
+  description: string;
+  techStack: string[];
+  icon: React.ElementType;
+}
+
+const ACTIVE_WORKBENCH: ActivePrototype[] = [
+  {
+    id: "whatsapp-qualifier",
+    title: "WhatsApp Lead Qualifier & Scheduler",
+    category: "Automation",
+    status: "Alpha Testing",
+    description:
+      "An intelligent conversational bot for WhatsApp that answers client inquiries about pricing and scope, qualifies leads based on budget, and syncs meeting details directly to Google Sheets and Notion.",
+    techStack: ["Next.js API", "WhatsApp Cloud API", "OpenAI Function Calling", "Supabase"],
+    icon: Zap,
+  },
+  {
+    id: "research-agent",
+    title: "Autonomous Industry Intelligence Agent",
+    category: "AI Application",
+    status: "Active Development",
+    description:
+      "A background research agent that parses daily tech news and industry publications, eliminates fluff, and sends a concise 3-minute markdown briefing directly to Telegram every morning.",
+    techStack: ["Python", "Claude 3.7", "FastAPI", "Telegram Bot API"],
+    icon: Bot,
+  },
+  {
+    id: "client-portal",
+    title: "Lightweight Client Telemetry & Delivery Portal",
+    category: "Web System",
+    status: "Prototyping",
+    description:
+      "A private, high-speed portal where clients can track build milestones in real time, test live preview environments, and access clean handoff documentation.",
+    techStack: ["Next.js 16", "React 19", "Tailwind CSS v4", "Vercel Edge"],
+    icon: Globe,
+  },
+];
 
 export default function LabSection() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
@@ -47,20 +96,20 @@ export default function LabSection() {
       className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.06]"
     >
       {/* Section Header */}
-      <div className="flex flex-col items-center text-center mb-12">
+      <MotionReveal className="flex flex-col items-center text-center mb-12">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-sky-400 mb-4 uppercase tracking-wider">
           <FlaskConical size={13} className="text-sky-400 animate-pulse" />
           The Digital Laboratory
         </div>
 
         <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
-          The Lab // Selected Systems
+          The Lab // Real Builds &amp; Prototypes
         </h2>
 
         <p className="text-base sm:text-lg text-slate-400 max-w-2xl">
-          An ongoing archive of functional AI experiments, autonomous workflows, and custom web builds engineered for performance and practical utility.
+          An authentic engineering workshop. Zero fabricated case studies or mock testimonials — only working software, active experiments, and production code.
         </p>
-      </div>
+      </MotionReveal>
 
       {/* Category Filter Pills with Fluid Motion Slider */}
       <div className="flex items-center justify-center flex-wrap gap-2 mb-12">
@@ -90,62 +139,116 @@ export default function LabSection() {
 
       {/* Dynamic State: Empty Lab vs Populated Projects */}
       {filteredProjects.length === 0 ? (
-        <div className="relative rounded-3xl bg-gradient-to-b from-white/[0.03] to-white/[0.01] border border-white/[0.08] p-8 sm:p-12 text-center max-w-3xl mx-auto overflow-hidden">
-          {/* Subtle background glow */}
-          <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-sky-500/10 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
-
-          {/* Status Indicator */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-mono mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-ping" />
-            <span>LAB_STATUS: COMPILING_BUILDS</span>
+        <div className="space-y-10">
+          {/* Authentic Workbench Showcase */}
+          <div className="text-left mb-6">
+            <div className="flex items-center gap-2 text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">
+              <Hammer size={14} className="text-amber-400" />
+              <span>On Sam&apos;s Workbench Right Now (Active Prototypes)</span>
+            </div>
+            <p className="text-sm text-slate-300">
+              I don&apos;t publish fake client logos or cookie-cutter templates. Here is what I am actively engineering and testing on my machine:
+            </p>
           </div>
 
-          <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-            Active R&amp;D in Progress
-          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {ACTIVE_WORKBENCH.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <MotionReveal key={item.id} delay={idx * 0.1}>
+                  <SpotlightCard
+                    onMouseEnter={() => soundFx.playHover()}
+                    spotlightColor="rgba(56, 189, 248, 0.12)"
+                    className="p-6 h-full flex flex-col justify-between group cursor-default"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Icon size={18} />
+                        </div>
+                        <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                          {item.status}
+                        </span>
+                      </div>
 
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl mx-auto mb-8">
-            Case studies, production benchmarks, and interactive agent sandboxes are actively undergoing verification before live release. I believe in demonstrating working systems rather than hypothetical claims.
-          </p>
+                      <div className="text-[10px] font-mono text-sky-400 uppercase tracking-wider mb-1">
+                        {item.category}
+                      </div>
 
-          {/* Blueprint Schema Preview Button */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              type="button"
-              onClick={() => {
-                soundFx.playChime(520, 0.08);
-                setBlueprintModalOpen(true);
-              }}
-              className="w-full sm:w-auto px-6 py-3 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.12] text-slate-200 hover:text-white text-xs font-mono transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Code2 size={15} className="text-sky-400" />
-              <span>Preview Case Study Blueprint</span>
-            </button>
+                      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-sky-300 transition-colors">
+                        {item.title}
+                      </h3>
 
-            <a
-              href="#contact"
-              onClick={() => soundFx.playHover()}
-              className="w-full sm:w-auto px-6 py-3 rounded-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-sky-500/20"
-            >
-              <span>Commission a Custom Build</span>
-              <ArrowUpRight size={14} />
-            </a>
+                      <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                        {item.description}
+                      </p>
+                    </div>
+
+                    <div>
+                      <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/[0.05]">
+                        {item.techStack.map((tech, tIdx) => (
+                          <span
+                            key={tIdx}
+                            className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.03] text-slate-400"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </SpotlightCard>
+                </MotionReveal>
+              );
+            })}
           </div>
 
-          {/* Technical Specs Guarantee */}
-          <div className="mt-10 pt-8 border-t border-white/[0.05] grid grid-cols-1 sm:grid-cols-3 gap-4 text-left font-mono text-[11px] text-slate-400">
-            <div>
-              <span className="text-slate-500 block text-[9px] uppercase">Standard</span>
-              <span className="text-slate-200">Zero Fabricated Data</span>
+          {/* Transparent Policy & Blueprint Callout */}
+          <div className="rounded-3xl bg-gradient-to-b from-white/[0.03] to-white/[0.01] border border-white/[0.08] p-8 sm:p-10 text-center max-w-3xl mx-auto overflow-hidden relative">
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+              Want to Build Something Custom Together?
+            </h3>
+
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-xl mx-auto mb-6">
+              I partner with founders and teams to build high-impact AI chatbots, business automations, and modern web apps from scratch. Let&apos;s make your project the next featured case study.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playChime(520, 0.08);
+                  setBlueprintModalOpen(true);
+                }}
+                className="w-full sm:w-auto px-6 py-3 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.12] text-slate-200 hover:text-white text-xs font-mono transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Code2 size={15} className="text-sky-400" />
+                <span>Preview Case Study Blueprint</span>
+              </button>
+
+              <a
+                href="#contact"
+                onClick={() => soundFx.playHover()}
+                className="w-full sm:w-auto px-6 py-3 rounded-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-sky-500/20"
+              >
+                <span>Propose a Custom Build</span>
+                <ArrowUpRight size={14} />
+              </a>
             </div>
-            <div>
-              <span className="text-slate-500 block text-[9px] uppercase">Telemetry</span>
-              <span className="text-slate-200">Live Production Links</span>
-            </div>
-            <div>
-              <span className="text-slate-500 block text-[9px] uppercase">Velocity</span>
-              <span className="text-slate-200">Sub-2s Speed Verification</span>
+
+            {/* Honest Standards Guarantee */}
+            <div className="mt-8 pt-6 border-t border-white/[0.05] grid grid-cols-1 sm:grid-cols-3 gap-4 text-left font-mono text-[11px] text-slate-400">
+              <div>
+                <span className="text-slate-500 block text-[9px] uppercase">Policy</span>
+                <span className="text-slate-200">Zero Fabricated Claims</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[9px] uppercase">Code Quality</span>
+                <span className="text-slate-200">Strict TypeScript &amp; Tests</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[9px] uppercase">Collaboration</span>
+                <span className="text-slate-200">Direct Communication</span>
+              </div>
             </div>
           </div>
         </div>
@@ -211,7 +314,7 @@ export default function LabSection() {
 
             <div className="flex items-center gap-2 text-xs font-mono text-sky-400 mb-2">
               <Cpu size={14} />
-              <span>SCHEMA VERIFICATION // CASE_STUDY_BLUEPRINT</span>
+              <span>SCHEMA // CASE_STUDY_STANDARD</span>
             </div>
 
             <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">
@@ -219,7 +322,7 @@ export default function LabSection() {
             </h3>
 
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-6">
-              Every system published in The Lab complies with this rigorous engineering schema. No vague summaries or vanity metrics.
+              Every system published in The Lab complies with this clear engineering schema. No vague summaries or fabricated metrics.
             </p>
 
             <div className="space-y-4 text-xs font-mono">
@@ -229,7 +332,7 @@ export default function LabSection() {
                   <span>1. PROBLEM FORMULATION</span>
                 </div>
                 <div className="text-slate-400">
-                  Explicit definition of the operational bottleneck, friction point, or user challenge.
+                  Explicit definition of the operational bottleneck or challenge solved for the user.
                 </div>
               </div>
 
@@ -239,27 +342,27 @@ export default function LabSection() {
                   <span>2. ARCHITECTURE &amp; WORKFLOW</span>
                 </div>
                 <div className="text-slate-400">
-                  State machine diagram, LLM prompt loops, tool calling protocols, database schemas, and edge runtime routing.
+                  Clear description of the API connections, database schema, AI prompts, and error fallbacks.
                 </div>
               </div>
 
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
                 <div className="text-indigo-400 font-bold mb-1 flex items-center gap-2">
                   <Sparkles size={13} className="text-indigo-400" />
-                  <span>3. VERIFIABLE METRICS</span>
+                  <span>3. PRACTICAL OUTCOMES</span>
                 </div>
                 <div className="text-slate-400">
-                  Quantitative speed benchmarks (TTFT, PageSpeed 95+, token cost reduction, automation cycle time).
+                  Hours saved, manual tasks eliminated, or quantifiable user engagement improvements.
                 </div>
               </div>
 
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
                 <div className="text-purple-400 font-bold mb-1 flex items-center gap-2">
                   <ExternalLink size={13} className="text-purple-400" />
-                  <span>4. REPRODUCIBILITY &amp; DEMO</span>
+                  <span>4. REPRODUCIBILITY &amp; LIVE DEMO</span>
                 </div>
                 <div className="text-slate-400">
-                  Live interactive deployment URL or recorded telemetry sandbox for client verification.
+                  Working live URL or reproducible video walkthrough for client verification.
                 </div>
               </div>
             </div>

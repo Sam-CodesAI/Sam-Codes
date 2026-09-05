@@ -88,7 +88,7 @@ export default function Navbar() {
             onClick={handleSoundToggle}
             aria-label={soundEnabled ? "Mute interactive audio" : "Enable interactive audio"}
             title={soundEnabled ? "Audio FX Active (Click to mute)" : "Enable subtle Audio FX"}
-            className={`p-2 rounded-full border transition-all text-xs flex items-center justify-center cursor-pointer ${
+            className={`p-2 rounded-full border transition-all text-xs flex items-center justify-center cursor-pointer min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] ${
               soundEnabled
                 ? "bg-sky-500/10 border-sky-500/30 text-sky-400 shadow-[0_0_12px_rgba(56,189,248,0.2)]"
                 : "bg-white/[0.03] border-white/[0.08] text-slate-400 hover:text-slate-200"
@@ -102,17 +102,17 @@ export default function Navbar() {
             type="button"
             onClick={openAskSam}
             aria-label="Open Ask Sam interactive assistant"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-sky-500/15 to-indigo-500/15 border border-sky-400/25 text-sky-300 hover:text-white hover:border-sky-400/50 hover:from-sky-500/25 hover:to-indigo-500/25 transition-all text-xs font-mono cursor-pointer shadow-sm"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-gradient-to-r from-sky-500/15 to-indigo-500/15 border border-sky-400/25 text-sky-300 hover:text-white hover:border-sky-400/50 hover:from-sky-500/25 hover:to-indigo-500/25 transition-all text-xs font-mono cursor-pointer shadow-sm min-h-[40px] sm:min-h-[44px]"
           >
             <Sparkles size={13} className="text-sky-400 animate-pulse" />
-            <span className="hidden sm:inline">Ask Sam</span>
+            <span>Ask Sam</span>
           </button>
 
           {/* Work With Me CTA */}
           <a
             href="#contact"
             onClick={() => soundFx.playChime(520, 0.08)}
-            className="hidden sm:inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-white text-slate-950 hover:bg-sky-300 transition-all text-xs font-medium tracking-wide shadow-md hover:shadow-sky-500/25 cursor-pointer"
+            className="hidden sm:inline-flex items-center justify-center px-5 py-2 rounded-full bg-white text-slate-950 hover:bg-sky-300 transition-all text-xs font-medium tracking-wide shadow-md hover:shadow-sky-500/25 cursor-pointer min-h-[44px]"
           >
             Work with me
           </a>
@@ -125,7 +125,7 @@ export default function Navbar() {
               setMobileMenuOpen(!mobileMenuOpen);
             }}
             aria-label="Toggle mobile menu"
-            className="p-2 lg:hidden rounded-full bg-white/[0.03] border border-white/[0.08] text-slate-300 hover:text-white cursor-pointer"
+            className="p-2.5 lg:hidden rounded-full bg-white/[0.03] border border-white/[0.08] text-slate-300 hover:text-white cursor-pointer min-h-[40px] min-w-[40px] flex items-center justify-center"
           >
             {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
           </button>
@@ -135,36 +135,36 @@ export default function Navbar() {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-x-4 top-20 bg-[#0a0e1c]/95 backdrop-blur-2xl border border-white/[0.1] rounded-2xl p-6 shadow-2xl flex flex-col gap-4 animate-in fade-in slide-in-from-top-4 duration-200 z-50">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={handleLinkClick}
-                className="text-sm font-mono tracking-wider text-slate-300 hover:text-sky-400 py-2 border-b border-white/[0.04] transition-colors"
+                className="text-sm font-mono tracking-wider text-slate-300 hover:text-sky-400 py-3 border-b border-white/[0.04] transition-colors min-h-[44px] flex items-center"
               >
                 {link.label}
               </a>
             ))}
           </div>
-          <div className="pt-2 flex flex-col gap-2.5">
+          <div className="pt-2 flex flex-col gap-3">
             <button
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 openAskSam();
               }}
-              className="w-full py-2.5 px-4 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 font-mono text-xs flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3.5 px-4 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 font-mono text-xs flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
             >
-              <Sparkles size={14} />
-              Ask Sam Interactive Assistant
+              <Sparkles size={15} />
+              Ask Sam Grounded Assistant
             </button>
             <a
               href="#contact"
               onClick={handleLinkClick}
-              className="w-full py-2.5 px-4 rounded-xl bg-white text-slate-950 font-medium text-xs text-center cursor-pointer hover:bg-sky-300 transition-colors"
+              className="w-full py-3.5 px-4 rounded-xl bg-white text-slate-950 font-medium text-xs text-center cursor-pointer hover:bg-sky-300 transition-colors min-h-[48px] flex items-center justify-center"
             >
-              Work with me
+              Work with me directly
             </a>
           </div>
         </div>

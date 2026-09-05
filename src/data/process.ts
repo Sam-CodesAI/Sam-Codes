@@ -8,51 +8,51 @@ export interface ProcessStep {
 export const processStepsData: ProcessStep[] = [
   {
     step: 1,
-    label: "IDEA",
-    tagline: "Deconstructing the core problem",
+    label: "ALIGN",
+    tagline: "Understanding the real problem",
     description:
-      "Clarifying what we are actually trying to achieve, identifying bottlenecks, and defining clear functional goals before writing code.",
+      "We start with a quick direct chat to clarify what you need, who it is for, and what success looks like before writing a single line of code.",
   },
   {
     step: 2,
-    label: "SYSTEM",
-    tagline: "Architecting the workflow",
+    label: "MAP",
+    tagline: "Architecting the solution",
     description:
-      "Mapping data flows, identifying API boundaries, choosing models, and establishing how the components will communicate cohesively.",
+      "Mapping the data flow, selecting the right tools, and planning the simplest architecture that gets the job done cleanly.",
   },
   {
     step: 3,
     label: "BUILD",
-    tagline: "AI-accelerated engineering",
+    tagline: "Fast, focused development",
     description:
-      "Implementing with modern frameworks, strict typing, clean modular structures, and fast execution feedback loops.",
+      "Building the core features with modern tools (Next.js, TypeScript, Python, Tailwind) with daily progress updates and zero black boxes.",
   },
   {
     step: 4,
-    label: "AUTOMATE",
-    tagline: "Connecting the leverage",
+    label: "CONNECT",
+    tagline: "Wiring automations & APIs",
     description:
-      "Wiring up event triggers, scheduled tasks, background operations, and tool-calling agentic logic to eliminate manual effort.",
+      "Connecting webhooks, AI models, database triggers, and third-party tools so everything runs cohesively without manual babysitting.",
   },
   {
     step: 5,
-    label: "TEST",
-    tagline: "Rigorous verification",
+    label: "VERIFY",
+    tagline: "Thorough testing & polish",
     description:
-      "Checking edge cases, verifying schema validations, testing prompt resilience, and profiling performance and latency.",
+      "Testing error handling, checking mobile responsiveness, and ensuring prompt stability under unpredictable user inputs.",
   },
   {
     step: 6,
     label: "SHIP",
-    tagline: "Frictionless deployment",
+    tagline: "Live production deployment",
     description:
-      "Deploying to modern edge infrastructure with global CDN caching, SSL security, and live observability.",
+      "Deploying to global cloud infrastructure (Vercel) with SSL, custom domain setup, and handoff documentation.",
   },
   {
     step: 7,
-    label: "ITERATE",
-    tagline: "Continuous refinement",
+    label: "REFINE",
+    tagline: "Rapid iteration on feedback",
     description:
-      "Gathering real interaction signals, optimizing model outputs, and evolving the system as requirements expand.",
+      "Reviewing real-world usage together, adjusting prompts, and making fast tweaks so the system continuously improves.",
   },
 ];
