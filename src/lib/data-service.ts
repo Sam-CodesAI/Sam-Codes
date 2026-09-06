@@ -288,6 +288,17 @@ export async function getCapabilities(): Promise<{
   exploringStack: TechItem[];
   coreCapabilities: CapabilityItem[];
 }> {
+  const supabase = await createServerClient();
+  if (supabase) {
+    const { data } = await supabase.from("site_settings").select("value").eq("key", "capabilities").maybeSingle();
+    if (data && data.value) {
+      return data.value as {
+        buildingWith: TechItem[];
+        exploringStack: TechItem[];
+        coreCapabilities: CapabilityItem[];
+      };
+    }
+  }
   const store = readLocalStore();
   return store.capabilities;
 }
@@ -311,6 +322,15 @@ export async function updateCapabilities(
   logAuditAction("UPDATE_CAPABILITIES", "CAPABILITIES", "global", actorEmail, {
     keys: Object.keys(data),
   });
+
+  const supabase = createAdminClient();
+  if (supabase) {
+    await supabase.from("site_settings").upsert({
+      key: "capabilities",
+      value: store.capabilities,
+      updated_at: new Date().toISOString(),
+    });
+  }
 
   return store.capabilities;
 }
@@ -711,6 +731,22 @@ export async function getAnalyticsSummary(rangeDays = 7): Promise<{
 // SOCIALS API
 // -----------------------------------------------------------------------------
 export async function getSocialLinks(): Promise<SocialLink[]> {
+  const supabase = await createServerClient();
+  if (supabase) {
+    const { data } = await supabase.from("social_links").select("*").eq("is_visible", true).order("priority", { ascending: true });
+    if (data && data.length > 0) {
+      return data.map((d) => ({
+        platform: d.platform,
+        url: d.url,
+        handleOrLabel: d.username,
+        ariaLabel: `Message Sam on ${d.platform}`,
+        iconName: (d.platform as SocialLink["iconName"]) || "Mail",
+        directActionLabel: d.platform === "Email" ? "Email Sam" : `DM on ${d.platform}`,
+        priorityBadge: d.priority === 1 ? "Top Preference" : undefined,
+        description: d.description,
+      }));
+    }
+  }
   const store = readLocalStore();
   return store.socials;
 }
@@ -726,6 +762,22 @@ export async function saveSocialLink(social: SocialLink, actorEmail = "samarthkn
   writeLocalStore(store);
 
   logAuditAction("UPDATE_SOCIAL", "SOCIAL", social.platform, actorEmail, { url: social.url, handle: social.handleOrLabel });
+
+  const supabase = createAdminClient();
+  if (supabase) {
+    await supabase.from("social_links").upsert({
+      id: social.platform.toLowerCase(),
+      platform: social.platform,
+      display_name: social.platform,
+      username: social.handleOrLabel,
+      url: social.url,
+      description: social.description || "",
+      priority: idx >= 0 ? idx + 1 : store.socials.length,
+      is_visible: true,
+      updated_at: new Date().toISOString(),
+    });
+  }
+
   return social;
 }
 
@@ -733,6 +785,18 @@ export async function saveSocialLink(social: SocialLink, actorEmail = "samarthkn
 // EXPLORING TOPICS API
 // -----------------------------------------------------------------------------
 export async function getExploringTopics(): Promise<ExplorationItem[]> {
+  const supabase = await createServerClient();
+  if (supabase) {
+    const { data } = await supabase.from("exploring_topics").select("*").eq("is_visible", true).order("order_index", { ascending: true });
+    if (data && data.length > 0) {
+      return data.map((d) => ({
+        name: d.name,
+        category: d.category as ExplorationItem["category"],
+        status: d.status as ExplorationItem["status"],
+        focus: d.focus,
+      }));
+    }
+  }
   const store = readLocalStore();
   return store.exploring;
 }
@@ -747,6 +811,21 @@ export async function saveExploringTopic(topic: ExplorationItem, actorEmail = "s
   }
   writeLocalStore(store);
   logAuditAction("SAVE_EXPLORING_TOPIC", "EXPLORING", topic.name, actorEmail, { status: topic.status });
+
+  const supabase = createAdminClient();
+  if (supabase) {
+    await supabase.from("exploring_topics").upsert({
+      id: `exp-${topic.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+      name: topic.name,
+      category: topic.category,
+      status: topic.status,
+      focus: topic.focus,
+      order_index: idx >= 0 ? idx + 1 : store.exploring.length,
+      is_visible: true,
+      updated_at: new Date().toISOString(),
+    });
+  }
+
   return topic;
 }
 
@@ -755,12 +834,29 @@ export async function deleteExploringTopic(name: string, actorEmail = "samarthkn
   store.exploring = store.exploring.filter((e) => e.name.toLowerCase() !== name.toLowerCase());
   writeLocalStore(store);
   logAuditAction("DELETE_EXPLORING_TOPIC", "EXPLORING", name, actorEmail, {});
+
+  const supabase = createAdminClient();
+  if (supabase) {
+    await supabase.from("exploring_topics").delete().ilike("name", name);
+  }
 }
 
 // -----------------------------------------------------------------------------
 // KNOWLEDGE BASE API (ASK SAM)
 // -----------------------------------------------------------------------------
 export async function getAssistantKnowledge(): Promise<KnowledgeQnA[]> {
+  const supabase = await createServerClient();
+  if (supabase) {
+    const { data } = await supabase.from("assistant_knowledge").select("*").eq("status", "PUBLISHED").order("order_index", { ascending: true });
+    if (data && data.length > 0) {
+      return data.map((d) => ({
+        id: d.id,
+        question: d.question,
+        keywords: Array.isArray(d.keywords) ? d.keywords : [],
+        answer: d.answer,
+      }));
+    }
+  }
   const store = readLocalStore();
   return store.knowledge;
 }
@@ -775,6 +871,21 @@ export async function saveAssistantKnowledge(item: KnowledgeQnA, actorEmail = "s
   }
   writeLocalStore(store);
   logAuditAction("SAVE_KNOWLEDGE", "KNOWLEDGE", item.id, actorEmail, { question: item.question });
+
+  const supabase = createAdminClient();
+  if (supabase) {
+    await supabase.from("assistant_knowledge").upsert({
+      id: item.id,
+      question: item.question,
+      keywords: item.keywords,
+      answer: item.answer,
+      category: "GENERAL",
+      order_index: idx >= 0 ? idx + 1 : store.knowledge.length,
+      status: "PUBLISHED",
+      updated_at: new Date().toISOString(),
+    });
+  }
+
   return item;
 }
 
@@ -783,12 +894,24 @@ export async function deleteAssistantKnowledge(id: string, actorEmail = "samarth
   store.knowledge = store.knowledge.filter((k) => k.id !== id);
   writeLocalStore(store);
   logAuditAction("DELETE_KNOWLEDGE", "KNOWLEDGE", id, actorEmail, {});
+
+  const supabase = createAdminClient();
+  if (supabase) {
+    await supabase.from("assistant_knowledge").delete().eq("id", id);
+  }
 }
 
 // -----------------------------------------------------------------------------
 // SITE SETTINGS API
 // -----------------------------------------------------------------------------
 export async function getSiteSettings(): Promise<SiteSettings> {
+  const supabase = await createServerClient();
+  if (supabase) {
+    const { data } = await supabase.from("site_settings").select("value").eq("key", "global_settings").maybeSingle();
+    if (data && data.value) {
+      return data.value as SiteSettings;
+    }
+  }
   const store = readLocalStore();
   return store.settings;
 }
@@ -798,6 +921,16 @@ export async function updateSiteSettings(settings: Partial<SiteSettings>, actorE
   store.settings = { ...store.settings, ...settings };
   writeLocalStore(store);
   logAuditAction("UPDATE_SETTINGS", "SETTINGS", "global", actorEmail, { keys: Object.keys(settings) });
+
+  const supabase = createAdminClient();
+  if (supabase) {
+    await supabase.from("site_settings").upsert({
+      key: "global_settings",
+      value: store.settings,
+      updated_at: new Date().toISOString(),
+    });
+  }
+
   return store.settings;
 }
 

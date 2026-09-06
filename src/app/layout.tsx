@@ -4,41 +4,58 @@ import NeuralField from "@/components/NeuralField";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 export const metadata: Metadata = {
-  title: "Sam Codes — AI Developer & Automation Builder",
+  title: {
+    default: "SAM CODES — Intelligent Digital Systems & Autonomous Workflows",
+    template: "%s | SAM CODES",
+  },
   description:
-    "Samarth Nimangre — student, AI developer and automation builder creating AI systems, workflows, web experiences and digital experiments.",
+    "Samarth Nimangre — AI Developer & Automation Engineer. Building autonomous agent workflows, edge webhook integrations, and production web applications with zero fabrication.",
   keywords: [
     "Sam Codes",
     "Samarth Nimangre",
     "Samarth Nimangre Karnataka",
     "AI Developer",
     "Automation Builder",
+    "Automation Engineer",
     "AI Agents",
     "Agentic Workflows",
     "Next.js Developer India",
     "Fullstack AI Engineer",
+    "Supabase Developer",
+    "WhatsApp Webhook Automation",
   ],
-  authors: [{ name: "Samarth Nimangre (Sam)" }],
+  authors: [{ name: "Samarth Nimangre (Sam)", url: "https://sam-codes.vercel.app" }],
   creator: "Samarth Nimangre",
   metadataBase: new URL("https://sam-codes.vercel.app"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://sam-codes.vercel.app",
-    title: "Sam Codes — AI Developer & Automation Builder",
+    title: "SAM CODES — Intelligent Digital Systems & Autonomous Workflows",
     description:
-      "Samarth Nimangre — student, AI developer and automation builder creating AI systems, workflows, web experiences and digital experiments.",
-    siteName: "Sam Codes",
+      "Samarth Nimangre — AI Developer & Automation Engineer. Building autonomous agent workflows, edge webhook integrations, and production web applications.",
+    siteName: "SAM CODES",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sam Codes — AI Developer & Automation Builder",
+    title: "SAM CODES — Intelligent Digital Systems & Autonomous Workflows",
     description:
-      "Samarth Nimangre — student, AI developer and automation builder creating AI systems, workflows, web experiences and digital experiments.",
+      "Samarth Nimangre — AI Developer & Automation Engineer. Building autonomous agent workflows, edge webhook integrations, and production web applications.",
+    creator: "@Tempest_Store",
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -49,6 +66,65 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://sam-codes.vercel.app/#samarth",
+      "name": "Samarth Nimangre",
+      "alternateName": "Sam",
+      "url": "https://sam-codes.vercel.app",
+      "jobTitle": "AI Developer & Workflow Automation Engineer",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "SAM CODES",
+      },
+      "sameAs": [
+        "https://www.instagram.com/samarth.buildss/",
+        "https://www.linkedin.com/in/samarth-nimangre-0a3b02421/",
+        "https://x.com/Tempest_Store",
+        "https://github.com/Sam-CodesAI",
+        "https://www.reddit.com/u/SamarthBuilds_/",
+      ],
+      "knowsAbout": [
+        "Artificial Intelligence",
+        "AI Agents",
+        "Workflow Automation",
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Supabase",
+        "PostgreSQL",
+      ],
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://sam-codes.vercel.app/#service",
+      "name": "SAM CODES",
+      "url": "https://sam-codes.vercel.app",
+      "description": "High-velocity AI chatbots, workflow automations, and modern web applications engineered with zero fabrication.",
+      "provider": {
+        "@id": "https://sam-codes.vercel.app/#samarth",
+      },
+      "areaServed": "Global",
+      "availableChannel": {
+        "@type": "ServiceChannel",
+        "serviceUrl": "https://sam-codes.vercel.app/#contact",
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://sam-codes.vercel.app/#website",
+      "url": "https://sam-codes.vercel.app",
+      "name": "SAM CODES",
+      "publisher": {
+        "@id": "https://sam-codes.vercel.app/#samarth",
+      },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -56,6 +132,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark scroll-smooth">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="relative bg-[#06080f] text-slate-100 antialiased selection:bg-sky-500/20 selection:text-white min-h-screen">
         {/* Background Neural Canvas */}
         <NeuralField />
