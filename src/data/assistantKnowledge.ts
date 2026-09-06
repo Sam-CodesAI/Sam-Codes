@@ -55,13 +55,16 @@ export const assistantKnowledgeBase: KnowledgeQnA[] = [
  * Deterministic Answer Resolver
  * Resolves user query against verified knowledge base with zero hallucination.
  */
-export function queryDeterministicAssistant(query: string): string {
+export function queryDeterministicAssistant(
+  query: string,
+  knowledge: KnowledgeQnA[] = assistantKnowledgeBase
+): string {
   const normalized = query.toLowerCase().trim();
 
   let bestMatch: KnowledgeQnA | null = null;
   let highestScore = 0;
 
-  for (const item of assistantKnowledgeBase) {
+  for (const item of knowledge) {
     let score = 0;
     for (const kw of item.keywords) {
       if (normalized.includes(kw)) {

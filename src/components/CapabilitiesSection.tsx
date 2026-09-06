@@ -39,7 +39,15 @@ const ICON_MAP: Record<string, LucideIcon> = {
 
 type ViewMode = "capabilities" | "stack";
 
-export default function CapabilitiesSection() {
+export default function CapabilitiesSection({
+  capabilities = capabilitiesData,
+  buildingWith = buildingWithStack,
+  exploring = exploringStack,
+}: {
+  capabilities?: Capability[];
+  buildingWith?: TechItem[];
+  exploring?: TechItem[];
+}) {
   const [activeTab, setActiveTab] = useState<ViewMode>("capabilities");
 
   const handleTabChange = (tab: ViewMode) => {
@@ -116,7 +124,7 @@ export default function CapabilitiesSection() {
       {/* Tab 1: Practical Capabilities (What I Can Build) */}
       {activeTab === "capabilities" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 animate-in fade-in duration-300">
-          {capabilitiesData.map((cap: Capability, idx: number) => {
+          {capabilities.map((cap: Capability, idx: number) => {
             const Icon = ICON_MAP[cap.icon] || Sparkles;
 
             return (
@@ -175,7 +183,7 @@ export default function CapabilitiesSection() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {buildingWithStack.map((item: TechItem, idx: number) => (
+              {buildingWith.map((item: TechItem, idx: number) => (
                 <SpotlightCard
                   key={idx}
                   spotlightColor="rgba(52, 211, 153, 0.12)"
@@ -205,7 +213,7 @@ export default function CapabilitiesSection() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {exploringStack.map((item: TechItem, idx: number) => (
+              {exploring.map((item: TechItem, idx: number) => (
                 <SpotlightCard
                   key={idx}
                   spotlightColor="rgba(168, 85, 247, 0.12)"

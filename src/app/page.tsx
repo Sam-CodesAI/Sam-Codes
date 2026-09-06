@@ -14,8 +14,41 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import AskSamAssistant from "@/components/AskSamAssistant";
 import EasterEggs from "@/components/EasterEggs";
+import {
+  getProfile,
+  getProjects,
+  getServices,
+  getExploringTopics,
+  getCapabilities,
+  getSocialLinks,
+  getAssistantKnowledge,
+} from "@/lib/data-service";
+import { profileData } from "@/data/profile";
+import { projectsData, Project } from "@/data/projects";
+import { servicesData } from "@/data/services";
+import { exploringData } from "@/data/exploring";
+import { buildingWithStack, exploringStack, coreCapabilities } from "@/data/capabilities";
+import { socialsData } from "@/data/socials";
+import { assistantKnowledgeBase } from "@/data/assistantKnowledge";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const [profile, projects, services, exploringTopics, capabilities, socials, knowledge] =
+    await Promise.all([
+      getProfile().catch(() => profileData),
+      getProjects(false).catch(() => []),
+      getServices().catch(() => servicesData),
+      getExploringTopics().catch(() => exploringData),
+      getCapabilities().catch(() => ({
+        buildingWith: buildingWithStack,
+        exploringStack,
+        coreCapabilities,
+      })),
+      getSocialLinks().catch(() => socialsData),
+      getAssistantKnowledge().catch(() => assistantKnowledgeBase),
+    ]);
+
   return (
     <>
       {/* Opening sequence for first-time session arrivals */}
@@ -26,23 +59,29 @@ export default function HomePage() {
 
       {/* Core Portfolio Page Flow */}
       <main className="flex-1 flex flex-col">
-        <Hero />
-        <Statement />
-        <CapabilitiesSection />
-        <LabSection />
+        <Hero profile={profile} />
+        <Statement profile={profile} />
+        <CapabilitiesSection
+          capabilities={capabilities.coreCapabilities}
+          buildingWith={capabilities.buildingWith}
+          exploring={capabilities.exploringStack}
+        />
+        <LabSection
+          projects={projects.length > 0 ? (projects as unknown as Project[]) : projectsData}
+        />
         <ProcessSection />
-        <AboutSection />
-        <ExploringSection />
+        <AboutSection profile={profile} />
+        <ExploringSection exploringTopics={exploringTopics} />
         <MilestonesSection />
-        <ServicesSection />
-        <ContactSection />
+        <ServicesSection services={services} />
+        <ContactSection socials={socials} />
       </main>
 
       {/* Footer credits and links */}
       <Footer />
 
       {/* Floating Interactive Assistant */}
-      <AskSamAssistant />
+      <AskSamAssistant knowledge={knowledge} />
 
       {/* Developer Telemetry HUD */}
       <EasterEggs />

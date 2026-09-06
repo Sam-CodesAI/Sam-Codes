@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { profileData } from "@/data/profile";
+import { profileData, ProfileData } from "@/data/profile";
 import { soundFx } from "@/utils/sound";
 import MotionReveal from "@/components/MotionReveal";
 import {
@@ -10,7 +10,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-export default function AboutSection() {
+export default function AboutSection({ profile = profileData }: { profile?: ProfileData }) {
   return (
     <section
       id="about"
@@ -39,25 +39,25 @@ export default function AboutSection() {
             <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] space-y-5 backdrop-blur-sm">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="text-xl font-bold text-white tracking-wide">
-                  {profileData.fullName}
+                  {profile.fullName}
                 </span>
                 <span className="text-xs font-mono px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">
-                  {profileData.age} Years Old · Known as {profileData.preferredName}
+                  {profile.age} Years Old · Known as {profile.preferredName}
                 </span>
                 <div className="flex items-center gap-1 text-xs font-mono text-slate-400 ml-auto">
                   <MapPin size={13} className="text-emerald-400" />
-                  <span>{profileData.location}</span>
+                  <span>{profile.location}</span>
                 </div>
               </div>
 
               <div className="space-y-4 text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
-                {profileData.aboutStory.map((paragraph, idx) => (
+                {profile.aboutStory.map((paragraph, idx) => (
                   <p key={idx}>{paragraph}</p>
                 ))}
               </div>
 
               <div className="pt-4 border-t border-white/[0.06] flex flex-wrap gap-2">
-                {profileData.identityTags.map((tag, idx) => (
+                {profile.identityTags.map((tag, idx) => (
                   <span
                     key={idx}
                     className="text-xs font-mono px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.06] text-slate-300"

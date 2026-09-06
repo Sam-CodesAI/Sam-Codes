@@ -7,7 +7,11 @@ import SpotlightCard from "@/components/SpotlightCard";
 import MotionReveal from "@/components/MotionReveal";
 import { Wrench, ArrowUpRight, Check } from "lucide-react";
 
-export default function ServicesSection() {
+export default function ServicesSection({
+  services = servicesData,
+}: {
+  services?: ServiceOffering[];
+}) {
   return (
     <section
       id="services"
@@ -30,7 +34,7 @@ export default function ServicesSection() {
       </MotionReveal>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {servicesData.map((svc: ServiceOffering, idx: number) => (
+        {services.map((svc: ServiceOffering, idx: number) => (
           <MotionReveal key={svc.id} delay={idx * 0.08}>
             <SpotlightCard
               onMouseEnter={() => soundFx.playHover()}

@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import { profileData } from "@/data/profile";
+import { profileData, ProfileData } from "@/data/profile";
 import { soundFx } from "@/utils/sound";
 import SpotlightCard from "@/components/SpotlightCard";
 import MotionReveal from "@/components/MotionReveal";
 import { Zap, Compass, ShieldCheck, Layers, Sparkles } from "lucide-react";
 
-export default function Statement() {
+export default function Statement({ profile = profileData }: { profile?: ProfileData }) {
   const PILLAR_ICONS = [Zap, Compass, ShieldCheck, Layers];
 
   return (
@@ -23,17 +23,17 @@ export default function Statement() {
         </div>
 
         <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-[1.15] max-w-3xl mb-4">
-          {profileData.statementHeadline}
+          {profile.statementHeadline}
         </h2>
 
         <p className="text-base sm:text-lg text-slate-300 max-w-2xl font-normal leading-relaxed">
-          {profileData.statementDescription}
+          {profile.statementDescription}
         </p>
       </MotionReveal>
 
       {/* 4 Principles Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
-        {profileData.whyWorkWithMe.map((item, idx) => {
+        {profile.whyWorkWithMe.map((item, idx) => {
           const Icon = PILLAR_ICONS[idx] || Sparkles;
           return (
             <MotionReveal key={idx} delay={idx * 0.08}>

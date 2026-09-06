@@ -8,7 +8,11 @@ import {
   Radio,
 } from "lucide-react";
 
-export default function ExploringSection() {
+export default function ExploringSection({
+  exploringTopics = exploringData,
+}: {
+  exploringTopics?: ExplorationItem[];
+}) {
   const getStatusBadge = (status: ExplorationItem["status"]) => {
     switch (status) {
       case "Building":
@@ -44,7 +48,7 @@ export default function ExploringSection() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {exploringData.map((item, idx) => (
+        {exploringTopics.map((item, idx) => (
           <div
             key={idx}
             onMouseEnter={() => soundFx.playHover()}

@@ -35,19 +35,25 @@ const CATEGORIES = [
   "Prototype",
 ] as const;
 
-export default function LabSection() {
+export default function LabSection({
+  projects = projectsData,
+  experiments = experimentsData,
+}: {
+  projects?: Project[];
+  experiments?: LabExperiment[];
+}) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [blueprintModalOpen, setBlueprintModalOpen] = useState<boolean>(false);
   const [activeProject, setActiveProject] = useState<Project | null>(null);
 
   // Filter completed projects
-  const filteredProjects = projectsData.filter((project: Project) => {
+  const filteredProjects = projects.filter((project: Project) => {
     if (selectedCategory === "All") return true;
     return project.category === selectedCategory;
   });
 
   // Filter active lab experiments
-  const filteredExperiments = experimentsData.filter((exp: LabExperiment) => {
+  const filteredExperiments = experiments.filter((exp: LabExperiment) => {
     if (selectedCategory === "All") return true;
     return exp.category === selectedCategory;
   });

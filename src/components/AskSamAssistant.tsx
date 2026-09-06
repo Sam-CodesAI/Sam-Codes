@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   queryDeterministicAssistant,
+  assistantKnowledgeBase,
+  KnowledgeQnA,
 } from "@/data/assistantKnowledge";
 import { soundFx } from "@/utils/sound";
 import { Sparkles, Send, X, Bot, User, RotateCcw } from "lucide-react";
@@ -22,7 +24,11 @@ const DEFAULT_CHIPS = [
   "How can I work with Sam?",
 ];
 
-export default function AskSamAssistant() {
+export default function AskSamAssistant({
+  knowledge = assistantKnowledgeBase,
+}: {
+  knowledge?: KnowledgeQnA[];
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -68,7 +74,7 @@ export default function AskSamAssistant() {
     setIsTyping(true);
 
     setTimeout(() => {
-      const answer = queryDeterministicAssistant(query);
+      const answer = queryDeterministicAssistant(query, knowledge);
       const assistantMsg: ChatMessage = {
         id: `assistant-${Date.now()}`,
         sender: "assistant",

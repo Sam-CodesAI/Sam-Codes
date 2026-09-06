@@ -2,13 +2,13 @@
 
 import React from "react";
 import { ArrowDown, ArrowUpRight, Terminal, Cpu, Zap } from "lucide-react";
-import { profileData } from "@/data/profile";
+import { profileData, ProfileData } from "@/data/profile";
 import { soundFx } from "@/utils/sound";
 import { motion } from "motion/react";
 import MagneticButton from "@/components/MagneticButton";
 import TextScramble from "@/components/TextScramble";
 
-export default function Hero() {
+export default function Hero({ profile = profileData }: { profile?: ProfileData }) {
   return (
     <section
       id="hero"
@@ -27,7 +27,7 @@ export default function Hero() {
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
         </span>
         <span className="text-[11px] sm:text-xs font-mono text-slate-300">
-          <TextScramble text={profileData.availabilityStatus} scrambleOnHover={false} />
+          <TextScramble text={profile.availabilityStatus} scrambleOnHover={false} />
         </span>
       </motion.div>
 
@@ -52,7 +52,7 @@ export default function Hero() {
         transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
         className="text-base sm:text-xl text-slate-300 max-w-2xl font-normal leading-relaxed mb-10"
       >
-        {profileData.heroSubheadline}
+        {profile.heroSubheadline}
       </motion.p>
 
       {/* Primary Action Buttons with Magnetic Physics */}

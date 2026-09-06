@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { socialsData, CONTACT_CONFIG } from "@/data/socials";
+import { socialsData, CONTACT_CONFIG, SocialLink } from "@/data/socials";
 import { soundFx } from "@/utils/sound";
 import SpotlightCard from "@/components/SpotlightCard";
 import MotionReveal from "@/components/MotionReveal";
@@ -56,7 +56,7 @@ function LinkedinIcon({ className }: { className?: string }) {
   );
 }
 
-function TwitterIcon({ className }: { className?: string }) {
+function XIcon({ className }: { className?: string }) {
   return (
     <svg
       className={className}
@@ -67,8 +67,7 @@ function TwitterIcon({ className }: { className?: string }) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M4 4l11.733 16h4.267l-11.733-16z" />
-      <path d="M4 20l6.768-6.768m2.464-2.464l6.768-6.768" />
+      <path d="M4 4l16 16m0-16L4 20" />
     </svg>
   );
 }
@@ -85,10 +84,10 @@ function RedditIcon({ className }: { className?: string }) {
       strokeLinejoin="round"
     >
       <circle cx="12" cy="12" r="10" />
-      <path d="M17 13c0-1.66-1.34-3-3-3-.4 0-.78.08-1.12.22C12.35 9.4 11.23 9 10 9c-.04 0-.08 0-.12.01L11 5l3 1" />
-      <circle cx="9" cy="13" r="1" />
-      <circle cx="15" cy="13" r="1" />
-      <path d="M9.5 16.5c1 .67 2 .67 3 0" />
+      <circle cx="9" cy="11" r="1.5" fill="currentColor" />
+      <circle cx="15" cy="11" r="1.5" fill="currentColor" />
+      <path d="M9 16c1.5 1 4.5 1 6 0" />
+      <path d="M17 7l2-2" />
     </svg>
   );
 }
@@ -110,16 +109,15 @@ function GithubIcon({ className }: { className?: string }) {
   );
 }
 
-const BRAND_ICONS: Record<string, React.FC<{ className?: string }>> = {
+const BRAND_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   Instagram: InstagramIcon,
   Linkedin: LinkedinIcon,
-  Twitter: TwitterIcon,
+  Twitter: XIcon,
   Reddit: RedditIcon,
   Github: GithubIcon,
-  Mail: Mail,
 };
 
-export default function ContactSection() {
+export default function ContactSection({ socials = socialsData }: { socials?: SocialLink[] }) {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedHandle, setCopiedHandle] = useState<string | null>(null);
 
@@ -223,7 +221,7 @@ export default function ContactSection() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {socialsData
+          {socials
             .filter((s) => s.platform !== "Email")
             .map((item) => {
               const Icon = BRAND_ICONS[item.iconName] || Mail;
