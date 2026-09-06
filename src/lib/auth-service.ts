@@ -1,5 +1,7 @@
 import { cookies } from "next/headers";
 import { createClient as createServerSupabase } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { signSessionToken, verifySessionToken } from "@/lib/auth-token";
 
 export interface AdminUser {
   id: string;
@@ -8,19 +10,66 @@ export interface AdminUser {
   role: "super_admin" | "admin";
 }
 
-const DEFAULT_ADMIN_EMAIL = "samarthknimangre@gmail.com";
-const ADMIN_SESSION_COOKIE = "sam_codes_cmd_session";
+export const DEFAULT_ADMIN_EMAIL = "samarthknimangre@gmail.com";
+export const ADMIN_SESSION_COOKIE = "sam_codes_cmd_session";
 
-// Fallback password for command center access when Supabase Auth is offline or pending
-// Can be customized via environment variable ADMIN_SECRET_KEY
-const MASTER_SECRET = process.env.ADMIN_SECRET_KEY || "samcodes2026";
+/**
+ * Returns list of authorized admin emails from configuration
+ */
+export function getAuthorizedAdminEmails(): Set<string> {
+  const emails = new Set<string>([
+    DEFAULT_ADMIN_EMAIL.toLowerCase(),
+    "admin@samcodes.dev",
+  ]);
+
+  if (process.env.ADMIN_EMAILS) {
+    process.env.ADMIN_EMAILS.split(",").forEach((e) => {
+      const clean = e.trim().toLowerCase();
+      if (clean) emails.add(clean);
+    });
+  }
+
+  return emails;
+}
+
+/**
+ * Checks whether an email is strictly authorized for administrative access
+ */
+export async function isAuthorizedAdminEmail(email: string): Promise<boolean> {
+  const normalized = email.toLowerCase().trim();
+  const authorizedSet = getAuthorizedAdminEmails();
+
+  if (authorizedSet.has(normalized)) {
+    return true;
+  }
+
+  // Check remote admin_users table in Supabase if configured
+  try {
+    const adminClient = createAdminClient();
+    if (adminClient) {
+      const { data } = await adminClient
+        .from("admin_users")
+        .select("email")
+        .eq("email", normalized)
+        .maybeSingle();
+
+      if (data?.email) {
+        return true;
+      }
+    }
+  } catch {
+    // If database check fails, fallback to strict static whitelist
+  }
+
+  return false;
+}
 
 /**
  * Verify if the incoming request has a valid administrative session
  */
 export async function verifyAdminSession(): Promise<{ authenticated: boolean; user?: AdminUser }> {
   try {
-    // 1. First check Supabase Auth if configured
+    // 1. First check Supabase Auth session if present
     const supabase = await createServerSupabase();
     if (supabase) {
       const {
@@ -28,33 +77,42 @@ export async function verifyAdminSession(): Promise<{ authenticated: boolean; us
         error,
       } = await supabase.auth.getUser();
 
-      if (!error && user) {
-        return {
-          authenticated: true,
-          user: {
-            id: user.id,
-            email: user.email || DEFAULT_ADMIN_EMAIL,
-            name: user.user_metadata?.full_name || "Samarth Nimangre",
-            role: "super_admin",
-          },
-        };
+      if (!error && user && user.email) {
+        const isAuthorized = await isAuthorizedAdminEmail(user.email);
+        if (isAuthorized) {
+          return {
+            authenticated: true,
+            user: {
+              id: user.id,
+              email: user.email,
+              name: user.user_metadata?.full_name || "Samarth Nimangre",
+              role: "super_admin",
+            },
+          };
+        }
       }
     }
 
     // 2. Check signed administrative session cookie
     const cookieStore = await cookies();
-    const sessionToken = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
+    const sessionCookie = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
 
-    if (sessionToken) {
-      const [email, secretHash] = Buffer.from(sessionToken, "base64").toString("utf-8").split("::");
-      if (email && secretHash === hashSecret(MASTER_SECRET)) {
+    if (!sessionCookie) {
+      return { authenticated: false };
+    }
+
+    // Verify HMAC-SHA256 signed session token
+    const verification = await verifySessionToken(sessionCookie);
+    if (verification.valid && verification.payload) {
+      const isAuthorized = await isAuthorizedAdminEmail(verification.payload.sub);
+      if (isAuthorized) {
         return {
           authenticated: true,
           user: {
-            id: "admin-samarth",
-            email: email || DEFAULT_ADMIN_EMAIL,
+            id: `admin-${verification.payload.jti.slice(0, 8)}`,
+            email: verification.payload.sub,
             name: "Samarth Nimangre",
-            role: "super_admin",
+            role: verification.payload.role,
           },
         };
       }
@@ -62,13 +120,13 @@ export async function verifyAdminSession(): Promise<{ authenticated: boolean; us
 
     return { authenticated: false };
   } catch (err) {
-    console.error("Auth verification error:", err);
+    console.error("[Auth] Session verification error:", err);
     return { authenticated: false };
   }
 }
 
 /**
- * Authenticate administrator with email and password / secret
+ * Authenticate administrator with email and password / master secret
  */
 export async function authenticateAdmin(
   email: string,
@@ -77,7 +135,13 @@ export async function authenticateAdmin(
   const cookieStore = await cookies();
   const normalizedEmail = email.toLowerCase().trim();
 
-  // Try Supabase Auth first
+  // Strict email authorization check
+  const isAuthorized = await isAuthorizedAdminEmail(normalizedEmail);
+  if (!isAuthorized) {
+    return { success: false, error: "Access denied. Email is not in the authorized administrative directory." };
+  }
+
+  // 1. Try Supabase Auth password first
   const supabase = await createServerSupabase();
   if (supabase) {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -86,33 +150,38 @@ export async function authenticateAdmin(
     });
 
     if (!error && data.user) {
+      // Also issue session cookie for unified API access
+      const token = await signSessionToken(normalizedEmail, "super_admin");
+      cookieStore.set(ADMIN_SESSION_COOKIE, token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60, // 7 days
+        path: "/",
+      });
+
       return { success: true };
     }
   }
 
-  // Check fallback secret
-  const isMasterKey = secretOrPassword === MASTER_SECRET;
-  const isAllowedEmail =
-    normalizedEmail === DEFAULT_ADMIN_EMAIL ||
-    normalizedEmail.includes("sam") ||
-    normalizedEmail === "admin@samcodes.dev";
+  // 2. Check Master Secret Key
+  const masterSecret = process.env.ADMIN_SECRET_KEY || "samcodes2026";
+  const isValidMasterSecret = secretOrPassword === masterSecret;
 
-  if (isMasterKey && isAllowedEmail) {
-    const tokenPayload = `${normalizedEmail}::${hashSecret(MASTER_SECRET)}`;
-    const encodedToken = Buffer.from(tokenPayload).toString("base64");
-
-    cookieStore.set(ADMIN_SESSION_COOKIE, encodedToken, {
+  if (isValidMasterSecret) {
+    const token = await signSessionToken(normalizedEmail, "super_admin");
+    cookieStore.set(ADMIN_SESSION_COOKIE, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 7 * 24 * 60 * 60, // 7 days
       path: "/",
     });
 
     return { success: true };
   }
 
-  return { success: false, error: "Invalid credentials or unauthorized email." };
+  return { success: false, error: "Invalid credentials provided." };
 }
 
 /**
@@ -123,18 +192,12 @@ export async function terminateAdminSession(): Promise<void> {
   const supabase = await createServerSupabase();
 
   if (supabase) {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // Ignore if Supabase auth is not active
+    }
   }
 
   cookieStore.delete(ADMIN_SESSION_COOKIE);
-}
-
-function hashSecret(secret: string): string {
-  let hash = 0;
-  for (let i = 0; i < secret.length; i++) {
-    const char = secret.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash |= 0;
-  }
-  return hash.toString(16);
 }

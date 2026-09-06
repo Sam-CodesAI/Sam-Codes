@@ -542,18 +542,21 @@ export type Database = {
       site_settings: {
         Row: {
           description: string | null
+          is_public: boolean
           key: string
           updated_at: string
           value: Json
         }
         Insert: {
           description?: string | null
+          is_public?: boolean
           key: string
           updated_at?: string
           value: Json
         }
         Update: {
           description?: string | null
+          is_public?: boolean
           key?: string
           updated_at?: string
           value?: Json

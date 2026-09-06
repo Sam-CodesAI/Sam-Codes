@@ -31,3 +31,4 @@ dist/
 .profile-repo/
 supabase/.temp/
 supabase/.branches/
+backups/
