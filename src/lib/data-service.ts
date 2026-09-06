@@ -549,20 +549,28 @@ export async function updateInquiryStatus(
 }
 
 export async function deleteInquiry(id: string, actorEmail = "samarthknimangre@gmail.com"): Promise<boolean> {
-  const store = readLocalStore();
-  const idx = store.inquiries.findIndex((i) => i.id === id);
-  if (idx < 0) return false;
-
-  store.inquiries.splice(idx, 1);
-  writeLocalStore(store);
-  logAuditAction("DELETE_INQUIRY", "INQUIRY", id, actorEmail, {});
-
+  let deletedFromSupabase = false;
   const supabase = createAdminClient();
   if (supabase) {
-    await supabase.from("inquiries").delete().eq("id", id);
+    const { error, count } = await supabase.from("inquiries").delete({ count: "exact" }).eq("id", id);
+    if (!error && (count === null || count > 0)) {
+      deletedFromSupabase = true;
+    }
   }
 
-  return true;
+  const store = readLocalStore();
+  const idx = store.inquiries.findIndex((i) => i.id === id);
+  if (idx >= 0) {
+    store.inquiries.splice(idx, 1);
+    writeLocalStore(store);
+  }
+
+  if (deletedFromSupabase || idx >= 0) {
+    logAuditAction("DELETE_INQUIRY", "INQUIRY", id, actorEmail, {});
+    return true;
+  }
+
+  return false;
 }
 
 // -----------------------------------------------------------------------------
