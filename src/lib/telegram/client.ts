@@ -1,8 +1,11 @@
 /**
  * High-Reliability Telegram Bot API Client
  * Built for sub-2-second serverless execution with abort controller timeouts,
- * typed payload interfaces, and safe text sanitization.
+ * dynamic configuration resolution from Supabase site_settings,
+ * typed payload interfaces, and real-time administrator alerts.
  */
+
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export interface TelegramUser {
   id: number;
@@ -72,11 +75,85 @@ export interface WebhookInfo {
   ip_address?: string;
 }
 
+export interface TelegramConfig {
+  botToken: string;
+  adminChatId: string;
+  webhookSecret: string;
+  botUsername?: string;
+  adminNotificationsEnabled: boolean;
+}
+
+let cachedConfig: TelegramConfig | null = null;
+let lastConfigFetch = 0;
+const CONFIG_CACHE_TTL_MS = 60 * 1000;
+
 /**
- * Retrieve the active Telegram Bot Token from environment.
+ * Resolve Telegram configuration dynamically.
+ * Priority: 1) process.env variables, 2) Supabase site_settings table (cached 60s).
+ */
+export async function resolveTelegramConfig(): Promise<TelegramConfig> {
+  const now = Date.now();
+  if (cachedConfig && now - lastConfigFetch < CONFIG_CACHE_TTL_MS) {
+    return cachedConfig;
+  }
+
+  const envToken = process.env.TELEGRAM_BOT_TOKEN || "";
+  const envAdminId = process.env.TELEGRAM_ADMIN_CHAT_ID || "";
+  const envSecret = process.env.TELEGRAM_WEBHOOK_SECRET || "";
+
+  if (envToken && envAdminId) {
+    cachedConfig = {
+      botToken: envToken,
+      adminChatId: envAdminId,
+      webhookSecret: envSecret,
+      adminNotificationsEnabled: true,
+    };
+    lastConfigFetch = now;
+    return cachedConfig;
+  }
+
+  // Fallback to Supabase site_settings
+  try {
+    const supabase = createAdminClient();
+    if (supabase) {
+      const { data } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "telegram_config")
+        .maybeSingle();
+
+      if (data && data.value && typeof data.value === "object") {
+        const val = data.value as Record<string, unknown>;
+        cachedConfig = {
+          botToken: envToken || String(val.botToken || ""),
+          adminChatId: envAdminId || String(val.adminChatId || ""),
+          webhookSecret: envSecret || String(val.webhookSecret || ""),
+          botUsername: typeof val.botUsername === "string" ? val.botUsername : undefined,
+          adminNotificationsEnabled: val.adminNotificationsEnabled !== false,
+        };
+        lastConfigFetch = now;
+        return cachedConfig;
+      }
+    }
+  } catch (err) {
+    console.warn("Could not query telegram_config from site_settings:", err);
+  }
+
+  cachedConfig = {
+    botToken: envToken,
+    adminChatId: envAdminId,
+    webhookSecret: envSecret,
+    adminNotificationsEnabled: true,
+  };
+  lastConfigFetch = now;
+  return cachedConfig;
+}
+
+/**
+ * Retrieve the active Telegram Bot Token from environment or cache.
  */
 export function getTelegramBotToken(): string {
-  return process.env.TELEGRAM_BOT_TOKEN || "";
+  return process.env.TELEGRAM_BOT_TOKEN || cachedConfig?.botToken || "";
 }
 
 /**
@@ -87,11 +164,16 @@ async function callTelegramApi<T>(
   payload: Record<string, unknown>,
   tokenOverride?: string
 ): Promise<TelegramApiResponse<T>> {
-  const token = tokenOverride || getTelegramBotToken();
+  let token = tokenOverride || getTelegramBotToken();
+  if (!token) {
+    const cfg = await resolveTelegramConfig();
+    token = cfg.botToken;
+  }
+
   if (!token) {
     return {
       ok: false,
-      description: "TELEGRAM_BOT_TOKEN is not configured in server environment",
+      description: "TELEGRAM_BOT_TOKEN is not configured in environment or site_settings",
     };
   }
 
@@ -202,6 +284,47 @@ export async function getTelegramMe(
   tokenOverride?: string
 ): Promise<TelegramApiResponse<TelegramUser>> {
   return callTelegramApi<TelegramUser>("getMe", {}, tokenOverride);
+}
+
+/**
+ * Send an immediate notification to Samarth's personal Telegram chat
+ * whenever a new inquiry is captured via Telegram or Web form.
+ */
+export async function notifyAdminOnTelegram(lead: {
+  id: string;
+  name: string;
+  service: string;
+  contact: string;
+  brief: string;
+}): Promise<boolean> {
+  try {
+    const cfg = await resolveTelegramConfig();
+    if (!cfg.botToken || !cfg.adminChatId || !cfg.adminNotificationsEnabled) {
+      return false;
+    }
+
+    const cleanBrief = lead.brief.slice(0, 500);
+    const text =
+      `⚡ *NEW LEAD CAPTURED*\n\n` +
+      `👤 *Client:* ${lead.name}\n` +
+      `🛠 *Service:* ${lead.service}\n` +
+      `📬 *Contact:* ${lead.contact}\n` +
+      `📝 *Brief:* ${cleanBrief}\n` +
+      `🔗 *ID:* \`#${lead.id.slice(-6)}\`\n\n` +
+      `[Open Command Center](https://sam-codes.vercel.app/admin/inquiries?id=${lead.id})`;
+
+    const res = await sendTelegramMessage(
+      cfg.adminChatId,
+      text,
+      { parseMode: "Markdown" },
+      cfg.botToken
+    );
+
+    return !!res.ok;
+  } catch (err) {
+    console.error("[Telegram Admin Alert Error]:", err);
+    return false;
+  }
 }
 
 /**

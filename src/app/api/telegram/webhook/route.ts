@@ -4,6 +4,7 @@ import {
   TelegramUpdate,
   sendTelegramMessage,
   sendTelegramChatAction,
+  resolveTelegramConfig,
 } from "@/lib/telegram/client";
 import { executeAgentTurn } from "@/lib/telegram/agent";
 
@@ -25,8 +26,9 @@ export async function GET(): Promise<NextResponse> {
  */
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    // 1. Verify Telegram Secret Token header if configured
-    const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
+    // 1. Verify Telegram Secret Token header from env or site_settings
+    const config = await resolveTelegramConfig();
+    const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET || config.webhookSecret;
     if (webhookSecret) {
       const incomingSecret = req.headers.get("X-Telegram-Bot-Api-Secret-Token");
       if (incomingSecret !== webhookSecret) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createInquiry } from "@/lib/data-service";
+import { notifyAdminOnTelegram } from "@/lib/telegram/client";
 import { getClientIp, checkRateLimit, recordFailure } from "@/lib/rate-limiter";
 
 const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
@@ -57,6 +58,15 @@ export async function POST(req: NextRequest) {
       contactMethod: contactMethod && typeof contactMethod === "string" ? contactMethod.trim().slice(0, 100) : "Direct Form",
       serviceRequested: serviceRequested && typeof serviceRequested === "string" ? serviceRequested.trim().slice(0, 150) : "General Inquiry",
       message: message.trim().slice(0, 5000),
+    });
+
+    // Notify Samarth instantly on his Telegram chat
+    void notifyAdminOnTelegram({
+      id: savedInquiry.id,
+      name: savedInquiry.name,
+      service: savedInquiry.serviceRequested,
+      contact: savedInquiry.email || savedInquiry.contactMethod,
+      brief: savedInquiry.message,
     });
 
     return NextResponse.json({

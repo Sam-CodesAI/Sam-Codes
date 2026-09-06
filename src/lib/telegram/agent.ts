@@ -5,6 +5,7 @@ import {
   logAuditAction,
   Inquiry,
 } from "@/lib/data-service";
+import { notifyAdminOnTelegram } from "@/lib/telegram/client";
 import { CONTACT_CONFIG } from "@/data/socials";
 
 export type ConversationPhase = "INITIAL" | "DISCOVERY" | "QUALIFICATION" | "CONFIRMED";
@@ -412,6 +413,14 @@ export async function executeAgentTurn(
           { chatId: session.chatId, service: session.leadDraft.serviceRequested }
         );
 
+        void notifyAdminOnTelegram({
+          id: inquiryCreated.id,
+          name: inquiryCreated.name,
+          service: inquiryCreated.serviceRequested,
+          contact: inquiryCreated.contactMethod,
+          brief: session.leadDraft.problemBrief || raw,
+        });
+
         session.inquiryId = inquiryCreated.id;
         session.phase = "CONFIRMED";
 
@@ -480,6 +489,14 @@ export async function executeAgentTurn(
         "telegram-agent",
         { chatId: session.chatId, service: session.leadDraft.serviceRequested }
       );
+
+      void notifyAdminOnTelegram({
+        id: inquiryCreated.id,
+        name: inquiryCreated.name,
+        service: inquiryCreated.serviceRequested,
+        contact: inquiryCreated.contactMethod,
+        brief: session.leadDraft.problemBrief || raw,
+      });
 
       session.inquiryId = inquiryCreated.id;
       session.phase = "CONFIRMED";
