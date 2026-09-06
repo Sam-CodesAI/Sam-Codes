@@ -205,7 +205,7 @@ export async function seedCMS(): Promise<void> {
     {
       id: "proj-telegram-agent",
       slug: "telegram-ai-lead-agent",
-      title: "Autonomous Telegram AI Lead Qualifier & CRM Bridge",
+      title: "Teleflow Agent: Autonomous Telegram AI Lead Qualifier & Edge CRM Router",
       short_description:
         "Instant 24/7 conversational Telegram bot qualifying client project briefs, extracting structured requirements, and inserting verified leads into Supabase PostgreSQL.",
       full_description:
@@ -260,7 +260,7 @@ export async function seedCMS(): Promise<void> {
       ],
       hero_image: "/og-image.png",
       live_url: "/admin/inquiries",
-      github_url: "https://github.com/Sam-CodesAI/sam-codeai-telegram-bot",
+      github_url: "https://github.com/Sam-CodesAI/teleflow-agent",
     },
   ];
 

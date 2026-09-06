@@ -44,7 +44,7 @@ export interface LabExperiment {
  */
 export const projectsData: Project[] = [
   {
-    title: "Autonomous Telegram AI Lead Qualifier & CRM Bridge",
+    title: "Teleflow Agent: Autonomous Telegram AI Lead Qualifier & Edge CRM Router",
     slug: "telegram-ai-lead-agent",
     shortDescription:
       "Instant 24/7 conversational Telegram bot qualifying client project briefs, extracting structured requirements, and inserting verified leads into Supabase PostgreSQL.",
@@ -99,7 +99,7 @@ export const projectsData: Project[] = [
         evidenceNotes: "Serverless edge deployment on Vercel with zero cold-start bottlenecks",
       },
     ],
-    githubUrl: "https://github.com/Sam-CodesAI/sam-codeai-telegram-bot",
+    githubUrl: "https://github.com/Sam-CodesAI/teleflow-agent",
     liveUrl: "/admin/inquiries",
   },
 ];
