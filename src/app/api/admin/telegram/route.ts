@@ -4,6 +4,7 @@ import {
   getTelegramMe,
   getTelegramWebhookInfo,
   setTelegramWebhook,
+  resolveTelegramConfig,
 } from "@/lib/telegram/client";
 import {
   executeAgentTurn,
@@ -24,16 +25,17 @@ export async function GET(): Promise<NextResponse> {
   }
 
   try {
-    const hasToken = !!process.env.TELEGRAM_BOT_TOKEN;
-    const hasSecret = !!process.env.TELEGRAM_WEBHOOK_SECRET;
+    const config = await resolveTelegramConfig();
+    const hasToken = !!(process.env.TELEGRAM_BOT_TOKEN || config.botToken);
+    const hasSecret = !!(process.env.TELEGRAM_WEBHOOK_SECRET || config.webhookSecret);
 
     let botInfo = null;
     let webhookInfo = null;
 
-    if (hasToken) {
+    if (hasToken && config.botToken) {
       const [botRes, whRes] = await Promise.all([
-        getTelegramMe(),
-        getTelegramWebhookInfo(),
+        getTelegramMe(config.botToken),
+        getTelegramWebhookInfo(config.botToken),
       ]);
       if (botRes.ok) botInfo = botRes.result;
       if (whRes.ok) webhookInfo = whRes.result;
@@ -76,8 +78,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       if (!body.webhookUrl) {
         return NextResponse.json({ error: "webhookUrl is required" }, { status: 400 });
       }
-      const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
-      const res = await setTelegramWebhook(body.webhookUrl, secret);
+      const config = await resolveTelegramConfig();
+      const secret = process.env.TELEGRAM_WEBHOOK_SECRET || config.webhookSecret;
+      const res = await setTelegramWebhook(body.webhookUrl, secret, config.botToken);
       return NextResponse.json(res);
     }
 
