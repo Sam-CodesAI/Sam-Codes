@@ -357,6 +357,39 @@ export async function getProjects(includeDrafts = false): Promise<ExtendedProjec
 }
 
 export async function getProjectById(idOrSlug: string): Promise<ExtendedProject | undefined> {
+  const supabase = createAdminClient();
+  if (supabase) {
+    const { data } = await supabase
+      .from("projects")
+      .select("*")
+      .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
+      .maybeSingle();
+
+    if (data) {
+      return {
+        id: data.id,
+        slug: data.slug,
+        title: data.title,
+        shortDescription: data.short_description,
+        fullDescription: data.full_description,
+        category: data.category,
+        technologies: data.tech_stack || [],
+        tools: data.tools || [],
+        image: data.hero_image || "",
+        status: data.status,
+        featured: data.featured,
+        date: data.publication_date || "",
+        problem: data.problem_statement,
+        approach: data.approach,
+        architecture: data.architecture || [],
+        result: data.results,
+        lessons: data.lessons,
+        metrics: data.metrics || [],
+        liveUrl: data.live_url,
+        githubUrl: data.github_url,
+      };
+    }
+  }
   const store = readLocalStore();
   return store.projects.find((p) => p.id === idOrSlug || p.slug === idOrSlug);
 }
@@ -420,6 +453,25 @@ export async function deleteProject(id: string, actorEmail = "samarthknimangre@g
 // INQUIRIES & LEADS API
 // -----------------------------------------------------------------------------
 export async function getInquiries(): Promise<Inquiry[]> {
+  const supabase = createAdminClient();
+  if (supabase) {
+    const { data } = await supabase.from("inquiries").select("*").order("created_at", { ascending: false });
+    if (data && data.length > 0) {
+      return data.map((d) => ({
+        id: d.id,
+        name: d.name,
+        email: d.email,
+        contactMethod: d.channel || "Email",
+        serviceRequested: d.service_requested,
+        message: d.message,
+        status: d.status,
+        isImportant: d.is_important || false,
+        privateNotes: d.private_notes,
+        createdAt: d.created_at,
+        updatedAt: d.updated_at,
+      }));
+    }
+  }
   const store = readLocalStore();
   return store.inquiries.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
@@ -560,9 +612,40 @@ export async function getAnalyticsSummary(rangeDays = 7): Promise<{
   devices: { device: string; count: number }[];
   timeline: { date: string; views: number; visitors: number }[];
 }> {
-  const store = readLocalStore();
-  const cutoff = Date.now() - rangeDays * 86400000;
-  const filteredEvents = store.analytics.filter((e) => new Date(e.createdAt).getTime() >= cutoff);
+  let filteredEvents: AnalyticsEvent[] = [];
+  const supabase = createAdminClient();
+  const cutoffIso = new Date(Date.now() - rangeDays * 86400000).toISOString();
+
+  if (supabase) {
+    const { data } = await supabase
+      .from("analytics_events")
+      .select("*")
+      .gte("created_at", cutoffIso)
+      .order("created_at", { ascending: false });
+
+    if (data && data.length > 0) {
+      filteredEvents = data.map((d) => ({
+        id: d.id,
+        eventName: d.event_name,
+        path: d.path,
+        section: d.section,
+        metadata: d.metadata,
+        sessionId: d.session_id,
+        referrer: d.referrer,
+        utmSource: d.utm_source,
+        utmMedium: d.utm_medium,
+        utmCampaign: d.utm_campaign,
+        deviceType: d.device_type,
+        createdAt: d.created_at,
+      }));
+    }
+  }
+
+  if (filteredEvents.length === 0) {
+    const store = readLocalStore();
+    const cutoff = Date.now() - rangeDays * 86400000;
+    filteredEvents = store.analytics.filter((e) => new Date(e.createdAt).getTime() >= cutoff);
+  }
 
   const uniqueSessions = new Set(filteredEvents.map((e) => e.sessionId)).size;
   const pageViews = filteredEvents.filter((e) => e.eventName === "page_view").length;
@@ -600,7 +683,10 @@ export async function getAnalyticsSummary(rangeDays = 7): Promise<{
 
   const devices = Object.entries(devicesMap).map(([device, count]) => ({ device, count }));
 
-  const inquiriesCount = store.inquiries.filter((i) => new Date(i.createdAt).getTime() >= cutoff).length;
+  const allInquiries = await getInquiries();
+  const inquiriesCount = allInquiries.filter(
+    (i) => new Date(i.createdAt).getTime() >= Date.now() - rangeDays * 86400000
+  ).length;
 
   return {
     totalVisitors: uniqueSessions,
