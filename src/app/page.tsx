@@ -24,7 +24,7 @@ import {
   getAssistantKnowledge,
 } from "@/lib/data-service";
 import { profileData } from "@/data/profile";
-import { projectsData, Project } from "@/data/projects";
+import { projectsData, experimentsData, Project } from "@/data/projects";
 import { servicesData } from "@/data/services";
 import { exploringData } from "@/data/exploring";
 import { buildingWithStack, exploringStack, coreCapabilities } from "@/data/capabilities";
@@ -68,6 +68,7 @@ export default async function HomePage() {
         />
         <LabSection
           projects={projects.length > 0 ? (projects as unknown as Project[]) : projectsData}
+          experiments={experimentsData}
         />
         <ProcessSection />
         <AboutSection profile={profile} />

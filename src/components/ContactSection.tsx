@@ -16,6 +16,7 @@ import {
   ExternalLink,
   Loader2,
   CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import { trackEvent } from "@/lib/analytics-client";
 
@@ -167,11 +168,14 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
         }),
       });
 
-      if (res.ok) {
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
         soundFx.playChime(720, 0.12);
         setIsSubmitted(true);
       } else {
-        throw new Error("Server submission failed");
+        setSubmissionError(
+          data.error || "Submission could not be completed. Please try again or reach out directly."
+        );
       }
     } catch {
       // Graceful fallback to client mailto link so no inquiry is ever lost
@@ -374,6 +378,13 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
               className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm space-y-5"
             >
               <h3 className="text-lg font-bold text-white mb-2">Send a Message</h3>
+
+              {submissionError && (
+                <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs font-mono flex items-center gap-2.5">
+                  <AlertCircle size={15} className="shrink-0 text-rose-400" />
+                  <span>{submissionError}</span>
+                </div>
+              )}
 
               {/* Honeypot field for spam bots */}
               <input

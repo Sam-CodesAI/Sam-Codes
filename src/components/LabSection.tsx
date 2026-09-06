@@ -35,6 +35,23 @@ const CATEGORIES = [
   "Prototype",
 ] as const;
 
+const CATEGORY_MAP: Record<string, string[]> = {
+  "All": [],
+  "AI Application": ["AI Application", "AI App", "AI Chatbots & Assistants"],
+  "Agentic Workflow": ["Agentic Workflow", "AI Agent System", "Agent Workflow"],
+  "Automation": ["Automation", "Workflow Automation", "Workflow & Business Automation"],
+  "Web System": ["Web System", "Web Platform", "Web Experience", "Websites & Web Applications"],
+  "Prototype": ["Prototype", "Experimental Prototype", "Developer Tool", "Rapid Prototypes & MVPs"],
+};
+
+function matchesCategory(itemCategory: string | undefined, selectedTab: string): boolean {
+  if (selectedTab === "All") return true;
+  if (!itemCategory) return false;
+  if (itemCategory.toLowerCase() === selectedTab.toLowerCase()) return true;
+  const synonyms = CATEGORY_MAP[selectedTab] || [];
+  return synonyms.some((s) => s.toLowerCase() === itemCategory.toLowerCase());
+}
+
 export default function LabSection({
   projects = projectsData,
   experiments = experimentsData,
@@ -46,17 +63,15 @@ export default function LabSection({
   const [blueprintModalOpen, setBlueprintModalOpen] = useState<boolean>(false);
   const [activeProject, setActiveProject] = useState<Project | null>(null);
 
-  // Filter completed projects
-  const filteredProjects = projects.filter((project: Project) => {
-    if (selectedCategory === "All") return true;
-    return project.category === selectedCategory;
-  });
+  // Filter completed projects with category normalization
+  const filteredProjects = projects.filter((project: Project) =>
+    matchesCategory(project.category, selectedCategory)
+  );
 
-  // Filter active lab experiments
-  const filteredExperiments = experiments.filter((exp: LabExperiment) => {
-    if (selectedCategory === "All") return true;
-    return exp.category === selectedCategory;
-  });
+  // Filter active lab experiments with category normalization
+  const filteredExperiments = experiments.filter((exp: LabExperiment) =>
+    matchesCategory(exp.category, selectedCategory)
+  );
 
   const handleTabChange = (category: string) => {
     soundFx.playHover();
@@ -115,64 +130,84 @@ export default function LabSection({
         })}
       </div>
 
-      {/* When completed projects exist, render the verified project grid */}
-      {filteredProjects.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {filteredProjects.map((proj: Project) => (
-            <SpotlightCard
-              key={proj.slug}
-              onClick={() => {
-                soundFx.playChime(440, 0.05);
-                setActiveProject(proj);
-              }}
-              className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-sky-500/30 transition-all cursor-pointer group flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-3">
-                  <span className="text-sky-400">{proj.category}</span>
-                  <span className="uppercase text-[10px] px-2 py-0.5 rounded bg-white/[0.04] text-slate-300">
-                    {proj.status}
-                  </span>
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-sky-300 transition-colors">
-                  {proj.title}
-                </h3>
-                <p className="text-xs text-slate-300 leading-relaxed mb-4">
-                  {proj.shortDescription}
-                </p>
+      {/* 1. When completed projects exist, render the verified project grid */}
+      {filteredProjects.length > 0 && (
+        <div className="mb-12">
+          {filteredExperiments.length > 0 && (
+            <div className="flex items-center gap-2 mb-6">
+              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              <h3 className="text-xs font-mono uppercase tracking-wider text-slate-400">
+                Verified Systems &amp; Case Studies ({filteredProjects.length})
+              </h3>
+            </div>
+          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProjects.map((proj: Project) => (
+              <SpotlightCard
+                key={proj.slug}
+                onClick={() => {
+                  soundFx.playChime(440, 0.05);
+                  setActiveProject(proj);
+                }}
+                className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-sky-500/30 transition-all cursor-pointer group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-3">
+                    <span className="text-sky-400">{proj.category}</span>
+                    <span className="uppercase text-[10px] px-2 py-0.5 rounded bg-white/[0.04] text-slate-300">
+                      {proj.status}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-sky-300 transition-colors">
+                    {proj.title}
+                  </h3>
+                  <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                    {proj.shortDescription}
+                  </p>
 
-                {/* Evidence Metrics (only if genuine data exists) */}
-                {proj.metrics && proj.metrics.length > 0 && (
-                  <div className="mb-4 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] grid grid-cols-2 gap-2 text-[11px] font-mono">
-                    {proj.metrics.map((m: ProjectEvidenceMetric, mIdx: number) => (
-                      <div key={mIdx}>
-                        <div className="text-slate-500 text-[9px] uppercase">{m.label}</div>
-                        <div className="text-emerald-400 font-bold">{m.value}</div>
-                      </div>
+                  {/* Evidence Metrics (only if genuine data exists) */}
+                  {proj.metrics && proj.metrics.length > 0 && (
+                    <div className="mb-4 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] grid grid-cols-2 gap-2 text-[11px] font-mono">
+                      {proj.metrics.map((m: ProjectEvidenceMetric, mIdx: number) => (
+                        <div key={mIdx}>
+                          <div className="text-slate-500 text-[9px] uppercase">{m.label}</div>
+                          <div className="text-emerald-400 font-bold">{m.value}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-4 border-t border-white/[0.04] flex items-center justify-between">
+                  <div className="flex flex-wrap gap-1">
+                    {proj.technologies.slice(0, 3).map((t: string, idx: number) => (
+                      <span
+                        key={idx}
+                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.02] text-slate-400"
+                      >
+                        {t}
+                      </span>
                     ))}
                   </div>
-                )}
-              </div>
-
-              <div className="pt-4 border-t border-white/[0.04] flex items-center justify-between">
-                <div className="flex flex-wrap gap-1">
-                  {proj.technologies.slice(0, 3).map((t: string, idx: number) => (
-                    <span
-                      key={idx}
-                      className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.02] text-slate-400"
-                    >
-                      {t}
-                    </span>
-                  ))}
+                  <ArrowUpRight size={14} className="text-slate-500 group-hover:text-sky-400 group-hover:translate-x-0.5 transition-all" />
                 </div>
-                <ArrowUpRight size={14} className="text-slate-500 group-hover:text-sky-400 group-hover:translate-x-0.5 transition-all" />
-              </div>
-            </SpotlightCard>
-          ))}
+              </SpotlightCard>
+            ))}
+          </div>
         </div>
-      ) : filteredExperiments.length > 0 ? (
-        /* The Lab Active Experiments State */
-        <div className="space-y-10">
+      )}
+
+      {/* 2. Active Experiments State */}
+      {filteredExperiments.length > 0 && (
+        <div className="space-y-6 mb-12">
+          {filteredProjects.length > 0 && (
+            <div className="flex items-center gap-2 mt-4 mb-2">
+              <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping" />
+              <h3 className="text-xs font-mono uppercase tracking-wider text-slate-400">
+                Active R&amp;D Experiments in Progress ({filteredExperiments.length})
+              </h3>
+            </div>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {filteredExperiments.map((exp: LabExperiment, idx: number) => (
               <MotionReveal key={exp.id} delay={idx * 0.08}>
@@ -216,59 +251,63 @@ export default function LabSection({
               </MotionReveal>
             ))}
           </div>
+        </div>
+      )}
 
-          {/* Transparent Blueprint & Collaboration Banner */}
-          <div className="rounded-3xl bg-gradient-to-b from-white/[0.03] to-white/[0.01] border border-white/[0.08] p-8 sm:p-10 text-center max-w-3xl mx-auto overflow-hidden relative">
-            <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
-              Working Systems Over Hypothetical Claims
-            </h3>
+      {/* 3. Transparent Blueprint & Collaboration Banner */}
+      {(filteredProjects.length > 0 || filteredExperiments.length > 0) && (
+        <div className="rounded-3xl bg-gradient-to-b from-white/[0.03] to-white/[0.01] border border-white/[0.08] p-8 sm:p-10 text-center max-w-3xl mx-auto overflow-hidden relative mb-12">
+          <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+            Working Systems Over Hypothetical Claims
+          </h3>
 
-            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-xl mx-auto mb-6">
-              When projects are completed, they are published here with complete architectural blueprints, source repositories, and verifiable outcomes.
-            </p>
+          <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-xl mx-auto mb-6">
+            When projects are completed, they are published here with complete architectural blueprints, source repositories, and verifiable outcomes.
+          </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button
-                type="button"
-                onClick={() => {
-                  soundFx.playChime(520, 0.08);
-                  setBlueprintModalOpen(true);
-                }}
-                className="w-full sm:w-auto px-6 py-3 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.12] text-slate-200 hover:text-white text-xs font-mono transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
-              >
-                <Code2 size={15} className="text-sky-400" />
-                <span>Preview Case Study Blueprint</span>
-              </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              type="button"
+              onClick={() => {
+                soundFx.playChime(520, 0.08);
+                setBlueprintModalOpen(true);
+              }}
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.12] text-slate-200 hover:text-white text-xs font-mono transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
+            >
+              <Code2 size={15} className="text-sky-400" />
+              <span>Preview Case Study Blueprint</span>
+            </button>
 
-              <a
-                href="#contact"
-                onClick={() => soundFx.playHover()}
-                className="w-full sm:w-auto px-6 py-3 rounded-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-sky-500/20 min-h-[44px]"
-              >
-                <span>Propose a build with Sam</span>
-                <ArrowUpRight size={14} />
-              </a>
+            <a
+              href="#contact"
+              onClick={() => soundFx.playHover()}
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-sky-500/20 min-h-[44px]"
+            >
+              <span>Propose a build with Sam</span>
+              <ArrowUpRight size={14} />
+            </a>
+          </div>
+
+          {/* Standards Guarantee */}
+          <div className="mt-8 pt-6 border-t border-white/[0.05] grid grid-cols-1 sm:grid-cols-3 gap-4 text-left font-mono text-[11px] text-slate-400">
+            <div>
+              <span className="text-slate-500 block text-[9px] uppercase">Integrity</span>
+              <span className="text-slate-200">Zero Fabricated Proof</span>
             </div>
-
-            {/* Standards Guarantee */}
-            <div className="mt-8 pt-6 border-t border-white/[0.05] grid grid-cols-1 sm:grid-cols-3 gap-4 text-left font-mono text-[11px] text-slate-400">
-              <div>
-                <span className="text-slate-500 block text-[9px] uppercase">Integrity</span>
-                <span className="text-slate-200">Zero Fabricated Proof</span>
-              </div>
-              <div>
-                <span className="text-slate-500 block text-[9px] uppercase">Engineering</span>
-                <span className="text-slate-200">Production Performance</span>
-              </div>
-              <div>
-                <span className="text-slate-500 block text-[9px] uppercase">Handoff</span>
-                <span className="text-slate-200">Clean Documentation</span>
-              </div>
+            <div>
+              <span className="text-slate-500 block text-[9px] uppercase">Engineering</span>
+              <span className="text-slate-200">Production Performance</span>
+            </div>
+            <div>
+              <span className="text-slate-500 block text-[9px] uppercase">Handoff</span>
+              <span className="text-slate-200">Clean Documentation</span>
             </div>
           </div>
         </div>
-      ) : (
-        /* Empty Lab Active R&D State */
+      )}
+
+      {/* 4. Empty Lab Active R&D State */}
+      {filteredProjects.length === 0 && filteredExperiments.length === 0 && (
         <div className="relative rounded-3xl bg-gradient-to-b from-white/[0.03] to-white/[0.01] border border-white/[0.08] p-8 sm:p-12 text-center max-w-3xl mx-auto overflow-hidden">
           {/* Subtle ambient glows */}
           <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-sky-500/10 blur-3xl pointer-events-none" />

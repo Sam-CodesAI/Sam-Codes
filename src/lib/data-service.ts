@@ -461,7 +461,7 @@ export async function getInquiries(): Promise<Inquiry[]> {
         id: d.id,
         name: d.name,
         email: d.email,
-        contactMethod: d.channel || "Email",
+        contactMethod: d.contact_method || d.channel || "Email",
         serviceRequested: d.service_requested,
         message: d.message,
         status: d.status,

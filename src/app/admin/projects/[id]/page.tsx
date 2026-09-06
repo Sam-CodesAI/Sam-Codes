@@ -30,10 +30,14 @@ interface MetricItem {
 
 const CATEGORY_OPTIONS = [
   "AI Application",
+  "Agentic Workflow",
+  "Automation",
+  "Web System",
+  "Prototype",
   "Workflow Automation",
+  "AI Agent System",
   "Web Platform",
   "Developer Tool",
-  "AI Agent System",
   "Experimental Prototype",
 ];
 

@@ -48,7 +48,40 @@ export const projectsData: Project[] = [];
  * The Lab: Things I'm building, testing, breaking, and learning from.
  * Pure experiments in progress. Transparently labeled so visitors see real active engineering.
  */
-export const experimentsData: LabExperiment[] = [];
+export const experimentsData: LabExperiment[] = [
+  {
+    id: "exp-agent-loop",
+    title: "Autonomous Multi-Agent Loop Runner",
+    state: "AGENT WORKFLOW",
+    category: "Agentic Workflow",
+    description: "Deterministic loop orchestrator running tasks against sprint plans with automated test verification, self-healing retries, and subagent state dispatch.",
+    techStack: ["TypeScript", "Autonomous Subagents", "Node.js 22", "Bash"],
+  },
+  {
+    id: "exp-whatsapp-bridge",
+    title: "Edge WhatsApp Lead Ingestion & Telegram Sync",
+    state: "AUTOMATION EXPERIMENT",
+    category: "Automation",
+    description: "High-speed serverless webhook bridge capturing WhatsApp chat events, extracting structured contact schemas, and instantly alerting CRM channels under 15ms.",
+    techStack: ["Next.js 16", "Webhooks", "PostgreSQL", "Airtable API"],
+  },
+  {
+    id: "exp-supabase-rls",
+    title: "Supabase PostgreSQL RLS & Telemetry Engine",
+    state: "SYSTEM IN DEVELOPMENT",
+    category: "Web System",
+    description: "Security-first database architecture featuring zero-trust Row Level Security, sliding-window rate limiters, and privacy-first in-memory session tracking.",
+    techStack: ["Supabase", "PostgreSQL", "Next.js 16", "Web Crypto"],
+  },
+  {
+    id: "exp-context-grounding",
+    title: "Context Window Compactor & Knowledge Grounding",
+    state: "SYSTEM IN DEVELOPMENT",
+    category: "AI Application",
+    description: "Grounded Q&A pipeline using similarity scoring and sliding context compaction to answer visitor queries without hallucinating unverified claims.",
+    techStack: ["Vector Search", "TypeScript", "React 19", "Tailwind CSS v4"],
+  },
+];
 
 export function getFeaturedProjects(): Project[] {
   return projectsData.filter((p) => p.featured);
