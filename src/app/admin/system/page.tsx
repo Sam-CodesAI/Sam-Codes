@@ -11,8 +11,6 @@ import {
   Download,
   Terminal,
   Clock,
-  Server,
-  AlertTriangle,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import StatusBadge from "@/components/admin/StatusBadge";

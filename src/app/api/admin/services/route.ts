@@ -8,8 +8,13 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const services = await getServices();
-  return NextResponse.json({ services });
+  try {
+    const services = await getServices();
+    return NextResponse.json({ services });
+  } catch (err) {
+    console.error("Error fetching services:", err);
+    return NextResponse.json({ error: "Failed to fetch services" }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -50,6 +55,11 @@ export async function DELETE(req: NextRequest) {
   const id = searchParams.get("id");
   if (!id) return NextResponse.json({ error: "Service ID required" }, { status: 400 });
 
-  await deleteService(id, session.user.email);
-  return NextResponse.json({ success: true });
+  try {
+    await deleteService(id, session.user.email);
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Error deleting services:", err);
+    return NextResponse.json({ error: "Failed to delete services" }, { status: 500 });
+  }
 }

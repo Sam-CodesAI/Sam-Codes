@@ -9,15 +9,12 @@ import {
   ExternalLink,
   Plus,
   Trash2,
-  CheckCircle2,
   Sparkles,
-  Layers,
   Code2,
   BarChart3,
   Globe,
   GitBranch,
   Star,
-  ShieldAlert,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import SaveBar from "@/components/admin/SaveBar";
@@ -193,7 +190,7 @@ export default function ProjectEditorPage({
   const handleUpdateMetric = (index: number, updated: Partial<MetricItem>) => {
     setProject((prev) => {
       const current = [...(prev.metrics || [])];
-      current[index] = { ...current[index], ...updated } as any;
+      current[index] = { ...current[index], ...updated };
       return { ...prev, metrics: current };
     });
   };
@@ -326,10 +323,10 @@ export default function ProjectEditorPage({
         {/* Tab Navigation */}
         <div className="flex items-center gap-2 border-b border-white/[0.08] overflow-x-auto scrollbar-none pb-px">
           {[
-            { id: "basic", label: "Overview & Meta", icon: Globe },
-            { id: "narrative", label: "Problem & Results", icon: Sparkles },
-            { id: "architecture", label: "Stack & Architecture", icon: Code2 },
-            { id: "metrics", label: "Quantitative Impact", icon: BarChart3 },
+            { id: "basic" as const, label: "Overview & Meta", icon: Globe },
+            { id: "narrative" as const, label: "Problem & Results", icon: Sparkles },
+            { id: "architecture" as const, label: "Stack & Architecture", icon: Code2 },
+            { id: "metrics" as const, label: "Quantitative Impact", icon: BarChart3 },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -337,7 +334,7 @@ export default function ProjectEditorPage({
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-3 text-xs font-mono border-b-2 transition-all cursor-pointer whitespace-nowrap min-h-[44px] ${
                   isActive
                     ? "border-sky-400 text-sky-400 font-bold bg-sky-500/[0.04]"
@@ -389,7 +386,7 @@ export default function ProjectEditorPage({
                 </label>
                 <select
                   value={project.category}
-                  onChange={(e) => handleFieldChange("category", e.target.value as any)}
+                  onChange={(e) => handleFieldChange("category", e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-white font-mono focus:outline-none focus:border-sky-500/50 min-h-[44px]"
                 >
                   {CATEGORY_OPTIONS.map((cat) => (
@@ -418,7 +415,7 @@ export default function ProjectEditorPage({
                 </label>
                 <select
                   value={project.status}
-                  onChange={(e) => handleFieldChange("status", e.target.value as any)}
+                  onChange={(e) => handleFieldChange("status", e.target.value as ExtendedProject["status"])}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs text-white font-mono focus:outline-none focus:border-sky-500/50 min-h-[44px]"
                 >
                   <option value="DRAFT" className="bg-slate-900 text-slate-200">

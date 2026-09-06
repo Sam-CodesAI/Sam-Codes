@@ -6,10 +6,14 @@ export interface SessionPayload {
   jti: string; // Unique token identifier
 }
 
-const DEFAULT_SECRET = "sc_harden_default_secret_key_prod_2026_salt";
+const DEFAULT_SECRET = "";
 
 function getMasterSecret(): string {
-  return process.env.ADMIN_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || DEFAULT_SECRET;
+  const secret = process.env.ADMIN_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || DEFAULT_SECRET;
+  if (!secret) {
+    throw new Error("Server misconfiguration: master secret not set");
+  }
+  return secret;
 }
 
 /**

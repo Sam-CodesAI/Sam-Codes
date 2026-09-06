@@ -13,7 +13,6 @@ import {
   Settings,
   ChevronRight,
   ExternalLink,
-  CheckCircle2,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 

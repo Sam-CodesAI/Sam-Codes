@@ -8,8 +8,13 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const topics = await getExploringTopics();
-  return NextResponse.json({ topics });
+  try {
+    const topics = await getExploringTopics();
+    return NextResponse.json({ topics });
+  } catch (err) {
+    console.error("Error fetching exploring:", err);
+    return NextResponse.json({ error: "Failed to fetch exploring" }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -42,6 +47,11 @@ export async function DELETE(req: NextRequest) {
   const name = searchParams.get("name");
   if (!name) return NextResponse.json({ error: "Topic name required" }, { status: 400 });
 
-  await deleteExploringTopic(name, session.user.email);
-  return NextResponse.json({ success: true });
+  try {
+    await deleteExploringTopic(name, session.user.email);
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Error deleting exploring:", err);
+    return NextResponse.json({ error: "Failed to delete exploring" }, { status: 500 });
+  }
 }

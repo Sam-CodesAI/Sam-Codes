@@ -4,7 +4,11 @@ import React from "react";
 import { profileData } from "@/data/profile";
 import { soundFx } from "@/utils/sound";
 import MotionReveal from "@/components/MotionReveal";
-import { Terminal, MapPin, User, Sparkles, CheckCircle2 } from "lucide-react";
+import {
+  MapPin,
+  User,
+  CheckCircle2,
+} from "lucide-react";
 
 export default function AboutSection() {
   return (

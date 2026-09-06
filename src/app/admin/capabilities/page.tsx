@@ -5,9 +5,6 @@ import {
   Cpu,
   Plus,
   Trash2,
-  Layers,
-  Sparkles,
-  CheckCircle2,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import SaveBar from "@/components/admin/SaveBar";

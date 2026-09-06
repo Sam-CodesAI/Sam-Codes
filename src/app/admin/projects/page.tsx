@@ -11,10 +11,7 @@ import {
   Trash2,
   Star,
   RefreshCw,
-  CheckCircle2,
   AlertCircle,
-  Clock,
-  Filter,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import StatusBadge from "@/components/admin/StatusBadge";

@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Settings,
-  CheckCircle2,
-  ShieldCheck,
   Globe,
   Sliders,
   Sparkles,

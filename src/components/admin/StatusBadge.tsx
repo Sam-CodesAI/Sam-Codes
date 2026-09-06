@@ -6,7 +6,7 @@ export interface StatusBadgeProps {
 }
 
 export default function StatusBadge({ status, className = "" }: StatusBadgeProps) {
-  const normalized = status.toUpperCase();
+  const normalized = (status || "").toUpperCase();
 
   let colorClasses = "bg-slate-800/80 text-slate-300 border-slate-700";
 

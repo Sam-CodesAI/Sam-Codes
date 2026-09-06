@@ -5,8 +5,6 @@ import {
   Compass,
   Plus,
   Trash2,
-  CheckCircle2,
-  Sparkles,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import SaveBar from "@/components/admin/SaveBar";
@@ -60,10 +58,10 @@ export default function AdminExploringPage() {
   const isDirty =
     JSON.stringify(topics) !== JSON.stringify(initialTopics);
 
-  const handleUpdateTopic = (
+  const handleUpdateTopic = <K extends keyof ExplorationItem>(
     index: number,
-    field: keyof ExplorationItem,
-    val: any
+    field: K,
+    val: ExplorationItem[K]
   ) => {
     setTopics((prev) => {
       const updated = [...prev];
@@ -192,7 +190,7 @@ export default function AdminExploringPage() {
                     <select
                       value={t.category}
                       onChange={(e) =>
-                        handleUpdateTopic(idx, "category", e.target.value)
+                        handleUpdateTopic(idx, "category", e.target.value as ExplorationItem["category"])
                       }
                       className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-white/[0.08] text-xs font-mono text-slate-300 min-h-[38px]"
                     >
@@ -211,7 +209,7 @@ export default function AdminExploringPage() {
                     <select
                       value={t.status}
                       onChange={(e) =>
-                        handleUpdateTopic(idx, "status", e.target.value)
+                        handleUpdateTopic(idx, "status", e.target.value as ExplorationItem["status"])
                       }
                       className="w-full px-2.5 py-1.5 rounded-lg bg-slate-900 border border-white/[0.08] text-xs font-mono text-slate-300 min-h-[38px]"
                     >

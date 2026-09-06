@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import {
-  assistantKnowledgeBase,
   queryDeterministicAssistant,
 } from "@/data/assistantKnowledge";
 import { soundFx } from "@/utils/sound";

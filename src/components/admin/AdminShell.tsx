@@ -14,10 +14,9 @@ import {
   ExternalLink,
   Search,
   LogOut,
-  Sparkles,
   Terminal,
 } from "lucide-react";
-import { ToastProvider, useToast } from "@/components/admin/ToastProvider";
+import { useToast } from "@/components/admin/ToastProvider";
 import CommandPalette from "@/components/admin/CommandPalette";
 
 interface NavItem {
@@ -293,9 +292,5 @@ function ShellInner({ children }: { children: React.ReactNode }) {
 }
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
-  return (
-    <ToastProvider>
-      <ShellInner>{children}</ShellInner>
-    </ToastProvider>
-  );
+  return <ShellInner>{children}</ShellInner>;
 }

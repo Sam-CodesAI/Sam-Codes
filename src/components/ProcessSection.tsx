@@ -9,12 +9,16 @@ import { GitCommit, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export default function ProcessSection() {
   const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
-  const activeStep: ProcessStep = processStepsData[activeStepIndex];
+  const activeStep: ProcessStep | undefined = processStepsData[activeStepIndex] || processStepsData[0];
 
   const handleSelectStep = (idx: number) => {
     soundFx.playHover();
     setActiveStepIndex(idx);
   };
+
+  if (!activeStep) {
+    return null;
+  }
 
   return (
     <section

@@ -165,7 +165,10 @@ export async function authenticateAdmin(
   }
 
   // 2. Check Master Secret Key
-  const masterSecret = process.env.ADMIN_SECRET_KEY || "samcodes2026";
+  const masterSecret = process.env.ADMIN_SECRET_KEY;
+  if (!masterSecret) {
+    return { success: false, error: "Server misconfiguration: ADMIN_SECRET_KEY not set" };
+  }
   const isValidMasterSecret = secretOrPassword === masterSecret;
 
   if (isValidMasterSecret) {

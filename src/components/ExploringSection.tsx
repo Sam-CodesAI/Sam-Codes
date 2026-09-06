@@ -3,7 +3,10 @@
 import React from "react";
 import { exploringData, ExplorationItem } from "@/data/exploring";
 import { soundFx } from "@/utils/sound";
-import { Telescope, Compass, Radio } from "lucide-react";
+import {
+  Telescope,
+  Radio,
+} from "lucide-react";
 
 export default function ExploringSection() {
   const getStatusBadge = (status: ExplorationItem["status"]) => {

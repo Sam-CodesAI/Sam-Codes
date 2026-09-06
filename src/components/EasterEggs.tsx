@@ -2,7 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { soundFx } from "@/utils/sound";
-import { Terminal, X, Cpu, Activity } from "lucide-react";
+import {
+  Terminal,
+  X,
+  Activity,
+} from "lucide-react";
 
 export default function EasterEggs() {
   const [isOpen, setIsOpen] = useState(false);

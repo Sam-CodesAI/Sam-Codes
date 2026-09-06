@@ -75,7 +75,7 @@ export function useToast() {
     return {
       showToast: (message: string, type: ToastType = "info") => {
         if (typeof window !== "undefined") {
-          console.log(`[Toast ${type}]: ${message}`);
+          // console.log(`[Toast ${type}]: ${message}`);
         }
       },
     };

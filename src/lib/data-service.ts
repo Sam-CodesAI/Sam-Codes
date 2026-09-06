@@ -121,53 +121,9 @@ function getInitialStore(): LocalStoreSchema {
     milestones: milestonesData,
     socials: socialsData,
     knowledge: assistantKnowledgeBase,
-    inquiries: [
-      {
-        id: "inq-demo-1",
-        name: "Arjun Verma",
-        email: "arjun@flowtech.ai",
-        contactMethod: "Email (arjun@flowtech.ai)",
-        serviceRequested: "Workflow & Business Automation",
-        message:
-          "Hi Sam, loved your personal platform. We need an automated webhook pipeline to sync our WhatsApp leads directly to Airtable and notify our Slack channel. Would love to collaborate on a 1-week build.",
-        status: "NEW",
-        isImportant: true,
-        privateNotes: "Follow up via email. Scope is ~4 days. High priority.",
-        createdAt: new Date(Date.now() - 3600000 * 3).toISOString(),
-        updatedAt: new Date(Date.now() - 3600000 * 3).toISOString(),
-      },
-    ],
-    analytics: [
-      {
-        id: "evt-1",
-        eventName: "page_view",
-        path: "/",
-        sessionId: "sess-init",
-        deviceType: "mobile",
-        referrer: "https://instagram.com",
-        utmSource: "instagram",
-        createdAt: new Date(Date.now() - 3600000 * 4).toISOString(),
-      },
-      {
-        id: "evt-2",
-        eventName: "cta_click",
-        path: "/",
-        section: "hero",
-        sessionId: "sess-init",
-        deviceType: "mobile",
-        createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-      },
-    ],
-    auditLogs: [
-      {
-        id: "log-1",
-        action: "INITIALIZE_COMMAND_CENTER",
-        entityType: "SYSTEM",
-        actorEmail: "samarthknimangre@gmail.com",
-        details: { status: "Online", version: "1.0.0" },
-        createdAt: new Date().toISOString(),
-      },
-    ],
+    inquiries: [],
+    analytics: [],
+    auditLogs: [],
     settings: {
       siteTitle: "Sam Codes — AI Developer & Automation Builder",
       metaDescription:
@@ -540,6 +496,23 @@ export async function updateInquiryStatus(
   return inquiry;
 }
 
+export async function deleteInquiry(id: string, actorEmail = "samarthknimangre@gmail.com"): Promise<boolean> {
+  const store = readLocalStore();
+  const idx = store.inquiries.findIndex((i) => i.id === id);
+  if (idx < 0) return false;
+
+  store.inquiries.splice(idx, 1);
+  writeLocalStore(store);
+  logAuditAction("DELETE_INQUIRY", "INQUIRY", id, actorEmail, {});
+
+  const supabase = createAdminClient();
+  if (supabase) {
+    await supabase.from("inquiries").delete().eq("id", id);
+  }
+
+  return true;
+}
+
 // -----------------------------------------------------------------------------
 // ANALYTICS API
 // -----------------------------------------------------------------------------
@@ -802,6 +775,6 @@ export async function getSystemHealth(): Promise<{
     analytics: store.settings.analyticsEnabled ? "Healthy" : "Disabled",
     askSam: store.knowledge.length > 0 ? "Healthy" : "Offline",
     version: "1.2.0-cmd",
-    uptime: "99.98%",
+    uptime: process.env.NODE_ENV === "production" ? "Live" : "Development",
   };
 }

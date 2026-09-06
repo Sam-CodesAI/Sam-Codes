@@ -22,7 +22,11 @@ if (fs.existsSync(envLocalPath)) {
   }
 }
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://gshrgmilfpmftyrxhuwm.supabase.co";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+if (!supabaseUrl) {
+  console.error("NEXT_PUBLIC_SUPABASE_URL is not set");
+  process.exit(1);
+}
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 if (!serviceRoleKey) {

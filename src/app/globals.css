@@ -28,8 +28,6 @@
     color: #f1f5f9;
     overflow-x: hidden;
     min-height: 100vh;
-    selection-background-color: #38bdf8;
-    selection-color: #06080f;
   }
 
   ::selection {
@@ -75,14 +73,7 @@
   }
 }
 
-@keyframes scanline {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(1000%);
-  }
-}
+
 
 .animate-pulse-slow {
   animation: pulseSlow 8s ease-in-out infinite;

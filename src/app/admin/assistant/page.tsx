@@ -6,9 +6,6 @@ import {
   Plus,
   Trash2,
   Search,
-  Sparkles,
-  CheckCircle2,
-  Cpu,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import SaveBar from "@/components/admin/SaveBar";
@@ -49,10 +46,10 @@ export default function AdminAssistantPage() {
   const isDirty =
     JSON.stringify(knowledge) !== JSON.stringify(initialKnowledge);
 
-  const handleUpdateItem = (
+  const handleUpdateItem = <K extends keyof KnowledgeQnA>(
     index: number,
-    field: keyof KnowledgeQnA,
-    val: any
+    field: K,
+    val: KnowledgeQnA[K]
   ) => {
     setKnowledge((prev) => {
       const updated = [...prev];

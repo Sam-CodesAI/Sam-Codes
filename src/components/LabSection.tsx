@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import {
+  motion,
+} from "motion/react";
 import {
   projectsData,
   experimentsData,
@@ -22,10 +24,6 @@ import {
   CheckCircle2,
   X,
   ExternalLink,
-  Activity,
-  Gauge,
-  Clock,
-  CheckCheck,
 } from "lucide-react";
 
 const CATEGORIES = [

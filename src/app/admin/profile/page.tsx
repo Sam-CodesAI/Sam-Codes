@@ -4,13 +4,8 @@ import React, { useEffect, useState } from "react";
 import {
   User,
   MapPin,
-  Sparkles,
   Plus,
   Trash2,
-  CheckCircle2,
-  Layers,
-  FileText,
-  ShieldCheck,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import SaveBar from "@/components/admin/SaveBar";

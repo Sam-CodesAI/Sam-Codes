@@ -8,8 +8,13 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const settings = await getSiteSettings();
-  return NextResponse.json({ settings });
+  try {
+    const settings = await getSiteSettings();
+    return NextResponse.json({ settings });
+  } catch (err) {
+    console.error("Error fetching settings:", err);
+    return NextResponse.json({ error: "Failed to fetch settings" }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {

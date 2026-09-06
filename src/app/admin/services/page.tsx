@@ -6,9 +6,6 @@ import {
   Plus,
   Trash2,
   CheckCircle2,
-  ArrowUpRight,
-  ShieldCheck,
-  FileEdit,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import SaveBar from "@/components/admin/SaveBar";
@@ -48,10 +45,10 @@ export default function AdminServicesPage() {
   const isDirty =
     JSON.stringify(services) !== JSON.stringify(initialServices);
 
-  const handleUpdateService = (
+  const handleUpdateService = <K extends keyof ServiceOffering>(
     index: number,
-    field: keyof ServiceOffering,
-    val: any
+    field: K,
+    val: ServiceOffering[K]
   ) => {
     setServices((prev) => {
       const updated = [...prev];

@@ -3,10 +3,16 @@
 // Session token generated once per browser tab/session
 function getSessionId(): string {
   if (typeof window === "undefined") return "";
-  let sid = sessionStorage.getItem("sam_codes_sid");
+  let sid = null;
+  try {
+    sid = sessionStorage.getItem("sam_codes_sid");
+  } catch (err) {}
+  
   if (!sid) {
     sid = "s-" + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
-    sessionStorage.setItem("sam_codes_sid", sid);
+    try {
+      sessionStorage.setItem("sam_codes_sid", sid);
+    } catch (err) {}
   }
   return sid;
 }

@@ -8,8 +8,6 @@ import {
   Smartphone,
   Laptop,
   Compass,
-  ArrowUpRight,
-  RefreshCw,
   Clock,
   ShieldCheck,
   TrendingUp,

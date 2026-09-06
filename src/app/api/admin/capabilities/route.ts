@@ -8,8 +8,13 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const capabilities = await getCapabilities();
-  return NextResponse.json({ capabilities });
+  try {
+    const capabilities = await getCapabilities();
+    return NextResponse.json({ capabilities });
+  } catch (err) {
+    console.error("Error fetching capabilities:", err);
+    return NextResponse.json({ error: "Failed to fetch capabilities" }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {

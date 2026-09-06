@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 
 const GLYPHS = "!<>-_\\/[]{}—=+*^?#________010101";
 
@@ -19,6 +19,7 @@ export default function TextScramble({
 }: TextScrambleProps) {
   const [displayText, setDisplayText] = useState(text);
   const [isScrambling, setIsScrambling] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const scramble = useCallback(() => {
     if (isScrambling) return;
@@ -27,7 +28,7 @@ export default function TextScramble({
     let iteration = 0;
     const length = text.length;
 
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       setDisplayText(
         text
           .split("")
@@ -42,7 +43,7 @@ export default function TextScramble({
       );
 
       if (iteration >= length) {
-        clearInterval(interval);
+        if (intervalRef.current) clearInterval(intervalRef.current);
         setDisplayText(text);
         setIsScrambling(false);
       }
@@ -53,6 +54,9 @@ export default function TextScramble({
 
   useEffect(() => {
     scramble();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerKey]);
 

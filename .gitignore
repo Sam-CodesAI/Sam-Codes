@@ -1,7 +1,6 @@
 # Environment variables and secrets
 .env
 .env.*
-!.env.example
 *.env
 credentials.json
 token.json
@@ -28,7 +27,10 @@ build/
 dist/
 .vercel/
 .env*
+!.env.example
 .profile-repo/
 supabase/.temp/
 supabase/.branches/
 backups/
+app-store.json
+*.tsbuildinfo

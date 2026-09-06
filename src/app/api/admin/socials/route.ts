@@ -8,8 +8,13 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const socials = await getSocialLinks();
-  return NextResponse.json({ socials });
+  try {
+    const socials = await getSocialLinks();
+    return NextResponse.json({ socials });
+  } catch (err) {
+    console.error("Error fetching socials:", err);
+    return NextResponse.json({ error: "Failed to fetch socials" }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {

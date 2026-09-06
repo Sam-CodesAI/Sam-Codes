@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminSession } from "@/lib/auth-service";
-import { getProjects, saveProject, deleteProject, ExtendedProject } from "@/lib/data-service";
+import { getProjects, getProjectById, saveProject, deleteProject, ExtendedProject } from "@/lib/data-service";
 
 export async function GET(req: NextRequest) {
   const session = await verifyAdminSession();
@@ -8,19 +8,23 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const { searchParams } = new URL(req.url);
-  const id = searchParams.get("id");
-  if (id) {
-    const { getProjectById } = await import("@/lib/data-service");
-    const project = await getProjectById(id);
-    if (!project) {
-      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (id) {
+      const project = await getProjectById(id);
+      if (!project) {
+        return NextResponse.json({ error: "Project not found" }, { status: 404 });
+      }
+      return NextResponse.json({ project });
     }
-    return NextResponse.json({ project });
-  }
 
-  const projects = await getProjects(true);
-  return NextResponse.json({ projects });
+    const projects = await getProjects(true);
+    return NextResponse.json({ projects });
+  } catch (err) {
+    console.error("Error fetching projects:", err);
+    return NextResponse.json({ error: "Failed to fetch projects" }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -80,6 +84,11 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "Project ID is required" }, { status: 400 });
   }
 
-  await deleteProject(id, session.user.email);
-  return NextResponse.json({ success: true });
+  try {
+    await deleteProject(id, session.user.email);
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Error deleting projects:", err);
+    return NextResponse.json({ error: "Failed to delete projects" }, { status: 500 });
+  }
 }

@@ -8,8 +8,13 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const knowledge = await getAssistantKnowledge();
-  return NextResponse.json({ knowledge });
+  try {
+    const knowledge = await getAssistantKnowledge();
+    return NextResponse.json({ knowledge });
+  } catch (err) {
+    console.error("Error fetching assistant:", err);
+    return NextResponse.json({ error: "Failed to fetch assistant" }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -49,6 +54,11 @@ export async function DELETE(req: NextRequest) {
   const id = searchParams.get("id");
   if (!id) return NextResponse.json({ error: "Item ID required" }, { status: 400 });
 
-  await deleteAssistantKnowledge(id, session.user.email);
-  return NextResponse.json({ success: true });
+  try {
+    await deleteAssistantKnowledge(id, session.user.email);
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Error deleting assistant:", err);
+    return NextResponse.json({ error: "Failed to delete assistant" }, { status: 500 });
+  }
 }

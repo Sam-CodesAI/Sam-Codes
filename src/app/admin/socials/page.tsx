@@ -6,8 +6,6 @@ import {
   ExternalLink,
   Plus,
   Trash2,
-  CheckCircle2,
-  Globe,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import SaveBar from "@/components/admin/SaveBar";
@@ -45,10 +43,10 @@ export default function AdminSocialsPage() {
   const isDirty =
     JSON.stringify(socials) !== JSON.stringify(initialSocials);
 
-  const handleUpdateSocial = (
+  const handleUpdateSocial = <K extends keyof SocialLink>(
     index: number,
-    field: keyof SocialLink,
-    val: any
+    field: K,
+    val: SocialLink[K]
   ) => {
     setSocials((prev) => {
       const updated = [...prev];
