@@ -29,3 +29,5 @@ dist/
 .vercel/
 .env*
 .profile-repo/
+supabase/.temp/
+supabase/.branches/
