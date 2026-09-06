@@ -99,7 +99,7 @@ export const projectsData: Project[] = [
         evidenceNotes: "Serverless edge deployment on Vercel with zero cold-start bottlenecks",
       },
     ],
-    githubUrl: "https://github.com/Samarth1306w/Personal-Workspace",
+    githubUrl: "https://github.com/Sam-CodesAI/sam-codeai-telegram-bot",
     liveUrl: "/admin/inquiries",
   },
 ];

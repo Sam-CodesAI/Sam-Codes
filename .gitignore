@@ -34,3 +34,4 @@ supabase/.branches/
 backups/
 app-store.json
 *.tsbuildinfo
+.repos/

@@ -260,7 +260,7 @@ export async function seedCMS(): Promise<void> {
       ],
       hero_image: "/og-image.png",
       live_url: "/admin/inquiries",
-      github_url: "https://github.com/Samarth1306w/Personal-Workspace",
+      github_url: "https://github.com/Sam-CodesAI/sam-codeai-telegram-bot",
     },
   ];
 
