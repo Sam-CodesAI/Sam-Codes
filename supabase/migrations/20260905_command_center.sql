@@ -11,7 +11,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- 1. ADMIN USERS & ROLES
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS admin_users (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT UNIQUE NOT NULL,
   role TEXT NOT NULL DEFAULT 'super_admin' CHECK (role IN ('super_admin', 'admin')),
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS profiles (
 -- 3. CAPABILITIES
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS capabilities (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   title TEXT NOT NULL,
   description TEXT NOT NULL,
   category TEXT NOT NULL CHECK (category IN ('WHAT I BUILD', 'BUILDING WITH', 'EXPLORING')),
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS capabilities (
 -- 4. SERVICES
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS services (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   title TEXT NOT NULL,
   short_description TEXT NOT NULL,
   full_description TEXT NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS services (
 -- 5. PROJECTS & CASE STUDIES
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS projects (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   slug TEXT UNIQUE NOT NULL,
   title TEXT NOT NULL,
   short_description TEXT NOT NULL,
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS projects (
 -- 6. THE LAB (EXPERIMENTS & WORKBENCH)
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS experiments (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   title TEXT NOT NULL,
   state TEXT NOT NULL CHECK (state IN ('SYSTEM IN DEVELOPMENT', 'AUTOMATION EXPERIMENT', 'AGENT WORKFLOW', 'WEB EXPERIENCE', 'BUILD LOG')),
   category TEXT NOT NULL CHECK (category IN ('AI Application', 'Agentic Workflow', 'Automation', 'Web System', 'Prototype')),
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS experiments (
 -- 7. EXPLORING TOPICS
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS exploring_topics (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   name TEXT NOT NULL,
   category TEXT NOT NULL CHECK (category IN ('AI', 'Engineering', 'Workflows', 'Interface')),
   status TEXT NOT NULL CHECK (status IN ('Active Research', 'Experimenting', 'Building')),
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS exploring_topics (
 -- 8. MILESTONES
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS milestones (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   title TEXT NOT NULL,
   category TEXT NOT NULL CHECK (category IN ('HACKATHONS', 'OPEN SOURCE', 'PROJECTS', 'CERTIFICATIONS', 'COMMUNITIES', 'ACADEMIC', 'OTHER')),
   organization_or_event TEXT NOT NULL,
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS social_links (
 -- 10. ASK SAM KNOWLEDGE BASE
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS assistant_knowledge (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   question TEXT NOT NULL,
   keywords JSONB NOT NULL DEFAULT '[]'::jsonb,
   answer TEXT NOT NULL,
@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS assistant_knowledge (
 -- 11. INQUIRIES & LEADS
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS inquiries (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   name TEXT NOT NULL,
   email TEXT,
   contact_method TEXT NOT NULL,
@@ -205,7 +205,7 @@ CREATE TABLE IF NOT EXISTS inquiries (
 -- 12. FIRST-PARTY PRIVACY-CONSCIOUS ANALYTICS
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS analytics_events (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   event_name TEXT NOT NULL,
   path TEXT NOT NULL DEFAULT '/',
   section TEXT,
@@ -238,7 +238,7 @@ CREATE TABLE IF NOT EXISTS site_settings (
 -- 14. AUDIT LOGS
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS audit_logs (
-  id TEXT PRIMARY KEY DEFAULT uuid_generate_v4()::text,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   action TEXT NOT NULL,
   entity_type TEXT NOT NULL,
   entity_id TEXT,
