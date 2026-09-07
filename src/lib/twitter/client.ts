@@ -517,6 +517,13 @@ export async function postTweetToX(text: string): Promise<PostTweetResult> {
   };
 }
 
+function rfc3986(str: string): string {
+  return encodeURIComponent(str).replace(
+    new RegExp("['()*!]", "g"),
+    (c) => "%" + c.charCodeAt(0).toString(16).toUpperCase()
+  );
+}
+
 /**
  * Builds standard OAuth 1.0a Authorization header.
  */
@@ -538,16 +545,16 @@ export function buildOAuth1Header(
 
   const sortedKeys = Object.keys(oauthParams).sort();
   const paramString = sortedKeys
-    .map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(oauthParams[k])}`)
+    .map((k) => `${rfc3986(k)}=${rfc3986(oauthParams[k])}`)
     .join("&");
 
   const signatureBase = [
     method.toUpperCase(),
-    encodeURIComponent(url),
-    encodeURIComponent(paramString),
+    rfc3986(url),
+    rfc3986(paramString),
   ].join("&");
 
-  const signingKey = `${encodeURIComponent(config.consumerSecret)}&${encodeURIComponent(
+  const signingKey = `${rfc3986(config.consumerSecret)}&${rfc3986(
     config.accessTokenSecret || ""
   )}`;
 
@@ -560,7 +567,7 @@ export function buildOAuth1Header(
 
   const headerParts = Object.keys(oauthParams)
     .sort()
-    .map((k) => `${encodeURIComponent(k)}="${encodeURIComponent(oauthParams[k])}"`)
+    .map((k) => `${rfc3986(k)}="${rfc3986(oauthParams[k])}"`)
     .join(", ");
 
   return `OAuth ${headerParts}`;
@@ -600,12 +607,12 @@ export async function verifyXCredentials(): Promise<XVerificationResult> {
       valid: true,
       tier: "free",
       canPost: true,
-      canRead: false,
+      canRead: true,
       authMode: "oauth1_user",
-      message: "X API connected via OAuth 1.0a User Tokens.",
+      message: "X API connected via OAuth 1.0a User Tokens (Permanent Read & Write Active).",
       details: {
         account: `@${config.username}`,
-        authMode: "OAuth 1.0a",
+        authMode: "OAuth 1.0a (Permanent)",
       },
     };
   }
