@@ -12,6 +12,7 @@ import {
   resetSession,
   getActiveSessionCount,
 } from "@/lib/telegram/agent";
+import { resolveGeminiApiKey } from "@/lib/gemini/client";
 
 export const runtime = "nodejs";
 
@@ -41,6 +42,8 @@ export async function GET(): Promise<NextResponse> {
       if (whRes.ok) webhookInfo = whRes.result;
     }
 
+    const [geminiKey] = await Promise.all([resolveGeminiApiKey()]);
+
     return NextResponse.json({
       configured: hasToken,
       hasSecret,
@@ -48,6 +51,7 @@ export async function GET(): Promise<NextResponse> {
       webhookInfo,
       activeSessions: getActiveSessionCount(),
       webhookEndpoint: "/api/telegram/webhook",
+      geminiConfigured: !!geminiKey,
     });
   } catch (err) {
     console.error("[Admin Telegram GET Error]:", err);

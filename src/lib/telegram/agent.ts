@@ -7,6 +7,8 @@ import {
 } from "@/lib/data-service";
 import { notifyAdminOnTelegram } from "@/lib/telegram/client";
 import { CONTACT_CONFIG } from "@/data/socials";
+import { resolveGeminiApiKey } from "@/lib/gemini/client";
+import { executeGeminiTurn } from "@/lib/telegram/gemini-agent";
 
 export type ConversationPhase = "INITIAL" | "DISCOVERY" | "QUALIFICATION" | "CONFIRMED";
 
@@ -28,6 +30,7 @@ export interface TelegramSession {
   leadDraft: LeadDraft;
   lastActiveAt: number;
   inquiryId?: string;
+  history: Array<{ role: "user" | "model"; text: string }>;
 }
 
 export interface AgentTurnResult {
@@ -64,6 +67,7 @@ export function getOrCreateSession(
     existing.lastActiveAt = now;
     if (context?.username && !existing.username) existing.username = context.username;
     if (context?.firstName && !existing.firstName) existing.firstName = context.firstName;
+    if (!existing.history) existing.history = [];
     return existing;
   }
 
@@ -78,6 +82,7 @@ export function getOrCreateSession(
       handleOrEmail: context?.username ? `@${context.username}` : undefined,
     },
     lastActiveAt: now,
+    history: [],
   };
 
   sessionStore.set(key, newSession);
@@ -326,13 +331,28 @@ export async function executeAgentTurn(
   // 1. Check for command resets or starts
   if (lower === "/start" || lower === "/restart" || lower === "/reset") {
     session.phase = "INITIAL";
+    session.history = [];
     session.leadDraft = {
       name: context?.firstName ? `${context.firstName}${context.lastName ? ` ${context.lastName}` : ""}` : undefined,
       handleOrEmail: context?.username ? `@${context.username}` : undefined,
     };
   }
 
-  // 2. Extract entities greedily across all turns
+  // 2. Check for Google Gemini Intelligence if configured
+  const geminiApiKey = await resolveGeminiApiKey();
+  if (geminiApiKey) {
+    try {
+      const geminiResult = await executeGeminiTurn(session, raw, context);
+      return geminiResult;
+    } catch (geminiError) {
+      console.warn(
+        "[Telegram Agent] Gemini intelligence unavailable or timed out. Falling back to deterministic engine:",
+        geminiError
+      );
+    }
+  }
+
+  // 3. Extract entities greedily across all turns (Deterministic Fallback)
   const extractedEmail = extractEmail(raw);
   const extractedHandle = extractHandle(raw);
   const extractedTimeline = extractTimeline(raw);
@@ -521,6 +541,11 @@ export async function executeAgentTurn(
       break;
     }
   }
+
+  // Record deterministic turn into session history
+  if (!session.history) session.history = [];
+  session.history.push({ role: "user", text: raw });
+  session.history.push({ role: "model", text: replyText });
 
   const latencyMs = Date.now() - startTime;
 

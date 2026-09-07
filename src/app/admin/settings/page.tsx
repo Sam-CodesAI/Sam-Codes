@@ -16,6 +16,11 @@ import {
   Copy,
   ExternalLink,
   ShieldCheck,
+  Cpu,
+  Key,
+  Zap,
+  Trash2,
+  AlertCircle,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import SaveBar from "@/components/admin/SaveBar";
@@ -38,6 +43,7 @@ export default function AdminSettingsPage() {
     webhookInfo: { url?: string } | null;
     activeSessions: number;
     webhookEndpoint: string;
+    geminiConfigured?: boolean;
   } | null>(null);
   const [simMessage, setSimMessage] = useState("");
   const [simChatId] = useState(`admin-sim-${Date.now().toString(36)}`);
@@ -46,6 +52,22 @@ export default function AdminSettingsPage() {
   >([]);
   const [isSimulating, setIsSimulating] = useState(false);
   const [simInquiryCreatedId, setSimInquiryCreatedId] = useState<string | null>(null);
+
+  // Gemini Intelligence State
+  const [geminiStatus, setGeminiStatus] = useState<{
+    configured: boolean;
+    model: string;
+    fallbackModel: string;
+    maskedKey: string | null;
+    source: "env" | "database" | "none";
+  } | null>(null);
+  const [geminiKeyInput, setGeminiKeyInput] = useState("");
+  const [isTestingGemini, setIsTestingGemini] = useState(false);
+  const [isSavingGemini, setIsSavingGemini] = useState(false);
+  const [geminiFeedback, setGeminiFeedback] = useState<{
+    success: boolean;
+    message: string;
+  } | null>(null);
 
   const fetchSettings = async () => {
     try {
@@ -75,10 +97,119 @@ export default function AdminSettingsPage() {
     }
   };
 
+  const fetchGeminiStatus = async () => {
+    try {
+      const res = await fetch("/api/admin/telegram/gemini");
+      if (res.ok) {
+        const data = await res.json();
+        setGeminiStatus(data);
+      }
+    } catch {
+      // Ignored non-blocking
+    }
+  };
+
   useEffect(() => {
     fetchSettings();
     fetchTelegramStatus();
+    fetchGeminiStatus();
   }, []);
+
+  const handleTestGemini = async () => {
+    setIsTestingGemini(true);
+    setGeminiFeedback(null);
+    try {
+      const res = await fetch("/api/admin/telegram/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "test",
+          apiKey: geminiKeyInput.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setGeminiFeedback({
+          success: true,
+          message: `Connected! Latency: ${data.latencyMs}ms (${data.model})`,
+        });
+        showToast("Gemini API connection verified!", "success");
+      } else {
+        setGeminiFeedback({
+          success: false,
+          message: data.error || "Connection test failed",
+        });
+        showToast(data.error || "Gemini connection failed", "error");
+      }
+    } catch {
+      setGeminiFeedback({
+        success: false,
+        message: "Failed to communicate with test endpoint",
+      });
+      showToast("Network error testing Gemini API", "error");
+    } finally {
+      setIsTestingGemini(false);
+    }
+  };
+
+  const handleSaveGeminiKey = async () => {
+    if (!geminiKeyInput.trim()) {
+      showToast("Please enter a valid Gemini API key", "error");
+      return;
+    }
+    setIsSavingGemini(true);
+    setGeminiFeedback(null);
+    try {
+      const res = await fetch("/api/admin/telegram/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "save",
+          apiKey: geminiKeyInput.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast("Gemini API key saved & verified!", "success");
+        setGeminiKeyInput("");
+        setGeminiFeedback({
+          success: true,
+          message: `Key saved! Verified latency: ${data.latencyMs}ms (${data.model})`,
+        });
+        await fetchGeminiStatus();
+        await fetchTelegramStatus();
+      } else {
+        showToast(data.error || "Failed to save Gemini API key", "error");
+        setGeminiFeedback({
+          success: false,
+          message: data.error || "Save failed",
+        });
+      }
+    } catch {
+      showToast("Network error saving Gemini API key", "error");
+    } finally {
+      setIsSavingGemini(false);
+    }
+  };
+
+  const handleRemoveGeminiKey = async () => {
+    if (!confirm("Are you sure you want to remove the Gemini API key from database storage?")) return;
+    try {
+      const res = await fetch("/api/admin/telegram/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "remove" }),
+      });
+      if (res.ok) {
+        showToast("Gemini API key removed. Bot reverted to deterministic rules.", "info");
+        setGeminiFeedback(null);
+        await fetchGeminiStatus();
+        await fetchTelegramStatus();
+      }
+    } catch {
+      showToast("Failed to remove Gemini API key", "error");
+    }
+  };
 
   const handleSimulateMessage = async (textToSend?: string) => {
     const text = textToSend || simMessage;
@@ -418,10 +549,20 @@ export default function AdminSettingsPage() {
             </div>
 
             {/* Architecture Details Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs font-mono">
               <div className="p-3 rounded-xl bg-white/[0.01] border border-white/[0.04]">
                 <div className="text-slate-500 text-[10px] uppercase">Webhook Endpoint</div>
                 <div className="text-slate-300 truncate mt-1">/api/telegram/webhook</div>
+              </div>
+              <div className="p-3 rounded-xl bg-white/[0.01] border border-white/[0.04]">
+                <div className="text-slate-500 text-[10px] uppercase">Intelligence Engine</div>
+                <div
+                  className={`font-bold mt-1 ${
+                    geminiStatus?.configured ? "text-emerald-400" : "text-amber-400"
+                  }`}
+                >
+                  {geminiStatus?.configured ? "Gemini 2.0 Flash" : "Deterministic Rules"}
+                </div>
               </div>
               <div className="p-3 rounded-xl bg-white/[0.01] border border-white/[0.04]">
                 <div className="text-slate-500 text-[10px] uppercase">Active In-Memory Sessions</div>
@@ -435,6 +576,112 @@ export default function AdminSettingsPage() {
                   <ShieldCheck size={13} />
                   40 req/min Rate Limit
                 </div>
+              </div>
+            </div>
+
+            {/* GOOGLE GEMINI INTELLIGENCE ENGINE */}
+            <div className="p-4 rounded-xl bg-gradient-to-r from-sky-500/[0.04] to-purple-500/[0.04] border border-sky-500/20 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.06] pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                    <Sparkles size={16} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-white font-mono flex items-center gap-2">
+                      Google Gemini 2.0 Intelligence
+                      {geminiStatus?.configured ? (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          ACTIVE ({geminiStatus.source === "env" ? "ENV" : "DATABASE"})
+                        </span>
+                      ) : (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                          FALLBACK (DETERMINISTIC)
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-mono">
+                      Powers multi-turn Telegram qualification, messy brief comprehension, and automatic CRM filing
+                    </div>
+                  </div>
+                </div>
+
+                {geminiStatus?.maskedKey && (
+                  <div className="text-[11px] font-mono text-slate-400 flex items-center gap-2">
+                    <span className="text-slate-500">Key:</span>
+                    <code className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.1] text-sky-300">
+                      {geminiStatus.maskedKey}
+                    </code>
+                    {geminiStatus.source === "database" && (
+                      <button
+                        type="button"
+                        onClick={handleRemoveGeminiKey}
+                        className="text-slate-500 hover:text-rose-400 transition-colors p-1"
+                        title="Remove key from database"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Gemini Key Input & Actions */}
+              <div className="space-y-3">
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="relative flex-1">
+                    <input
+                      type="password"
+                      value={geminiKeyInput}
+                      onChange={(e) => setGeminiKeyInput(e.target.value)}
+                      placeholder={
+                        geminiStatus?.configured
+                          ? "Enter new Gemini API key to update..."
+                          : "Paste Gemini API Key (e.g. AIzaSy...)"
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/[0.1] text-xs font-mono text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500 min-h-[44px]"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      disabled={isSavingGemini || !geminiKeyInput.trim()}
+                      onClick={handleSaveGeminiKey}
+                      className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 disabled:opacity-50 text-slate-950 font-mono font-bold text-xs flex items-center gap-2 transition-colors min-h-[44px]"
+                    >
+                      <Key size={14} />
+                      {isSavingGemini ? "Verifying..." : "Save Key"}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isTestingGemini || (!geminiStatus?.configured && !geminiKeyInput.trim())}
+                      onClick={handleTestGemini}
+                      className="px-4 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] disabled:opacity-50 text-slate-200 font-mono text-xs flex items-center gap-2 border border-white/[0.1] transition-colors min-h-[44px]"
+                    >
+                      <Zap
+                        size={14}
+                        className={isTestingGemini ? "animate-spin text-amber-400" : "text-sky-400"}
+                      />
+                      {isTestingGemini ? "Pinging..." : "Test Connection"}
+                    </button>
+                  </div>
+                </div>
+
+                {geminiFeedback && (
+                  <div
+                    className={`p-2.5 rounded-lg text-xs font-mono flex items-center gap-2 ${
+                      geminiFeedback.success
+                        ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-300"
+                        : "bg-rose-500/10 border border-rose-500/20 text-rose-300"
+                    }`}
+                  >
+                    {geminiFeedback.success ? (
+                      <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
+                    ) : (
+                      <AlertCircle size={14} className="text-rose-400 shrink-0" />
+                    )}
+                    <span>{geminiFeedback.message}</span>
+                  </div>
+                )}
               </div>
             </div>
 
