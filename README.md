@@ -183,8 +183,8 @@ pnpm db:backup # or npm run db:backup
 
 - **Instagram:** [@samarth.buildss](https://www.instagram.com/samarth.buildss/)
 - **LinkedIn:** [Samarth Nimangre](https://www.linkedin.com/in/samarth-nimangre-0a3b02421/)
-- **X (Twitter):** [@Tempest_Store](https://x.com/Tempest_Store)
-- **Reddit:** [u/SamarthBuilds_](https://www.reddit.com/u/SamarthBuilds_/)
+- **X (Twitter):** [@Sam_CodeAI](https://x.com/Sam_CodeAI)
+- **Reddit:** [Sam_CodeAI](https://www.reddit.com/user/SamarthBuilds_/)
 - **GitHub:** [@Sam-CodesAI](https://github.com/Sam-CodesAI)
 - **Direct Email:** [samarthknimangre@gmail.com](mailto:samarthknimangre@gmail.com)
 

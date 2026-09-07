@@ -86,7 +86,7 @@ const jsonLd = {
         "https://www.linkedin.com/in/samarth-nimangre-0a3b02421/",
         "https://x.com/Sam_CodeAI",
         "https://github.com/Sam-CodesAI",
-        "https://www.reddit.com/u/SamarthBuilds_/",
+        "https://www.reddit.com/user/SamarthBuilds_/",
       ],
       "knowsAbout": [
         "Artificial Intelligence",

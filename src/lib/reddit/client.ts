@@ -21,6 +21,7 @@ export interface RedditTokenData {
 export interface RedditAccountInfo {
   connected: boolean;
   username: string;
+  displayName?: string;
   totalKarma: number;
   linkKarma: number;
   commentKarma: number;
@@ -57,7 +58,7 @@ export interface SubmitPostResult {
 }
 
 const DEV_CLIENT_ID = "TWTsqXa53CexlrYGBWaesQ";
-const USER_AGENT = "web:sam-codes:v1.2.0 (by /u/SamarthBuilds_)";
+const USER_AGENT = "web:sam-codes:v1.2.0 (by /u/Sam_CodeAI)";
 const LOCAL_TOKEN_CACHE = path.join(process.cwd(), ".reddit-tokens.json");
 const DEVVIT_TOKEN_FILE = path.join(
   process.env.HOME || "/home/codespace",
@@ -264,11 +265,16 @@ export async function getRedditAccountStatus(): Promise<RedditAccountInfo | null
       inbox_count: number;
       created_utc: number;
       icon_img?: string;
+      subreddit?: {
+        title?: string;
+        display_name_prefixed?: string;
+      };
     };
 
     return {
       connected: true,
       username: data.name,
+      displayName: data.subreddit?.title || data.name,
       totalKarma:
         data.total_karma !== undefined
           ? data.total_karma
@@ -289,14 +295,17 @@ export async function getRedditAccountStatus(): Promise<RedditAccountInfo | null
  * Retrieves recently submitted posts for the authenticated user.
  */
 export async function getRedditRecentPosts(
-  limit: number = 10
+  limit: number = 10,
+  targetUsername?: string
 ): Promise<RedditPostSummary[]> {
   const token = await getValidRedditAccessToken();
   if (!token) return [];
 
+  const username = targetUsername || "SamarthBuilds_";
+
   try {
     const res = await fetch(
-      `https://oauth.reddit.com/user/SamarthBuilds_/submitted?limit=${limit}`,
+      `https://oauth.reddit.com/user/${username}/submitted?limit=${limit}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -421,3 +430,81 @@ export async function submitRedditPost(
     return { success: false, error: `Reddit submit request failed: ${msg}` };
   }
 }
+
+/**
+ * Updates the Reddit profile display name (title) for the authenticated user's profile.
+ */
+export async function updateRedditProfileDisplayName(
+  displayName: string,
+  publicDescription?: string
+): Promise<{ success: boolean; error?: string }> {
+  const token = await getValidRedditAccessToken();
+  if (!token) return { success: false, error: "Not authenticated with Reddit" };
+
+  try {
+    // 1. Fetch current me data to get user's profile subreddit id (t5_...)
+    const meRes = await fetch("https://oauth.reddit.com/api/v1/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "User-Agent": USER_AGENT,
+      },
+    });
+    if (!meRes.ok) {
+      return { success: false, error: `Failed to fetch profile (HTTP ${meRes.status})` };
+    }
+    const me = (await meRes.json()) as {
+      subreddit?: {
+        name?: string;
+        public_description?: string;
+      };
+    };
+
+    const srName = me.subreddit?.name;
+    if (!srName) {
+      return { success: false, error: "Subreddit profile identifier not found" };
+    }
+
+    const desc =
+      publicDescription !== undefined
+        ? publicDescription
+        : me.subreddit?.public_description || "";
+
+    const body = new URLSearchParams({
+      api_type: "json",
+      sr: srName,
+      title: displayName,
+      public_description: desc,
+      link_type: "any",
+      type: "user",
+    });
+
+    const updateRes = await fetch("https://oauth.reddit.com/api/site_admin", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": USER_AGENT,
+      },
+      body: body.toString(),
+    });
+
+    const json = (await updateRes.json()) as {
+      json?: {
+        errors?: Array<[string, string, string]>;
+      };
+    };
+
+    if (json.json?.errors && json.json.errors.length > 0) {
+      return {
+        success: false,
+        error: json.json.errors.map((e) => e[1] || e[0]).join(", "),
+      };
+    }
+
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return { success: false, error: `Failed to update Reddit profile: ${msg}` };
+  }
+}
+

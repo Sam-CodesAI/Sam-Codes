@@ -27,6 +27,7 @@ import { SocialLink } from "@/data/socials";
 interface RedditAccountInfo {
   connected: boolean;
   username: string;
+  displayName?: string;
   totalKarma: number;
   linkKarma: number;
   commentKarma: number;
@@ -670,7 +671,7 @@ export default function AdminSocialsPage() {
           </div>
         </div>
 
-        {/* Reddit Personal Account Studio (u/SamarthBuilds_) */}
+        {/* Reddit Personal Account Studio (Sam_CodeAI) */}
         <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08] backdrop-blur-sm space-y-6">
           {/* Bridge Status Bar */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-white/[0.06]">
@@ -700,9 +701,16 @@ export default function AdminSocialsPage() {
 
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono text-slate-400 mt-1">
                   <span>
-                    Account:{" "}
+                    Display Name:{" "}
+                    <strong className="text-white font-semibold">
+                      {redditData?.account?.displayName || "Sam_CodeAI"}
+                    </strong>
+                  </span>
+                  <span>•</span>
+                  <span>
+                    Handle:{" "}
                     <a
-                      href="https://www.reddit.com/user/SamarthBuilds_"
+                      href={redditData?.account?.profileUrl || "https://www.reddit.com/user/SamarthBuilds_"}
                       target="_blank"
                       rel="noreferrer"
                       className="text-[#FF4500] hover:underline inline-flex items-center gap-1 font-semibold"
@@ -794,7 +802,7 @@ export default function AdminSocialsPage() {
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-mono text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                 <Sparkles size={12} className="text-[#FF4500]" />
-                <span>Developer Discussion Presets (u/SamarthBuilds_)</span>
+                <span>Developer Discussion Presets (Sam_CodeAI)</span>
               </span>
               <span className="text-[10px] font-mono text-slate-500">
                 Click to load title, body, and target subreddit
@@ -894,7 +902,7 @@ export default function AdminSocialsPage() {
                 <p className="text-[11px] font-mono text-slate-500">
                   <span className="text-emerald-400 flex items-center gap-1">
                     <ShieldCheck size={12} />
-                    Submits under u/SamarthBuilds_ with auto-refreshed wildcard token.
+                    Submits under {redditData?.account?.displayName || "Sam_CodeAI"} (u/{redditData?.account?.username || "SamarthBuilds_"}) with auto-refreshed token.
                   </span>
                 </p>
 
@@ -917,7 +925,7 @@ export default function AdminSocialsPage() {
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-mono text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                   <Award size={12} className="text-[#FF4500]" />
-                  <span>Recent Submissions (u/SamarthBuilds_)</span>
+                  <span>Recent Submissions (Sam_CodeAI)</span>
                 </span>
                 <span className="text-[10px] font-mono text-slate-500">
                   Live from Reddit API

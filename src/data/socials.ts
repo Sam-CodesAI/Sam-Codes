@@ -30,8 +30,8 @@ export const CONTACT_CONFIG = {
   X_URL: "https://x.com/Sam_CodeAI",
   X_HANDLE: "@Sam_CodeAI",
 
-  REDDIT_URL: "https://www.reddit.com/u/SamarthBuilds_/",
-  REDDIT_HANDLE: "u/SamarthBuilds_",
+  REDDIT_URL: "https://www.reddit.com/user/SamarthBuilds_/",
+  REDDIT_HANDLE: "u/Sam_CodeAI",
 
   GITHUB_URL: "https://github.com/Sam-CodesAI",
   GITHUB_HANDLE: "Sam-CodesAI",

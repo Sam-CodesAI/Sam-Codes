@@ -4,6 +4,7 @@ import {
   getRedditAccountStatus,
   getRedditRecentPosts,
   submitRedditPost,
+  updateRedditProfileDisplayName,
 } from "@/lib/reddit/client";
 import { PRESET_REDDIT_POSTS } from "@/lib/reddit/templates";
 
@@ -20,7 +21,7 @@ export async function GET(): Promise<NextResponse> {
 
   try {
     const account = await getRedditAccountStatus();
-    const recentPosts = account ? await getRedditRecentPosts(5) : [];
+    const recentPosts = account ? await getRedditRecentPosts(5, account.username) : [];
 
     return NextResponse.json({
       success: true,
@@ -39,7 +40,7 @@ export async function GET(): Promise<NextResponse> {
 }
 
 /**
- * POST: Submits a dev log, architecture breakdown, or update to a subreddit.
+ * POST: Submits a dev log, architecture breakdown, or update to a subreddit, or updates profile display name.
  */
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const session = await verifyAdminSession();
@@ -49,12 +50,35 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   try {
     const body = (await req.json()) as {
-      action?: "submit_post";
+      action?: "submit_post" | "update_profile";
+      displayName?: string;
+      publicDescription?: string;
       subreddit?: string;
       title?: string;
       text?: string;
       url?: string;
     };
+
+    if (body.action === "update_profile") {
+      const displayName = body.displayName?.trim();
+      if (!displayName) {
+        return NextResponse.json(
+          { error: "Profile display name is required" },
+          { status: 400 }
+        );
+      }
+      const updateResult = await updateRedditProfileDisplayName(
+        displayName,
+        body.publicDescription
+      );
+      if (!updateResult.success) {
+        return NextResponse.json({ error: updateResult.error }, { status: 400 });
+      }
+      return NextResponse.json({
+        success: true,
+        message: `Reddit profile display name updated to ${displayName}!`,
+      });
+    }
 
     const subreddit = body.subreddit?.trim();
     const title = body.title?.trim();

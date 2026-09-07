@@ -134,7 +134,7 @@ export async function seedCMS(): Promise<void> {
     { id: "linkedin", platform: "LinkedIn", display_name: "LinkedIn", username: "Samarth Nimangre", url: "https://www.linkedin.com/in/samarth-nimangre-0a3b02421/", description: "Professional networking, collaboration scopes, and career journey", priority: 3, is_visible: true },
     { id: "twitter", platform: "Twitter", display_name: "X (Twitter)", username: "@Sam_CodeAI", url: "https://x.com/Sam_CodeAI", description: "Daily tech thoughts, builder updates, and AI developments", priority: 4, is_visible: true },
     { id: "github", platform: "Github", display_name: "GitHub", username: "Sam-CodesAI", url: "https://github.com/Sam-CodesAI", description: "Open source contributions, build repositories, and clean architectures", priority: 5, is_visible: true },
-    { id: "reddit", platform: "Reddit", display_name: "Reddit", username: "u/SamarthBuilds_", url: "https://www.reddit.com/u/SamarthBuilds_/", description: "Participating in engineering and builder communities", priority: 6, is_visible: true },
+    { id: "reddit", platform: "Reddit", display_name: "Reddit", username: "u/Sam_CodeAI", url: "https://www.reddit.com/user/SamarthBuilds_/", description: "Participating in engineering and builder communities", priority: 6, is_visible: true },
   ];
 
   const { error: soErr } = await supabase.from("social_links").upsert(socials);
