@@ -27,8 +27,8 @@ export const CONTACT_CONFIG = {
   LINKEDIN_LABEL: "Samarth Nimangre",
 
   // X (Twitter) URL & Handle — unified developer brand
-  X_URL: "https://x.com/SamCodesAI",
-  X_HANDLE: "@SamCodesAI",
+  X_URL: "https://x.com/Sam_CodeAI",
+  X_HANDLE: "@Sam_CodeAI",
 
   REDDIT_URL: "https://www.reddit.com/u/SamarthBuilds_/",
   REDDIT_HANDLE: "u/SamarthBuilds_",
