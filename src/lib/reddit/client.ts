@@ -508,3 +508,121 @@ export async function updateRedditProfileDisplayName(
   }
 }
 
+/**
+ * Post a comment or proposal reply to a Reddit submission or comment.
+ */
+export async function sendRedditComment(
+  thingId: string,
+  text: string
+): Promise<{ success: boolean; commentId?: string; permalink?: string; error?: string }> {
+  const token = await getValidRedditAccessToken();
+  if (!token) return { success: false, error: "Not authenticated with Reddit." };
+
+  const id = thingId.startsWith("t3_") || thingId.startsWith("t1_") ? thingId : `t3_${thingId}`;
+
+  const body = new URLSearchParams({
+    api_type: "json",
+    thing_id: id,
+    text: text.trim(),
+  });
+
+  try {
+    const res = await fetch("https://oauth.reddit.com/api/comment", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "User-Agent": USER_AGENT,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: body.toString(),
+    });
+
+    const json = (await res.json()) as {
+      json?: {
+        errors?: Array<[string, string, string]>;
+        data?: {
+          things?: Array<{
+            data?: {
+              id?: string;
+              permalink?: string;
+            };
+          }>;
+        };
+      };
+    };
+
+    if (json.json?.errors && json.json.errors.length > 0) {
+      return {
+        success: false,
+        error: json.json.errors.map((e) => e[1] || e[0]).join(", "),
+      };
+    }
+
+    const created = json.json?.data?.things?.[0]?.data;
+    if (res.ok && created?.id) {
+      return {
+        success: true,
+        commentId: created.id,
+        permalink: created.permalink ? `https://reddit.com${created.permalink}` : undefined,
+      };
+    }
+
+    return { success: false, error: `Comment submission failed (HTTP ${res.status})` };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return { success: false, error: `Reddit comment request failed: ${msg}` };
+  }
+}
+
+/**
+ * Sends a private message (DM) to a Reddit user.
+ */
+export async function sendRedditPrivateMessage(
+  to: string,
+  subject: string,
+  text: string
+): Promise<{ success: boolean; error?: string }> {
+  const token = await getValidRedditAccessToken();
+  if (!token) return { success: false, error: "Not authenticated with Reddit." };
+
+  const cleanTo = to.replace(/^u\//, "").trim();
+
+  const body = new URLSearchParams({
+    api_type: "json",
+    to: cleanTo,
+    subject: subject.trim(),
+    text: text.trim(),
+  });
+
+  try {
+    const res = await fetch("https://oauth.reddit.com/api/compose", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "User-Agent": USER_AGENT,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: body.toString(),
+    });
+
+    const json = (await res.json()) as {
+      json?: {
+        errors?: Array<[string, string, string]>;
+      };
+    };
+
+    if (json.json?.errors && json.json.errors.length > 0) {
+      return {
+        success: false,
+        error: json.json.errors.map((e) => e[1] || e[0]).join(", "),
+      };
+    }
+
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return { success: false, error: `Reddit PM request failed: ${msg}` };
+  }
+}
+
+
