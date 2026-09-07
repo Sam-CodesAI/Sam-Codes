@@ -38,3 +38,4 @@ app-store.json
 sam-codeai-manager/
 .reddit-tokens.json
 .linkedin-tokens.json
+.seen-leads.json
