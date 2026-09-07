@@ -15,11 +15,62 @@ import {
   Clock,
   ShieldCheck,
   Code2,
+  MessageSquare,
+  Flame,
+  Award,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import SaveBar from "@/components/admin/SaveBar";
 import { useToast } from "@/components/admin/ToastProvider";
 import { SocialLink } from "@/data/socials";
+
+interface RedditAccountInfo {
+  connected: boolean;
+  username: string;
+  totalKarma: number;
+  linkKarma: number;
+  commentKarma: number;
+  inboxCount: number;
+  createdUtc: number;
+  iconImg?: string;
+  profileUrl: string;
+}
+
+interface RedditPostSummary {
+  id: string;
+  title: string;
+  subreddit: string;
+  score: number;
+  numComments: number;
+  permalink: string;
+  url: string;
+  createdUtc: number;
+}
+
+interface RedditPostTemplate {
+  id: string;
+  targetSubreddit: string;
+  title: string;
+  body: string;
+}
+
+interface RedditStatusData {
+  success: boolean;
+  connected: boolean;
+  account?: RedditAccountInfo;
+  recentPosts?: RedditPostSummary[];
+  templates?: RedditPostTemplate[];
+  error?: string;
+}
+
+const POPULAR_SUBREDDITS = [
+  "TelegramBots",
+  "buildinpublic",
+  "webdev",
+  "Next_JS",
+  "SaaS",
+  "sam_codeai_manage_dev",
+];
 
 interface TweetTemplate {
   id: string;
@@ -74,6 +125,16 @@ export default function AdminSocialsPage() {
   const [publishedTweetUrl, setPublishedTweetUrl] = useState<string | null>(null);
   const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null);
 
+  // Reddit Personal Account Studio State
+  const [redditData, setRedditData] = useState<RedditStatusData | null>(null);
+  const [isLoadingReddit, setIsLoadingReddit] = useState(false);
+  const [redditSubreddit, setRedditSubreddit] = useState("TelegramBots");
+  const [redditTitle, setRedditTitle] = useState("");
+  const [redditBody, setRedditBody] = useState("");
+  const [isPostingReddit, setIsPostingReddit] = useState(false);
+  const [publishedRedditUrl, setPublishedRedditUrl] = useState<string | null>(null);
+  const [activeRedditTemplateId, setActiveRedditTemplateId] = useState<string | null>(null);
+
   const fetchSocials = async () => {
     try {
       setIsLoading(true);
@@ -99,6 +160,21 @@ export default function AdminSocialsPage() {
       }
     } catch {
       // Non-blocking
+    }
+  };
+
+  const fetchRedditStatus = async () => {
+    try {
+      setIsLoadingReddit(true);
+      const res = await fetch("/api/admin/reddit");
+      if (res.ok) {
+        const data: RedditStatusData = await res.json();
+        setRedditData(data);
+      }
+    } catch {
+      // Non-blocking
+    } finally {
+      setIsLoadingReddit(false);
     }
   };
 
@@ -147,6 +223,7 @@ export default function AdminSocialsPage() {
   useEffect(() => {
     fetchSocials();
     fetchTwitterStatus();
+    fetchRedditStatus();
 
     // Check query params for OAuth 2.0 callback return
     if (typeof window !== "undefined") {
@@ -212,6 +289,50 @@ export default function AdminSocialsPage() {
       showToast("Network error while posting to X", "error");
     } finally {
       setIsPostingTweet(false);
+    }
+  };
+
+  const handleSelectRedditTemplate = (template: RedditPostTemplate) => {
+    setRedditSubreddit(template.targetSubreddit);
+    setRedditTitle(template.title);
+    setRedditBody(template.body);
+    setActiveRedditTemplateId(template.id);
+    setPublishedRedditUrl(null);
+    showToast(`Loaded template: ${template.title.slice(0, 32)}...`, "info");
+  };
+
+  const handlePostReddit = async () => {
+    if (!redditTitle.trim() || !redditBody.trim() || !redditSubreddit.trim() || isPostingReddit) return;
+    setIsPostingReddit(true);
+    setPublishedRedditUrl(null);
+
+    try {
+      const cleanSub = redditSubreddit.replace(/^r\//, "").trim();
+      const res = await fetch("/api/admin/reddit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "submit_post",
+          subreddit: cleanSub,
+          title: redditTitle.trim(),
+          text: redditBody.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast(`Post published to r/${cleanSub}!`, "success");
+        setPublishedRedditUrl(data.url || `https://reddit.com/r/${cleanSub}`);
+        setRedditTitle("");
+        setRedditBody("");
+        setActiveRedditTemplateId(null);
+        await fetchRedditStatus();
+      } else {
+        showToast(data.error || "Failed to submit post to Reddit", "error");
+      }
+    } catch {
+      showToast("Network error while submitting to Reddit", "error");
+    } finally {
+      setIsPostingReddit(false);
     }
   };
 
@@ -547,6 +668,295 @@ export default function AdminSocialsPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Reddit Personal Account Studio (u/SamarthBuilds_) */}
+        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08] backdrop-blur-sm space-y-6">
+          {/* Bridge Status Bar */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-white/[0.06]">
+            <div className="flex items-start sm:items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-[#FF4500]/10 border border-[#FF4500]/30 flex items-center justify-center font-bold text-[#FF4500] text-base shadow-inner shrink-0">
+                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.703zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
+                </svg>
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="text-sm font-bold text-white">
+                    Reddit Personal Account Studio
+                  </h3>
+                  {redditData?.connected ? (
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 text-[10px] font-mono flex items-center gap-1">
+                      <ShieldCheck size={11} />
+                      <span>Connected • Live API Active</span>
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/25 text-[10px] font-mono flex items-center gap-1">
+                      <RefreshCw size={11} className={isLoadingReddit ? "animate-spin" : ""} />
+                      <span>Connecting Account...</span>
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono text-slate-400 mt-1">
+                  <span>
+                    Account:{" "}
+                    <a
+                      href="https://www.reddit.com/user/SamarthBuilds_"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[#FF4500] hover:underline inline-flex items-center gap-1 font-semibold"
+                    >
+                      <span>u/{redditData?.account?.username || "SamarthBuilds_"}</span>
+                      <ExternalLink size={10} />
+                    </a>
+                  </span>
+                  <span>•</span>
+                  <span className="text-slate-300">
+                    Total Karma: <strong className="text-white">{redditData?.account?.totalKarma ?? 1}</strong>
+                  </span>
+                  <span>•</span>
+                  <span>Post: {redditData?.account?.linkKarma ?? 1}</span>
+                  <span>•</span>
+                  <span>Comment: {redditData?.account?.commentKarma ?? 0}</span>
+                  {redditData?.account?.inboxCount !== undefined && redditData.account.inboxCount > 0 && (
+                    <>
+                      <span>•</span>
+                      <span className="px-1.5 py-0.5 rounded bg-[#FF4500]/20 text-[#FF4500] font-bold text-[10px]">
+                        {redditData.account.inboxCount} unread
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Refresh Sync Button */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={fetchRedditStatus}
+                disabled={isLoadingReddit}
+                className="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 font-mono text-xs border border-white/[0.08] transition-all cursor-pointer min-h-[44px] flex items-center gap-1.5"
+                title="Refresh Reddit Account Data"
+              >
+                <RefreshCw size={13} className={isLoadingReddit ? "animate-spin" : ""} />
+                <span>Refresh Sync</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Subreddit Quick Selector */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-mono text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Flame size={12} className="text-[#FF4500]" />
+                <span>Target Subreddit</span>
+              </span>
+              <span className="text-[10px] font-mono text-slate-500">
+                Select a developer community or enter a custom one
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              {POPULAR_SUBREDDITS.map((sub) => {
+                const isSelected = redditSubreddit === sub;
+                return (
+                  <button
+                    key={sub}
+                    type="button"
+                    onClick={() => setRedditSubreddit(sub)}
+                    className={`px-3 py-2 rounded-lg text-xs font-mono transition-all cursor-pointer min-h-[44px] flex items-center gap-1.5 ${
+                      isSelected
+                        ? "bg-[#FF4500] text-white font-bold shadow-md shadow-[#FF4500]/20"
+                        : "bg-white/[0.03] text-slate-300 hover:bg-white/[0.08] border border-white/[0.06]"
+                    }`}
+                  >
+                    <span>r/{sub}</span>
+                  </button>
+                );
+              })}
+              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] min-h-[44px]">
+                <span className="text-xs font-mono text-slate-500">r/</span>
+                <input
+                  type="text"
+                  value={redditSubreddit}
+                  onChange={(e) => setRedditSubreddit(e.target.value.replace(/^r\//, ""))}
+                  placeholder="custom_subreddit"
+                  className="w-36 bg-transparent text-xs font-mono text-white placeholder:text-slate-600 focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Presets / Templates */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-mono text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles size={12} className="text-[#FF4500]" />
+                <span>Developer Discussion Presets (u/SamarthBuilds_)</span>
+              </span>
+              <span className="text-[10px] font-mono text-slate-500">
+                Click to load title, body, and target subreddit
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+              {(redditData?.templates || []).map((t) => {
+                const isSelected = activeRedditTemplateId === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => handleSelectRedditTemplate(t)}
+                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+                      isSelected
+                        ? "bg-[#FF4500]/10 border-[#FF4500]/40 shadow-md shadow-[#FF4500]/5"
+                        : "bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04] hover:border-white/[0.12]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-mono font-bold text-[#FF4500] uppercase tracking-wider">
+                        r/{t.targetSubreddit}
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-500">
+                        {t.body.length} chars
+                      </span>
+                    </div>
+                    <span className="text-xs font-semibold text-white line-clamp-2">
+                      {t.title}
+                    </span>
+                    <span className="text-[11px] text-slate-400 line-clamp-2 font-mono">
+                      {t.body}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Post Composer */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-mono text-slate-300 flex items-center gap-1.5">
+                <MessageSquare size={12} className="text-[#FF4500]" />
+                <span>Post Composer (Markdown Formatted)</span>
+              </label>
+              <span
+                className={`text-[10px] font-mono ${
+                  redditTitle.length > 300
+                    ? "text-rose-400 font-bold"
+                    : "text-slate-500"
+                }`}
+              >
+                Title: {redditTitle.length}/300 chars
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <input
+                type="text"
+                value={redditTitle}
+                onChange={(e) => setRedditTitle(e.target.value)}
+                placeholder="Post title (e.g. Built an open-source edge Telegram lead qualifier in TypeScript)"
+                maxLength={300}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/[0.08] text-xs text-white placeholder:text-slate-600 focus:border-[#FF4500] focus:outline-none font-mono"
+              />
+
+              <textarea
+                value={redditBody}
+                onChange={(e) => setRedditBody(e.target.value)}
+                placeholder="Write markdown post content (headers, bullet points, code blocks, links)..."
+                rows={7}
+                className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/[0.08] text-xs text-white placeholder:text-slate-600 focus:border-[#FF4500] focus:outline-none resize-none font-mono leading-relaxed"
+              />
+
+              {/* Live Reddit Success Banner */}
+              {publishedRedditUrl && (
+                <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-3 text-emerald-300 text-xs font-mono">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                    <span>Post successfully submitted to <strong>r/{redditSubreddit}</strong>!</span>
+                  </div>
+                  <a
+                    href={publishedRedditUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 font-bold flex items-center gap-1 shrink-0 min-h-[36px]"
+                  >
+                    <span>View on Reddit</span>
+                    <ExternalLink size={12} />
+                  </a>
+                </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <p className="text-[11px] font-mono text-slate-500">
+                  <span className="text-emerald-400 flex items-center gap-1">
+                    <ShieldCheck size={12} />
+                    Submits under u/SamarthBuilds_ with auto-refreshed wildcard token.
+                  </span>
+                </p>
+
+                <button
+                  type="button"
+                  onClick={handlePostReddit}
+                  disabled={!redditTitle.trim() || !redditBody.trim() || !redditSubreddit.trim() || isPostingReddit || redditTitle.length > 300}
+                  className="px-6 py-2.5 rounded-xl bg-[#FF4500] hover:bg-[#FF5722] disabled:bg-white/10 text-white disabled:text-slate-500 font-bold text-xs font-mono flex items-center justify-center gap-2 transition-all cursor-pointer disabled:cursor-not-allowed min-h-[44px] shadow-md shadow-[#FF4500]/20"
+                >
+                  <Send size={13} className={isPostingReddit ? "animate-pulse" : ""} />
+                  <span>{isPostingReddit ? "Submitting to Reddit..." : `Broadcast to r/${redditSubreddit || "..."}`}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Submissions Feed */}
+          {redditData?.recentPosts && redditData.recentPosts.length > 0 && (
+            <div className="space-y-2 pt-2 border-t border-white/[0.06]">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-mono text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <Award size={12} className="text-[#FF4500]" />
+                  <span>Recent Submissions (u/SamarthBuilds_)</span>
+                </span>
+                <span className="text-[10px] font-mono text-slate-500">
+                  Live from Reddit API
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                {redditData.recentPosts.map((post) => (
+                  <div
+                    key={post.id}
+                    className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between gap-3"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono font-bold text-[#FF4500]">
+                          r/{post.subreddit}
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-500">
+                          Score: {post.score} • {post.numComments} comments
+                        </span>
+                      </div>
+                      <p className="text-xs font-medium text-white truncate mt-0.5">
+                        {post.title}
+                      </p>
+                    </div>
+                    <a
+                      href={post.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white shrink-0 min-h-[44px] flex items-center justify-center"
+                      title="Open submission"
+                    >
+                      <ExternalLink size={13} />
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Channels List */}

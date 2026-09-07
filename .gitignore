@@ -35,3 +35,5 @@ backups/
 app-store.json
 *.tsbuildinfo
 .repos/
+sam-codeai-manager/
+.reddit-tokens.json
