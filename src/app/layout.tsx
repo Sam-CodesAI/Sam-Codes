@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     title: "SAM CODES — Intelligent Digital Systems & Autonomous Workflows",
     description:
       "Samarth Nimangre — AI Developer & Automation Engineer. Building autonomous agent workflows, edge webhook integrations, and production web applications.",
-    creator: "@Tempest_Store",
+    creator: "@SamCodesAI",
   },
   robots: {
     index: true,
@@ -81,9 +81,10 @@ const jsonLd = {
         "name": "SAM CODES",
       },
       "sameAs": [
+        "https://t.me/samarth_master_bot",
         "https://www.instagram.com/samarth.buildss/",
         "https://www.linkedin.com/in/samarth-nimangre-0a3b02421/",
-        "https://x.com/Tempest_Store",
+        "https://x.com/SamCodesAI",
         "https://github.com/Sam-CodesAI",
         "https://www.reddit.com/u/SamarthBuilds_/",
       ],

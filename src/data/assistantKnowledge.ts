@@ -32,15 +32,15 @@ export const assistantKnowledgeBase: KnowledgeQnA[] = [
   {
     id: "show-me-sams-work",
     question: "Show me Sam's work.",
-    keywords: ["work", "projects", "lab", "portfolio", "examples", "case study", "show"],
+    keywords: ["work", "projects", "lab", "portfolio", "examples", "case study", "show", "teleflow", "bot"],
     answer:
-      "Under Sam's strict zero-fabrication policy, no fake client logos, mock testimonials, or imaginary metrics are ever shown. In 'The Lab' section, you can inspect the Case Study Blueprint to see his rigorous engineering standards, or propose a custom build to be developed and published.",
+      "Under Sam's strict zero-fabrication policy, only real verified engineering is showcased. In 'The Lab' section, check out Teleflow Agent (github.com/Sam-CodesAI/teleflow-agent) — an autonomous Telegram AI lead qualifier running at ~284ms latency with interactive inline keyboards, active 24/7 on Telegram (@samarth_master_bot).",
   },
   {
     id: "how-to-work-with-sam",
     question: "How can I work with Sam?",
-    keywords: ["work", "hire", "contact", "reach", "collaborate", "start", "dm", "message"],
-    answer: `You can reach out directly via DM on Instagram (${CONTACT_CONFIG.INSTAGRAM_HANDLE}), LinkedIn (${CONTACT_CONFIG.LINKEDIN_LABEL}), or X (${CONTACT_CONFIG.X_HANDLE}), or email him at ${CONTACT_CONFIG.EMAIL_ADDRESS}. Sam works directly with clients on clear, milestone-based scopes with daily progress updates.`,
+    keywords: ["work", "hire", "contact", "reach", "collaborate", "start", "dm", "message", "telegram", "book"],
+    answer: `You can chat immediately with our 24/7 Telegram AI Qualifier (${CONTACT_CONFIG.TELEGRAM_BOT_HANDLE}) or DM Sam directly on Telegram (${CONTACT_CONFIG.TELEGRAM_PERSONAL_HANDLE}), Instagram (${CONTACT_CONFIG.INSTAGRAM_HANDLE}), LinkedIn (${CONTACT_CONFIG.LINKEDIN_LABEL}), or email ${CONTACT_CONFIG.EMAIL_ADDRESS}. You can also schedule an architecture session directly at ${CONTACT_CONFIG.CAL_URL}.`,
   },
   {
     id: "who-is-sam",

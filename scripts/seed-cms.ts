@@ -129,15 +129,16 @@ export async function seedCMS(): Promise<void> {
 
   // 3. Social Links
   const socials = [
-    { id: "instagram", platform: "Instagram", display_name: "Instagram", username: "@samarth.buildss", url: "https://www.instagram.com/samarth.buildss/", description: "Fastest response for project chats, ideas, and quick questions", priority: 1, is_visible: true },
-    { id: "linkedin", platform: "LinkedIn", display_name: "LinkedIn", username: "Samarth Nimangre", url: "https://www.linkedin.com/in/samarth-nimangre-0a3b02421/", description: "Professional networking, collaboration scopes, and career journey", priority: 2, is_visible: true },
-    { id: "twitter", platform: "Twitter", display_name: "X (Twitter)", username: "@Tempest_Store", url: "https://x.com/Tempest_Store", description: "Daily tech thoughts, builder updates, and AI developments", priority: 3, is_visible: true },
-    { id: "reddit", platform: "Reddit", display_name: "Reddit", username: "u/SamarthBuilds_", url: "https://www.reddit.com/u/SamarthBuilds_/", description: "Participating in engineering and builder communities", priority: 4, is_visible: true },
+    { id: "telegram", platform: "Telegram", display_name: "Telegram (AI Bot)", username: "@samarth_master_bot", url: "https://t.me/samarth_master_bot", description: "24/7 AI lead qualification, instant requirement scoping, and direct message routing", priority: 1, is_visible: true },
+    { id: "instagram", platform: "Instagram", display_name: "Instagram", username: "@samarth.buildss", url: "https://www.instagram.com/samarth.buildss/", description: "Fastest response for project chats, ideas, and quick questions", priority: 2, is_visible: true },
+    { id: "linkedin", platform: "LinkedIn", display_name: "LinkedIn", username: "Samarth Nimangre", url: "https://www.linkedin.com/in/samarth-nimangre-0a3b02421/", description: "Professional networking, collaboration scopes, and career journey", priority: 3, is_visible: true },
+    { id: "twitter", platform: "Twitter", display_name: "X (Twitter)", username: "@SamCodesAI", url: "https://x.com/SamCodesAI", description: "Daily tech thoughts, builder updates, and AI developments", priority: 4, is_visible: true },
     { id: "github", platform: "Github", display_name: "GitHub", username: "Sam-CodesAI", url: "https://github.com/Sam-CodesAI", description: "Open source contributions, build repositories, and clean architectures", priority: 5, is_visible: true },
+    { id: "reddit", platform: "Reddit", display_name: "Reddit", username: "u/SamarthBuilds_", url: "https://www.reddit.com/u/SamarthBuilds_/", description: "Participating in engineering and builder communities", priority: 6, is_visible: true },
   ];
 
   const { error: soErr } = await supabase.from("social_links").upsert(socials);
-  console.log("Socials seed:", soErr ? soErr.message : "OK (5 links)");
+  console.log("Socials seed:", soErr ? soErr.message : "OK (6 links)");
 
   // 4. Assistant Knowledge Base
   const knowledge = [
@@ -170,9 +171,9 @@ export async function seedCMS(): Promise<void> {
     },
     {
       id: "show-me-sams-work",
-      question: "Show me Sam work.",
-      keywords: ["work", "projects", "lab", "portfolio", "examples", "case study", "show"],
-      answer: "Under Sam strict zero-fabrication policy, no fake client logos, mock testimonials, or imaginary metrics are ever shown. In The Lab section, you can inspect verified production case studies, live experiments in progress, and the Case Study Blueprint.",
+      question: "Show me Sam's work.",
+      keywords: ["work", "projects", "lab", "portfolio", "examples", "case study", "show", "teleflow", "bot"],
+      answer: "Under Sam's strict zero-fabrication policy, only real verified engineering is showcased. In 'The Lab' section, check out Teleflow Agent (github.com/Sam-CodesAI/teleflow-agent) — an autonomous Telegram AI lead qualifier running at ~284ms latency with interactive inline keyboards, active 24/7 on Telegram (@samarth_master_bot).",
       category: "PROJECTS",
       order_index: 4,
       status: "PUBLISHED",
@@ -180,8 +181,8 @@ export async function seedCMS(): Promise<void> {
     {
       id: "how-to-work-with-sam",
       question: "How can I work with Sam?",
-      keywords: ["work", "hire", "contact", "reach", "collaborate", "start", "dm", "message"],
-      answer: "You can reach out directly via DM on Instagram (@samarth.buildss), LinkedIn (Samarth Nimangre), or X (@Tempest_Store), or email him at samarthknimangre@gmail.com. Sam works directly with clients on clear, milestone-based scopes with daily progress updates.",
+      keywords: ["work", "hire", "contact", "reach", "collaborate", "start", "dm", "message", "telegram", "book"],
+      answer: "You can chat immediately with our 24/7 Telegram AI Qualifier (@samarth_master_bot) or DM Sam directly on Telegram (@Samarth1306), Instagram (@samarth.buildss), LinkedIn, or email samarthknimangre@gmail.com. You can also schedule an architecture session at https://cal.com/samarth/discovery.",
       category: "CONTACT",
       order_index: 5,
       status: "PUBLISHED",

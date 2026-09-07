@@ -3,7 +3,7 @@ export interface SocialLink {
   url: string;
   handleOrLabel: string;
   ariaLabel: string;
-  iconName: "Instagram" | "Linkedin" | "Twitter" | "Reddit" | "Github" | "Mail";
+  iconName: "Instagram" | "Linkedin" | "Twitter" | "Reddit" | "Github" | "Mail" | "Telegram";
   directActionLabel: string;
   priorityBadge?: string;
   description?: string;
@@ -14,21 +14,31 @@ export interface SocialLink {
  * Update these constants whenever handles, URLs, or email addresses change.
  */
 export const CONTACT_CONFIG = {
+  // Telegram - 24/7 AI Bot and Personal DM
+  TELEGRAM_BOT_URL: "https://t.me/samarth_master_bot",
+  TELEGRAM_BOT_HANDLE: "@samarth_master_bot",
+  TELEGRAM_PERSONAL_URL: "https://t.me/Samarth1306",
+  TELEGRAM_PERSONAL_HANDLE: "@Samarth1306",
+
   INSTAGRAM_URL: "https://www.instagram.com/samarth.buildss/",
   INSTAGRAM_HANDLE: "@samarth.buildss",
 
   LINKEDIN_URL: "https://www.linkedin.com/in/samarth-nimangre-0a3b02421/",
   LINKEDIN_LABEL: "Samarth Nimangre",
 
-  // X (Twitter) URL & Handle - easily updated when brand handle changes
-  X_URL: "https://x.com/Tempest_Store",
-  X_HANDLE: "@Tempest_Store",
+  // X (Twitter) URL & Handle — unified developer brand
+  X_URL: "https://x.com/SamCodesAI",
+  X_HANDLE: "@SamCodesAI",
 
   REDDIT_URL: "https://www.reddit.com/u/SamarthBuilds_/",
   REDDIT_HANDLE: "u/SamarthBuilds_",
 
   GITHUB_URL: "https://github.com/Sam-CodesAI",
   GITHUB_HANDLE: "Sam-CodesAI",
+
+  // Architecture Call Scheduling
+  CAL_URL: "https://cal.com/samarth/discovery",
+  CAL_LABEL: "Book Architecture Call",
 
   // Primary contact email address
   EMAIL_ADDRESS: "samarthknimangre@gmail.com",
@@ -38,14 +48,25 @@ export const CONTACT_CONFIG = {
 
 /**
  * Contact pathways ordered by priority:
- * 1. Instagram
- * 2. LinkedIn
- * 3. X
- * 4. Reddit
- * 5. GitHub
- * 6. Email
+ * 1. Telegram (24/7 AI Qualifier)
+ * 2. Instagram (Top Preference for DMs)
+ * 3. LinkedIn (Professional Engagements)
+ * 4. X (Twitter - Tech Discussions)
+ * 5. GitHub (Open Source Repositories)
+ * 6. Reddit (Builder Community)
+ * 7. Email (Formal Proposals & RFPs)
  */
 export const socialsData: SocialLink[] = [
+  {
+    platform: "Telegram",
+    url: CONTACT_CONFIG.TELEGRAM_BOT_URL,
+    handleOrLabel: CONTACT_CONFIG.TELEGRAM_BOT_HANDLE,
+    ariaLabel: "Chat with Sam's AI Qualifier bot on Telegram",
+    iconName: "Telegram",
+    directActionLabel: "Chat with AI Bot",
+    priorityBadge: "24/7 Live Bot",
+    description: "Instant requirement qualification, scope assessment, and real-time message routing",
+  },
   {
     platform: "Instagram",
     url: CONTACT_CONFIG.INSTAGRAM_URL,
@@ -73,8 +94,18 @@ export const socialsData: SocialLink[] = [
     ariaLabel: "Message Sam on X (Twitter)",
     iconName: "Twitter",
     directActionLabel: "Send a DM on X",
-    priorityBadge: "DMs Open",
-    description: "Tech discussions, build progress, and direct messaging",
+    priorityBadge: "Tech & Builds",
+    description: "Tech discussions, daily build progress, and direct messaging",
+  },
+  {
+    platform: "GitHub",
+    url: CONTACT_CONFIG.GITHUB_URL,
+    handleOrLabel: CONTACT_CONFIG.GITHUB_HANDLE,
+    ariaLabel: "View Sam's GitHub Profile",
+    iconName: "Github",
+    directActionLabel: "View Repositories",
+    priorityBadge: "Open Source",
+    description: "Production code repositories, agentic workflows, and verified benchmarks",
   },
   {
     platform: "Reddit",
@@ -84,15 +115,6 @@ export const socialsData: SocialLink[] = [
     iconName: "Reddit",
     directActionLabel: "Chat on Reddit",
     description: "Builder community, discussions, and open-source feedback",
-  },
-  {
-    platform: "GitHub",
-    url: CONTACT_CONFIG.GITHUB_URL,
-    handleOrLabel: CONTACT_CONFIG.GITHUB_HANDLE,
-    ariaLabel: "View Sam's GitHub Profile",
-    iconName: "Github",
-    directActionLabel: "View Repositories",
-    description: "Open source code, repositories, and build activity",
   },
   {
     platform: "Email",

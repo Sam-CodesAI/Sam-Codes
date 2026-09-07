@@ -110,7 +110,25 @@ function GithubIcon({ className }: { className?: string }) {
   );
 }
 
+function TelegramIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m22 2-7 20-4-9-9-4Z" />
+      <path d="M22 2 11 13" />
+    </svg>
+  );
+}
+
 const BRAND_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  Telegram: TelegramIcon,
   Instagram: InstagramIcon,
   Linkedin: LinkedinIcon,
   Twitter: XIcon,
@@ -208,23 +226,23 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
         </h2>
 
         <p className="text-base sm:text-lg text-slate-300 max-w-2xl font-normal leading-relaxed">
-          The fastest way to reach me is via direct message on Instagram, LinkedIn, or X. For project briefs or scopes, feel free to send an email.
+          The fastest way to reach me is via our 24/7 Telegram AI Qualifier (@samarth_master_bot) or direct message on Instagram and LinkedIn. For project briefs or scopes, feel free to send an email.
         </p>
       </MotionReveal>
 
-      {/* Primary Social Pathways Grid (Prioritized as requested: Insta, LinkedIn, X, Reddit, Github) */}
+      {/* Primary Social Pathways Grid */}
       <div className="mb-14">
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
-            Preferred Channels (Direct Messaging)
+            Preferred Channels (Direct Messaging &amp; AI Bot)
           </span>
           <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1.5">
             <Clock size={12} />
-            <span>Fastest reply on Instagram &amp; LinkedIn</span>
+            <span>24/7 Live AI Bot on Telegram · Fast DMs on Instagram</span>
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {socials
             .filter((s) => s.platform !== "Email")
             .map((item) => {
