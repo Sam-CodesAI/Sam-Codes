@@ -113,7 +113,7 @@ export function getActiveSessionCount(): number {
 /**
  * Extract email address from input text.
  */
-function extractEmail(text: string): string | undefined {
+export function extractEmail(text: string): string | undefined {
   const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/;
   const match = text.match(emailRegex);
   return match ? match[0].trim() : undefined;
@@ -122,7 +122,7 @@ function extractEmail(text: string): string | undefined {
 /**
  * Extract Telegram handle or social handle from input text.
  */
-function extractHandle(text: string): string | undefined {
+export function extractHandle(text: string): string | undefined {
   const handleRegex = /(?:^|\s)@([a-zA-Z0-9_]{3,32})\b/;
   const match = text.match(handleRegex);
   return match ? `@${match[1]}` : undefined;
@@ -131,7 +131,7 @@ function extractHandle(text: string): string | undefined {
 /**
  * Extract timeline signals from text.
  */
-function extractTimeline(text: string): string | undefined {
+export function extractTimeline(text: string): string | undefined {
   const lower = text.toLowerCase();
   if (lower.includes("asap") || lower.includes("immediately") || lower.includes("urgent")) {
     return "ASAP / Immediate priority";
@@ -153,7 +153,7 @@ function extractTimeline(text: string): string | undefined {
 /**
  * Extract prospect's stated name if explicitly introduced.
  */
-function extractStatedName(text: string): string | undefined {
+export function extractStatedName(text: string): string | undefined {
   const patterns = [
     /(?:my name is|i am|i'm|this is)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i,
     /(?:call me)\s+([A-Z][a-z]+)/i,
@@ -170,7 +170,7 @@ function extractStatedName(text: string): string | undefined {
 /**
  * Match user request to one of Samarth's verified service offerings.
  */
-function matchService(text: string): { title: string; tagline: string; deliverables: string[] } {
+export function matchService(text: string): { title: string; tagline: string; deliverables: string[] } {
   const lower = text.toLowerCase();
 
   if (

@@ -19,12 +19,17 @@ import {
 import { notifyAdminOnTelegram } from "@/lib/telegram/client";
 import { CONTACT_CONFIG } from "@/data/socials";
 import { profileData } from "@/data/profile";
-import type {
-  TelegramSession,
-  AgentTurnResult,
-  UserContext,
-  ConversationPhase,
-  LeadDraft,
+import {
+  type TelegramSession,
+  type AgentTurnResult,
+  type UserContext,
+  type ConversationPhase,
+  type LeadDraft,
+  extractEmail,
+  extractHandle,
+  extractTimeline,
+  extractStatedName,
+  matchService,
 } from "@/lib/telegram/agent";
 
 interface GeminiExtractionResponse {
@@ -178,7 +183,7 @@ export async function executeGeminiTurn(
     }
   }
 
-  // Merge extracted lead details into session leadDraft
+  // 1. Merge extracted lead details from Gemini
   if (parsed.extractedLead) {
     const ext = parsed.extractedLead;
     if (ext.name && !session.leadDraft.name) session.leadDraft.name = ext.name;
@@ -189,9 +194,40 @@ export async function executeGeminiTurn(
     if (ext.estimatedScope) session.leadDraft.estimatedScope = ext.estimatedScope;
   }
 
-  // Update session phase
-  if (parsed.suggestedPhase) {
+  // 2. Fallback entity extraction from raw text
+  const rxEmail = extractEmail(incomingText);
+  const rxHandle = extractHandle(incomingText);
+  const rxTimeline = extractTimeline(incomingText);
+  const rxName = extractStatedName(incomingText);
+
+  if (rxEmail) session.leadDraft.handleOrEmail = rxEmail;
+  else if (rxHandle && !session.leadDraft.handleOrEmail?.includes("@") && !session.leadDraft.handleOrEmail?.includes(".")) {
+    session.leadDraft.handleOrEmail = rxHandle;
+  }
+  if (rxTimeline) session.leadDraft.timeline = rxTimeline;
+  if (rxName && !session.leadDraft.name) session.leadDraft.name = rxName;
+
+  if (!session.leadDraft.serviceRequested) {
+    const matched = matchService(incomingText);
+    session.leadDraft.serviceRequested = matched.title;
+  }
+  if (!session.leadDraft.problemBrief && incomingText.length > 10) {
+    session.leadDraft.problemBrief = incomingText;
+  }
+
+  // 3. Multi-turn State Machine Transition
+  if (parsed.suggestedPhase && parsed.suggestedPhase !== "INITIAL") {
     session.phase = parsed.suggestedPhase;
+  } else if (session.phase === "INITIAL") {
+    session.phase = "DISCOVERY";
+  }
+
+  if (
+    session.leadDraft.serviceRequested &&
+    session.phase === "DISCOVERY" &&
+    (session.messagesCount >= 2 || incomingText.length > 25)
+  ) {
+    session.phase = "QUALIFICATION";
   }
 
   // Check if we have sufficient info to qualify and log an inquiry into Supabase
@@ -238,7 +274,7 @@ export async function executeGeminiTurn(
         `• Scope: ${session.leadDraft.estimatedScope || "Standard"}\n` +
         `• Contact: ${clientContact}\n` +
         `• Telegram Chat ID: ${session.chatId}\n` +
-        `• Engine: Google Gemini 3.6 Flash (Autonomous Qualification)`,
+        `• Engine: Google Gemini 3.1 Flash (Autonomous Qualification)`,
     });
 
     session.inquiryId = inquiryCreated.id;
@@ -252,7 +288,7 @@ export async function executeGeminiTurn(
       {
         chatId: session.chatId,
         service: session.leadDraft.serviceRequested,
-        model: "gemini-3.6-flash",
+        model: "gemini-3.1-flash-lite",
       }
     );
 
