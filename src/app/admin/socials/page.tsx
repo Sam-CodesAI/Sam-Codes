@@ -18,11 +18,60 @@ import {
   MessageSquare,
   Flame,
   Award,
+  Settings,
+  Link2,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import SaveBar from "@/components/admin/SaveBar";
 import { useToast } from "@/components/admin/ToastProvider";
 import { SocialLink } from "@/data/socials";
+
+function LinkedinIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+      <rect width="4" height="12" x="2" y="9" />
+      <circle cx="4" cy="4" r="2" />
+    </svg>
+  );
+}
+
+interface LinkedInProfileInfo {
+  connected: boolean;
+  name: string;
+  email?: string;
+  picture?: string;
+  personUrn: string;
+  profileUrl: string;
+  expiresInDays?: number;
+}
+
+interface LinkedInPostTemplate {
+  id: string;
+  category: "ENGINEERING_INSIGHT" | "OPEN_SOURCE" | "BUILD_IN_PUBLIC" | "CASE_STUDY";
+  title: string;
+  text: string;
+}
+
+interface LinkedInStatusData {
+  success: boolean;
+  hasCredentials: boolean;
+  clientId?: string;
+  connected: boolean;
+  profile?: LinkedInProfileInfo;
+  authUrl?: string | null;
+  redirectUri?: string;
+  templates?: LinkedInPostTemplate[];
+  error?: string;
+}
 
 interface RedditAccountInfo {
   connected: boolean;
@@ -136,6 +185,21 @@ export default function AdminSocialsPage() {
   const [publishedRedditUrl, setPublishedRedditUrl] = useState<string | null>(null);
   const [activeRedditTemplateId, setActiveRedditTemplateId] = useState<string | null>(null);
 
+  // LinkedIn Personal Account Studio State
+  const [linkedInData, setLinkedInData] = useState<LinkedInStatusData | null>(null);
+  const [isLoadingLinkedIn, setIsLoadingLinkedIn] = useState(false);
+  const [linkedInText, setLinkedInText] = useState("");
+  const [linkedInArticleUrl, setLinkedInArticleUrl] = useState("");
+  const [isPostingLinkedIn, setIsPostingLinkedIn] = useState(false);
+  const [publishedLinkedInUrl, setPublishedLinkedInUrl] = useState<string | null>(null);
+  const [activeLinkedInTemplateId, setActiveLinkedInTemplateId] = useState<string | null>(null);
+
+  // App Credentials Setup Drawer State
+  const [showLinkedInConfig, setShowLinkedInConfig] = useState(false);
+  const [inputLinkedInClientId, setInputLinkedInClientId] = useState("");
+  const [inputLinkedInClientSecret, setInputLinkedInClientSecret] = useState("");
+  const [isSavingLinkedInCreds, setIsSavingLinkedInCreds] = useState(false);
+
   const fetchSocials = async () => {
     try {
       setIsLoading(true);
@@ -176,6 +240,21 @@ export default function AdminSocialsPage() {
       // Non-blocking
     } finally {
       setIsLoadingReddit(false);
+    }
+  };
+
+  const fetchLinkedInStatus = async () => {
+    try {
+      setIsLoadingLinkedIn(true);
+      const res = await fetch("/api/admin/linkedin");
+      if (res.ok) {
+        const data: LinkedInStatusData = await res.json();
+        setLinkedInData(data);
+      }
+    } catch {
+      // Non-blocking
+    } finally {
+      setIsLoadingLinkedIn(false);
     }
   };
 
@@ -225,13 +304,17 @@ export default function AdminSocialsPage() {
     fetchSocials();
     fetchTwitterStatus();
     fetchRedditStatus();
+    fetchLinkedInStatus();
 
-    // Check query params for OAuth 2.0 callback return
+    // Check query params for OAuth return
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
       const twitterAuth = urlParams.get("twitter_auth");
       const twitterError = urlParams.get("twitter_error");
       const twitterCode = urlParams.get("twitter_code");
+
+      const linkedInAuth = urlParams.get("linkedin_auth");
+      const linkedInError = urlParams.get("linkedin_error");
 
       if (twitterAuth === "success") {
         showToast("X (@Sam_CodeAI) authenticated successfully with auto-refresh!", "success");
@@ -242,6 +325,15 @@ export default function AdminSocialsPage() {
         window.history.replaceState({}, document.title, window.location.pathname);
       } else if (twitterCode) {
         handleExchangeCode(twitterCode);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      if (linkedInAuth === "success") {
+        showToast("Connected to LinkedIn successfully!", "success");
+        window.history.replaceState({}, document.title, window.location.pathname);
+        fetchLinkedInStatus();
+      } else if (linkedInError) {
+        showToast(`LinkedIn Auth Error: ${decodeURIComponent(linkedInError)}`, "error");
         window.history.replaceState({}, document.title, window.location.pathname);
       }
     }
@@ -334,6 +426,79 @@ export default function AdminSocialsPage() {
       showToast("Network error while submitting to Reddit", "error");
     } finally {
       setIsPostingReddit(false);
+    }
+  };
+
+  const handleSaveLinkedInCredentials = async () => {
+    if (!inputLinkedInClientId.trim() || !inputLinkedInClientSecret.trim()) {
+      showToast("Please enter both Client ID and Client Secret", "error");
+      return;
+    }
+    setIsSavingLinkedInCreds(true);
+    try {
+      const res = await fetch("/api/admin/linkedin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "save_credentials",
+          clientId: inputLinkedInClientId.trim(),
+          clientSecret: inputLinkedInClientSecret.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast("LinkedIn App credentials saved!", "success");
+        setShowLinkedInConfig(false);
+        setInputLinkedInClientId("");
+        setInputLinkedInClientSecret("");
+        await fetchLinkedInStatus();
+      } else {
+        showToast(data.error || "Failed to save credentials", "error");
+      }
+    } catch {
+      showToast("Network error saving credentials", "error");
+    } finally {
+      setIsSavingLinkedInCreds(false);
+    }
+  };
+
+  const handleSelectLinkedInTemplate = (template: LinkedInPostTemplate) => {
+    setLinkedInText(template.text);
+    setActiveLinkedInTemplateId(template.id);
+    setPublishedLinkedInUrl(null);
+    showToast(`Loaded: ${template.title.slice(0, 32)}...`, "info");
+  };
+
+  const handlePostLinkedIn = async () => {
+    if (!linkedInText.trim() || isPostingLinkedIn) return;
+    setIsPostingLinkedIn(true);
+    setPublishedLinkedInUrl(null);
+
+    try {
+      const res = await fetch("/api/admin/linkedin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "submit_post",
+          text: linkedInText.trim(),
+          url: linkedInArticleUrl.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast("Post published successfully to LinkedIn!", "success");
+        setPublishedLinkedInUrl(data.postUrl || "https://www.linkedin.com/feed/");
+        setLinkedInText("");
+        setLinkedInArticleUrl("");
+        setActiveLinkedInTemplateId(null);
+        await fetchLinkedInStatus();
+      } else {
+        showToast(data.error || "Failed to publish to LinkedIn", "error");
+      }
+    } catch {
+      showToast("Network error while publishing to LinkedIn", "error");
+    } finally {
+      setIsPostingLinkedIn(false);
     }
   };
 
@@ -965,6 +1130,332 @@ export default function AdminSocialsPage() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* LinkedIn Personal Account Studio (Samarth Nimangre) */}
+        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08] backdrop-blur-sm space-y-6">
+          {/* Bridge Status Bar */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-white/[0.06]">
+            <div className="flex items-start sm:items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-[#0A66C2]/10 border border-[#0A66C2]/30 flex items-center justify-center font-bold text-[#0A66C2] text-base shadow-inner shrink-0">
+                <LinkedinIcon className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="text-sm font-bold text-white">
+                    LinkedIn Personal Account Studio
+                  </h3>
+                  {linkedInData?.connected ? (
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 text-[10px] font-mono flex items-center gap-1">
+                      <ShieldCheck size={11} />
+                      <span>Connected • Live Profile Active</span>
+                    </span>
+                  ) : linkedInData?.hasCredentials ? (
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/25 text-[10px] font-mono flex items-center gap-1">
+                      <Key size={11} />
+                      <span>App Configured · Click Connect</span>
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/25 text-[10px] font-mono flex items-center gap-1">
+                      <Settings size={11} />
+                      <span>Setup Required · Configure App Keys</span>
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono text-slate-400 mt-1">
+                  <span>
+                    Member:{" "}
+                    <a
+                      href="https://www.linkedin.com/in/samarth-nimangre-0a3b02421/"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[#0A66C2] hover:underline inline-flex items-center gap-1 font-semibold"
+                    >
+                      <span>{linkedInData?.profile?.name || "Samarth Nimangre"}</span>
+                      <ExternalLink size={10} />
+                    </a>
+                  </span>
+                  <span>•</span>
+                  <span>Professional Network Feed</span>
+                  {linkedInData?.profile?.expiresInDays !== undefined && (
+                    <>
+                      <span>•</span>
+                      <span className="flex items-center gap-1 text-slate-400">
+                        <Clock size={11} />
+                        Token: {linkedInData.profile.expiresInDays}d remaining
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              {linkedInData?.authUrl ? (
+                <a
+                  href={linkedInData.authUrl}
+                  className="px-4 py-2 rounded-xl bg-[#0A66C2] hover:bg-[#004182] text-white font-bold text-xs font-mono flex items-center gap-1.5 shadow-lg shadow-[#0A66C2]/20 transition-all cursor-pointer min-h-[44px]"
+                >
+                  <Zap size={14} />
+                  <span>{linkedInData.connected ? "Reconnect Account" : "Connect with LinkedIn"}</span>
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowLinkedInConfig(true)}
+                  className="px-4 py-2 rounded-xl bg-[#0A66C2] hover:bg-[#004182] text-white font-bold text-xs font-mono flex items-center gap-1.5 shadow-lg shadow-[#0A66C2]/20 transition-all cursor-pointer min-h-[44px]"
+                >
+                  <Key size={14} />
+                  <span>Configure App Keys</span>
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={() => setShowLinkedInConfig(!showLinkedInConfig)}
+                className="px-3 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 font-mono text-xs border border-white/[0.08] transition-all cursor-pointer min-h-[44px]"
+                title="Configure LinkedIn Developer App credentials"
+              >
+                <Settings size={14} />
+              </button>
+
+              <button
+                type="button"
+                onClick={fetchLinkedInStatus}
+                disabled={isLoadingLinkedIn}
+                className="px-3 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 font-mono text-xs border border-white/[0.08] transition-all cursor-pointer min-h-[44px]"
+                title="Refresh sync status"
+              >
+                <RefreshCw size={13} className={isLoadingLinkedIn ? "animate-spin" : ""} />
+              </button>
+            </div>
+          </div>
+
+          {/* Credentials Setup Drawer */}
+          {(showLinkedInConfig || !linkedInData?.hasCredentials) && (
+            <div className="p-4 rounded-xl bg-black/50 border border-white/[0.1] space-y-4 animate-in fade-in duration-200">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold text-[#0A66C2] flex items-center gap-1.5">
+                  <Key size={13} />
+                  <span>LinkedIn Developer App Credentials</span>
+                </span>
+                <span className="text-[11px] font-mono text-slate-500">
+                  Required for OAuth 2.0 &amp; UGC Post API
+                </span>
+              </div>
+
+              <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.06] text-[11px] font-mono text-slate-300 space-y-2 leading-relaxed">
+                <p className="text-white font-semibold">How to connect LinkedIn in 60 seconds:</p>
+                <ol className="list-decimal list-inside space-y-1 text-slate-400">
+                  <li>
+                    Visit{" "}
+                    <a
+                      href="https://www.linkedin.com/developers/apps"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[#0A66C2] hover:underline font-bold inline-flex items-center gap-0.5"
+                    >
+                      <span>LinkedIn Developer Portal</span>
+                      <ExternalLink size={10} />
+                    </a>{" "}
+                    and create or select your App.
+                  </li>
+                  <li>
+                    Under the <strong>Products</strong> tab, enable <strong>&apos;Sign In with LinkedIn using OpenID Connect&apos;</strong> and <strong>&apos;Share on LinkedIn&apos;</strong>.
+                  </li>
+                  <li>
+                    Under the <strong>Auth</strong> tab, add this <strong>Authorized redirect URL</strong>:
+                    <div className="mt-1 p-2 rounded bg-black/60 text-sky-400 select-all break-all border border-white/[0.06]">
+                      {linkedInData?.redirectUri || "https://sam-codes.vercel.app/api/admin/linkedin/callback"}
+                    </div>
+                  </li>
+                  <li>Paste your <strong>Client ID</strong> and <strong>Client Secret</strong> below to connect your profile:</li>
+                </ol>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
+                    Client ID
+                  </label>
+                  <input
+                    type="text"
+                    value={inputLinkedInClientId}
+                    onChange={(e) => setInputLinkedInClientId(e.target.value)}
+                    placeholder="e.g. 78xxxxxxxxxxxx"
+                    className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-white placeholder:text-slate-600 focus:border-[#0A66C2] focus:outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
+                    Client Secret
+                  </label>
+                  <input
+                    type="password"
+                    value={inputLinkedInClientSecret}
+                    onChange={(e) => setInputLinkedInClientSecret(e.target.value)}
+                    placeholder="e.g. WPL_AP1.xxxxxxxx..."
+                    className="w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-white placeholder:text-slate-600 focus:border-[#0A66C2] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2">
+                {linkedInData?.hasCredentials && (
+                  <button
+                    type="button"
+                    onClick={() => setShowLinkedInConfig(false)}
+                    className="px-4 py-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 font-mono text-xs cursor-pointer min-h-[44px]"
+                  >
+                    Cancel
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleSaveLinkedInCredentials}
+                  disabled={!inputLinkedInClientId.trim() || !inputLinkedInClientSecret.trim() || isSavingLinkedInCreds}
+                  className="px-5 py-2 rounded-lg bg-[#0A66C2] hover:bg-[#004182] disabled:bg-white/10 text-white disabled:text-slate-500 font-bold text-xs font-mono flex items-center justify-center gap-1.5 transition-all cursor-pointer disabled:cursor-not-allowed min-h-[44px]"
+                >
+                  <RefreshCw size={13} className={isSavingLinkedInCreds ? "animate-spin" : ""} />
+                  <span>{isSavingLinkedInCreds ? "Saving..." : "Save App Credentials"}</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Live LinkedIn Success Banner */}
+          {publishedLinkedInUrl && (
+            <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-3 text-emerald-300 text-xs font-mono">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                <span>Post published successfully to <strong>LinkedIn</strong>!</span>
+              </div>
+              <a
+                href={publishedLinkedInUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 font-bold flex items-center gap-1 shrink-0 min-h-[36px]"
+              >
+                <span>View on LinkedIn</span>
+                <ExternalLink size={12} />
+              </a>
+            </div>
+          )}
+
+          {/* Discussion Presets */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-mono text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles size={12} className="text-[#0A66C2]" />
+                <span>Professional Discussion Presets (LinkedIn)</span>
+              </span>
+              <span className="text-[10px] font-mono text-slate-500">
+                Click to load into composer
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+              {(linkedInData?.templates || []).map((t) => {
+                const isSelected = activeLinkedInTemplateId === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => handleSelectLinkedInTemplate(t)}
+                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+                      isSelected
+                        ? "bg-[#0A66C2]/10 border-[#0A66C2]/40 shadow-md shadow-[#0A66C2]/5"
+                        : "bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04] hover:border-white/[0.12]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-mono font-bold text-[#0A66C2] uppercase tracking-wider">
+                        {t.category.replace(/_/g, " ")}
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-500">
+                        {t.text.length} chars
+                      </span>
+                    </div>
+                    <span className="text-xs font-semibold text-white line-clamp-2">
+                      {t.title}
+                    </span>
+                    <span className="text-[11px] text-slate-400 line-clamp-2 font-mono">
+                      {t.text}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Post Composer */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-mono text-slate-300 flex items-center gap-1.5">
+                <MessageSquare size={12} className="text-[#0A66C2]" />
+                <span>LinkedIn Post Composer</span>
+              </label>
+              <span
+                className={`text-[10px] font-mono ${
+                  linkedInText.length > 3000
+                    ? "text-rose-400 font-bold"
+                    : "text-slate-500"
+                }`}
+              >
+                {linkedInText.length}/3000 chars
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <textarea
+                value={linkedInText}
+                onChange={(e) => setLinkedInText(e.target.value)}
+                placeholder="Share technical insights, engineering decisions, open-source milestones, or architectural deep dives..."
+                rows={7}
+                className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/[0.08] text-xs text-white placeholder:text-slate-600 focus:border-[#0A66C2] focus:outline-none resize-none font-mono leading-relaxed"
+              />
+
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 border border-white/[0.08]">
+                <Link2 size={13} className="text-[#0A66C2] shrink-0" />
+                <input
+                  type="url"
+                  value={linkedInArticleUrl}
+                  onChange={(e) => setLinkedInArticleUrl(e.target.value)}
+                  placeholder="Attach URL (e.g. https://github.com/Sam-CodesAI/teleflow-agent or https://sam-codes.vercel.app)"
+                  className="flex-1 bg-transparent text-xs font-mono text-white placeholder:text-slate-600 focus:outline-none"
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <p className="text-[11px] font-mono text-slate-500">
+                  {linkedInData?.connected ? (
+                    <span className="text-emerald-400 flex items-center gap-1">
+                      <ShieldCheck size={12} />
+                      Posting to {linkedInData.profile?.name || "Samarth Nimangre"}&apos;s profile feed.
+                    </span>
+                  ) : (
+                    <span className="text-amber-400 flex items-center gap-1">
+                      <Key size={12} />
+                      Connect your LinkedIn account above to enable 1-click publishing.
+                    </span>
+                  )}
+                </p>
+
+                <button
+                  type="button"
+                  onClick={handlePostLinkedIn}
+                  disabled={!linkedInText.trim() || isPostingLinkedIn || !linkedInData?.connected || linkedInText.length > 3000}
+                  className="px-6 py-2.5 rounded-xl bg-[#0A66C2] hover:bg-[#004182] disabled:bg-white/10 text-white disabled:text-slate-500 font-bold text-xs font-mono flex items-center justify-center gap-2 transition-all cursor-pointer disabled:cursor-not-allowed min-h-[44px] shadow-md shadow-[#0A66C2]/20"
+                >
+                  <Send size={13} className={isPostingLinkedIn ? "animate-pulse" : ""} />
+                  <span>{isPostingLinkedIn ? "Publishing to LinkedIn..." : "Broadcast to LinkedIn"}</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Channels List */}

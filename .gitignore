@@ -37,3 +37,4 @@ app-store.json
 .repos/
 sam-codeai-manager/
 .reddit-tokens.json
+.linkedin-tokens.json
