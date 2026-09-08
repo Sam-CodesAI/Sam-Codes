@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "db:backup": "node --experimental-strip-types scripts/backup-db.ts",
     "whatsapp": "npx tsx --env-file=.env scripts/start-whatsapp-bridge.ts",
     "whatsapp:sync": "npx tsx --env-file=.env scripts/sync-whatsapp-auth.ts"

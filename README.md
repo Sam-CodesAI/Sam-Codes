@@ -53,7 +53,7 @@
 │       ├── 20260905_command_center.sql  # Command Center schema (14 tables, RLS)
 │       └── 20260906_harden_security.sql  # Security hardening, constraints, indexes
 ├── src/
-│   ├── middleware.ts            # Edge route protection & CSRF verification
+│   ├── proxy.ts                 # Next.js 16 edge route protection & CSRF verification
 │   ├── app/
 │   │   ├── globals.css          # Tailwind CSS v4 styling & obsidian tokens
 │   │   ├── layout.tsx           # Root layout, metadata, ambient glows, neural canvas

@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { ADMIN_SESSION_COOKIE } from "@/lib/auth-service";
 import { verifySessionToken } from "@/lib/auth-token";
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Allow login endpoint and public routes
