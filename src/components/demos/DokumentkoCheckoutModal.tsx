@@ -67,12 +67,14 @@ export default function DokumentkoCheckoutModal({
   isOpen = true,
   onClose,
   initialPlan = "starter",
-  initialLocale = "en"
+  initialLocale = "en",
+  embedded = false,
 }: {
   isOpen?: boolean;
   onClose?: () => void;
   initialPlan?: "starter" | "pro" | "team";
   initialLocale?: "en" | "sl";
+  embedded?: boolean;
 }) {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
   const [selectedPlanId, setSelectedPlanId] = useState<"starter" | "pro" | "team">(initialPlan);
@@ -127,23 +129,22 @@ export default function DokumentkoCheckoutModal({
     }
   }[locale];
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div 
-        className="relative w-full max-w-2xl rounded-2xl border border-white/10 p-6 sm:p-8 shadow-2xl text-white overflow-hidden"
-        style={{
-          background: "radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), rgba(10, 10, 10, 0.98) 70%)"
-        }}
-      >
-        {/* Close Button */}
-        {onClose && (
-          <button 
-            onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        )}
+  const content = (
+    <div 
+      className="relative w-full max-w-2xl rounded-2xl border border-white/10 p-6 sm:p-8 shadow-2xl text-white overflow-hidden"
+      style={{
+        background: "radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), rgba(10, 10, 10, 0.98) 70%)"
+      }}
+    >
+      {/* Close Button */}
+      {onClose && (
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      )}
 
         {/* Language switch */}
         <div className="flex items-center justify-between mb-4">
@@ -305,6 +306,16 @@ export default function DokumentkoCheckoutModal({
           </div>
         </div>
       </div>
+    </div>
+  );
+
+  if (embedded) {
+    return content;
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+      {content}
     </div>
   );
 }
