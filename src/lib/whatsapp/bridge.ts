@@ -339,7 +339,7 @@ export async function startWhatsAppBridge(): Promise<WASocket> {
   sock.ev.on("connection.update", async (update) => {
     const { connection, lastDisconnect, qr } = update;
 
-    if (qr && !sock.authState.creds.registered) {
+    if (qr && !sock.authState.creds.me) {
       console.log("\n📸 QR Code generated as fallback:\n");
       qrcode.generate(qr, { small: true });
 
