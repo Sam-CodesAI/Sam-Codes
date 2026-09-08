@@ -423,6 +423,7 @@ export async function startWhatsAppBridge(): Promise<WASocket> {
         console.log("[WhatsApp Bridge] Auth credentials invalid or logged out. Resetting local and cloud auth for fresh pairing...");
         try {
           fs.rmSync(AUTH_DIR, { recursive: true, force: true });
+          fs.mkdirSync(AUTH_DIR, { recursive: true });
         } catch {}
         await clearWhatsAppAuthFromCloud();
         setTimeout(startWhatsAppBridge, 3000);
