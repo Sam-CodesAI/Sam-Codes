@@ -290,6 +290,33 @@ function ensureCloudHealthServer() {
         );
         return;
       }
+
+      if (req.url === "/send" && req.method === "POST") {
+        let body = "";
+        req.on("data", (chunk) => {
+          body += chunk;
+        });
+        req.on("end", async () => {
+          try {
+            const parsed = JSON.parse(body);
+            const { phone, text } = parsed;
+            if (!phone || !text) {
+              res.writeHead(400, { "Content-Type": "application/json" });
+              res.end(JSON.stringify({ success: false, error: "phone and text are required" }));
+              return;
+            }
+            const ok = await sendOutboundWhatsApp(phone, text);
+            res.writeHead(ok ? 200 : 500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: ok, targetPhone: phone }));
+          } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : String(err);
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: false, error: msg }));
+          }
+        });
+        return;
+      }
+
       res.writeHead(404).end();
     });
 
@@ -435,7 +462,10 @@ export async function sendOutboundWhatsApp(phone: string, text: string): Promise
     console.error("[WhatsApp Bridge] Socket not active.");
     return false;
   }
-  const cleanPhone = phone.replace(/[^0-9]/g, "");
+  let cleanPhone = phone.replace(/[^0-9]/g, "");
+  if (cleanPhone.length === 10) {
+    cleanPhone = `91${cleanPhone}`;
+  }
   const jid = `${cleanPhone}@s.whatsapp.net`;
   try {
     await activeSocket.sendMessage(jid, { text });
