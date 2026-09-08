@@ -56,9 +56,20 @@ export default function ServicesSection({
                   {svc.title}
                 </h3>
 
-                <p className="text-xs font-mono text-slate-400 mb-4">
+                <p className="text-xs font-mono text-slate-400 mb-3">
                   {svc.tagline}
                 </p>
+
+                {svc.pricing && (
+                  <div className="flex flex-wrap items-center gap-2 mb-4 text-xs font-mono">
+                    <span className="px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold">
+                      {svc.pricing.inr}
+                    </span>
+                    <span className="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08] text-slate-300 text-[11px]">
+                      ⏱ {svc.pricing.turnaround}
+                    </span>
+                  </div>
+                )}
 
                 <p className="text-sm text-slate-300 leading-relaxed mb-6">
                   {svc.description}

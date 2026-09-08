@@ -54,8 +54,11 @@ async function buildSystemPrompt(userContext?: UserContext): Promise<string> {
   const knowledge = await getAssistantKnowledge();
 
   const servicesText = services
-    .map((s) => `• ${s.title} (${s.tagline}): ${s.deliverables.slice(0, 3).join(", ")}`)
-    .join("\n");
+    .map(
+      (s) =>
+        `• ${s.title}: ${s.pricing?.inr || "₹1,000+"} (${s.pricing?.usd || "$15+"}) | Turnaround: ${s.pricing?.turnaround || "24-48h"}\n  Deliverables: ${s.deliverables.slice(0, 3).join(", ")}`
+    )
+    .join("\n\n");
 
   const faqsText = knowledge
     .map((k) => `Q: ${k.question}\nA: ${k.answer}`)
@@ -70,15 +73,18 @@ async function buildSystemPrompt(userContext?: UserContext): Promise<string> {
 ### ABOUT SAMARTH & SAM CODES
 • Developer: ${profileData.fullName} (${profileData.title}), based in ${profileData.location}.
 • Philosophy: Strict ZERO-FABRICATION policy. Only quote real engineering capabilities, real verified deliverables, and realistic timelines. Never invent capabilities or give false guarantees.
-• Core Offerings:
+• Verified Payment Pathways:
+  - India: Instant UPI transfer to '6361209256@ibl' or NEFT/IMPS
+  - International: PayPal, Stripe invoice, or Wise
+  - Terms: Micro-fixes (100% upon working demo test). Larger builds (50% deposit / 50% on launch).
+• Core Offerings & Pricing Catalog:
 ${servicesText}
 
 • Verified Contact Pathways:
   - Telegram Bot: ${CONTACT_CONFIG.TELEGRAM_BOT_HANDLE}
   - Direct Telegram: ${CONTACT_CONFIG.TELEGRAM_PERSONAL_HANDLE}
+  - WhatsApp Intake: +91 8550816706
   - Primary Email: ${CONTACT_CONFIG.EMAIL_ADDRESS}
-  - X (Twitter): ${CONTACT_CONFIG.X_HANDLE}
-  - Reddit: ${CONTACT_CONFIG.REDDIT_HANDLE}
   - Architecture Call: ${CONTACT_CONFIG.CAL_URL}
 
 • Grounded Portfolio Knowledge:

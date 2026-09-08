@@ -1,0 +1,26 @@
+# Production Dockerfile for SAM CODES WhatsApp 24/7 Cloud Agent
+FROM node:24-alpine
+
+WORKDIR /app
+
+# Install system utilities needed for building native modules if any
+RUN apk add --no-cache curl
+
+# Copy dependency manifests
+COPY package.json pnpm-lock.yaml* package-lock.json* ./
+
+# Install production dependencies
+RUN npm install --omit=dev
+
+# Copy application source and scripts
+COPY tsconfig.json ./
+COPY src ./src
+COPY scripts ./scripts
+
+# Expose cloud health-check port
+EXPOSE 3000
+ENV PORT=3000
+ENV NODE_ENV=production
+
+# On container start, restore session from Supabase cloud and run bridge 24/7
+CMD ["npx", "tsx", "scripts/start-whatsapp-bridge.ts"]

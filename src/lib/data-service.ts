@@ -226,17 +226,28 @@ export async function getServices(): Promise<ServiceOffering[]> {
   if (supabase) {
     const { data } = await supabase.from("services").select("*").order("order_index", { ascending: true });
     if (data && data.length > 0) {
-      return data.map((d) => ({
-        id: d.id,
-        title: d.title,
-        tagline: d.short_description,
-        description: d.full_description,
-        deliverables: Array.isArray(d.deliverables) ? d.deliverables : [],
-      }));
+      return data.map((d) => {
+        const fallback = servicesData.find((s) => s.id === d.id);
+        return {
+          id: d.id,
+          title: d.title,
+          tagline: d.short_description,
+          description: d.full_description,
+          deliverables: Array.isArray(d.deliverables) ? d.deliverables : (fallback?.deliverables || []),
+          pricing: (d.pricing as ServiceOffering["pricing"]) || fallback?.pricing || {
+            inr: "₹1,000 – ₹25,000 INR",
+            usd: "$15 – $300 USD",
+            startingAt: "₹1,000",
+            turnaround: "24–48 Hours",
+            paymentModel: "Milestone-based",
+          },
+          idealFor: (d.ideal_for as string) || fallback?.idealFor || "",
+        };
+      });
     }
   }
   const store = readLocalStore();
-  return store.services;
+  return store.services && store.services.length > 0 ? store.services : servicesData;
 }
 
 export async function saveService(service: ServiceOffering, actorEmail = "samarthknimangre@gmail.com"): Promise<ServiceOffering> {
