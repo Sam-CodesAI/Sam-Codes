@@ -24,6 +24,7 @@ import http from "node:http";
 import {
   syncWhatsAppAuthToCloud,
   restoreWhatsAppAuthFromCloud,
+  clearWhatsAppAuthFromCloud,
 } from "./cloud-auth";
 import {
   getServices,
@@ -44,6 +45,10 @@ let httpServerStarted = false;
 
 // Per-phone conversation memory buffer (last 8 turns)
 const conversationMemory = new Map<string, Array<{ role: "user" | "model"; text: string }>>();
+
+// Deduplication cache and reply rate limiter
+const processedMessageIds = new Set<string>();
+const recentReplies = new Map<string, number>();
 
 /**
  * Sends a real-time notification to Samarth via Telegram bot
@@ -362,6 +367,32 @@ export async function startWhatsAppBridge(): Promise<WASocket> {
     void syncWhatsAppAuthToCloud();
   });
 
+  // Automatically request pairing code if not registered yet
+  if (!sock.authState.creds.registered) {
+    console.log(`[WhatsApp Bridge] Device not registered. Requesting pairing code for +${TARGET_PHONE_NUMBER}...`);
+    setTimeout(async () => {
+      try {
+        const code = await sock.requestPairingCode(TARGET_PHONE_NUMBER);
+        console.log(`\n==============================================`);
+        console.log(`📱 WHATSAPP PAIRING CODE FOR +${TARGET_PHONE_NUMBER}:`);
+        console.log(`   👉 ${code} 👈`);
+        console.log(`==============================================\n`);
+
+        await sendTelegramAlert(
+          `🔑 *WhatsApp Pairing Code for +${TARGET_PHONE_NUMBER}*\n\n` +
+          `*\`${code}\`*\n\n` +
+          `_Link in WhatsApp on your phone:_\n` +
+          `1. Open WhatsApp -> Settings -> Linked Devices\n` +
+          `2. Tap *Link a Device*\n` +
+          `3. Tap *"Link with phone number instead"*\n` +
+          `4. Enter: *${code}*`
+        );
+      } catch (pairErr) {
+        console.warn("[WhatsApp Bridge] Could not request pairing code (QR fallback will be used):", pairErr);
+      }
+    }, 4000);
+  }
+
   // Handle connection updates
   sock.ev.on("connection.update", async (update) => {
     const { connection, lastDisconnect, qr } = update;
@@ -371,13 +402,13 @@ export async function startWhatsAppBridge(): Promise<WASocket> {
       qrcode.generate(qr, { small: true });
 
       try {
-        const brainQrPath = "/home/codespace/.gemini/antigravity-cli/brain/8fd4ce96-8ce8-4fa9-9f25-7722392aafe0/whatsapp_qr.png";
-        await QRCode.toFile(brainQrPath, qr, {
+        const qrPath = path.join(process.cwd(), "whatsapp_qr.png");
+        await QRCode.toFile(qrPath, qr, {
           width: 500,
           margin: 2,
           color: { dark: "#000000", light: "#ffffff" },
         });
-        console.log(`[WhatsApp Bridge] QR PNG generated at: ${brainQrPath}`);
+        console.log(`[WhatsApp Bridge] QR PNG generated at: ${qrPath}`);
       } catch (qrErr) {
         console.error("[WhatsApp Bridge] Failed to write QR image:", qrErr);
       }
@@ -385,10 +416,17 @@ export async function startWhatsAppBridge(): Promise<WASocket> {
 
     if (connection === "close") {
       const statusCode = (lastDisconnect?.error as any)?.output?.statusCode;
-      const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
-      console.log(`[WhatsApp Bridge] Connection closed (${statusCode}). Reconnecting: ${shouldReconnect}`);
+      const isLoggedOut = statusCode === DisconnectReason.loggedOut;
+      console.log(`[WhatsApp Bridge] Connection closed (${statusCode}). Is logged out: ${isLoggedOut}`);
 
-      if (shouldReconnect) {
+      if (isLoggedOut) {
+        console.log("[WhatsApp Bridge] Auth credentials invalid or logged out. Resetting local and cloud auth for fresh pairing...");
+        try {
+          fs.rmSync(AUTH_DIR, { recursive: true, force: true });
+        } catch {}
+        await clearWhatsAppAuthFromCloud();
+        setTimeout(startWhatsAppBridge, 3000);
+      } else {
         setTimeout(startWhatsAppBridge, 3000);
       }
     } else if (connection === "open") {
@@ -412,10 +450,20 @@ export async function startWhatsAppBridge(): Promise<WASocket> {
     for (const msg of messages) {
       if (!msg.message || msg.key.fromMe) continue;
 
+      const messageId = msg.key.id;
+      if (messageId) {
+        if (processedMessageIds.has(messageId)) continue;
+        processedMessageIds.add(messageId);
+        if (processedMessageIds.size > 1000) {
+          const first = processedMessageIds.values().next().value;
+          if (first) processedMessageIds.delete(first);
+        }
+      }
+
       const senderJid = msg.key.remoteJid || "";
       if (senderJid.endsWith("@g.us")) continue; // Suppress group chats
 
-      const senderPhone = senderJid.replace("@s.whatsapp.net", "");
+      const senderPhone = senderJid.replace(/@(s\.whatsapp\.net|lid)/, "");
       const senderName = msg.pushName || "Client";
       const messageText =
         msg.message.conversation ||
@@ -430,9 +478,22 @@ export async function startWhatsAppBridge(): Promise<WASocket> {
       await sendTelegramAlert(
         `📩 *New WhatsApp Message!*\n\n` +
         `👤 *From:* ${senderName} (\`+${senderPhone}\`)\n` +
-        `💬 *Message:* "${messageText}"\n\n` +
-        `🤖 *AI Qualifier:* Formulating grounded response...`
+        `💬 *Message:* "${messageText}"`
       );
+
+      // Check if automated greeting or out-of-office message to avoid bot-to-bot looping
+      const isAutoReply = /thank you for (contacting|reaching)|currently unavailable|closed|working hours|auto-reply|automated response/i.test(messageText);
+      if (isAutoReply) {
+        console.log(`[WhatsApp Bridge] Detected automated greeting from +${senderPhone}. Suppressing bot response.`);
+        continue;
+      }
+
+      // Check reply debounce (at least 5s between automated bot replies to same JID)
+      const lastReplyTime = recentReplies.get(senderJid) || 0;
+      if (Date.now() - lastReplyTime < 5000) {
+        console.log(`[WhatsApp Bridge] Throttling rapid reply to ${senderJid}`);
+        continue;
+      }
 
       // 2. Formulate grounded AI reply
       const { replyText } = await generateIntelligentWhatsAppReply(
@@ -443,6 +504,7 @@ export async function startWhatsAppBridge(): Promise<WASocket> {
 
       // 3. Send reply back to client on WhatsApp
       try {
+        recentReplies.set(senderJid, Date.now());
         await sock.sendMessage(senderJid, { text: replyText });
         console.log(`📤 [Replied to +${senderPhone}]: "${replyText.slice(0, 80)}..."`);
       } catch (sendErr) {

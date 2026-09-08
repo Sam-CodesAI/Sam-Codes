@@ -115,3 +115,19 @@ export async function restoreWhatsAppAuthFromCloud(): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Clears the WhatsApp session in Supabase site_settings when logged out or invalidated.
+ */
+export async function clearWhatsAppAuthFromCloud(): Promise<boolean> {
+  try {
+    const supabase = createAdminClient();
+    if (!supabase) return false;
+    await supabase.from("site_settings").delete().eq("key", SETTINGS_KEY);
+    console.log("[Cloud Auth] Cleared invalidated session from Supabase site_settings.");
+    return true;
+  } catch (err) {
+    console.error("[Cloud Auth] Error clearing auth from cloud:", err);
+    return false;
+  }
+}
