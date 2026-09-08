@@ -306,7 +306,6 @@ export default function DokumentkoCheckoutModal({
           </div>
         </div>
       </div>
-    </div>
   );
 
   if (embedded) {
