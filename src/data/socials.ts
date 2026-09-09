@@ -23,7 +23,7 @@ export const CONTACT_CONFIG = {
   INSTAGRAM_URL: "https://www.instagram.com/samarth.buildss/",
   INSTAGRAM_HANDLE: "@samarth.buildss",
 
-  LINKEDIN_URL: "https://www.linkedin.com/in/samarth-nimangre-0a3b02421/",
+  LINKEDIN_URL: "https://www.linkedin.com/in/sam-codesai",
   LINKEDIN_LABEL: "Samarth Nimangre",
 
   // X (Twitter) URL & Handle — unified developer brand

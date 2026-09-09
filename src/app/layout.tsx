@@ -83,7 +83,7 @@ const jsonLd = {
       "sameAs": [
         "https://t.me/samarth_master_bot",
         "https://www.instagram.com/samarth.buildss/",
-        "https://www.linkedin.com/in/samarth-nimangre-0a3b02421/",
+        "https://www.linkedin.com/in/sam-codesai",
         "https://x.com/Sam_CodeAI",
         "https://github.com/Sam-CodesAI",
         "https://www.reddit.com/user/SamarthBuilds_/",

@@ -52,7 +52,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- 3. Social Links
 INSERT INTO social_links (id, platform, display_name, username, url, description, priority, is_visible) VALUES
 ('instagram', 'Instagram', 'Instagram', '@samarth.buildss', 'https://www.instagram.com/samarth.buildss/', 'Fastest response for project chats, ideas, and quick questions', 1, true),
-('linkedin', 'LinkedIn', 'LinkedIn', 'Samarth Nimangre', 'https://www.linkedin.com/in/samarth-nimangre-0a3b02421/', 'For client engagements, academic discussions, and professional network', 2, true),
+('linkedin', 'LinkedIn', 'LinkedIn', 'Samarth Nimangre', 'https://www.linkedin.com/in/sam-codesai', 'For client engagements, academic discussions, and professional network', 2, true),
 ('x', 'X (Twitter)', 'X', '@Sam_CodeAI', 'https://x.com/Sam_CodeAI', 'Tech discussions, build progress, and direct messaging', 3, true),
 ('reddit', 'Reddit', 'Reddit', 'u/Sam_CodeAI', 'https://www.reddit.com/user/SamarthBuilds_/', 'Builder community, discussions, and open-source feedback', 4, true),
 ('github', 'GitHub', 'GitHub', 'Sam-CodesAI', 'https://github.com/Sam-CodesAI', 'Open source code, repositories, and build activity', 5, true),

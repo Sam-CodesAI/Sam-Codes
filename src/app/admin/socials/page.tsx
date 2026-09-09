@@ -1167,7 +1167,7 @@ export default function AdminSocialsPage() {
                   <span>
                     Member:{" "}
                     <a
-                      href="https://www.linkedin.com/in/samarth-nimangre-0a3b02421/"
+                      href="https://www.linkedin.com/in/sam-codesai"
                       target="_blank"
                       rel="noreferrer"
                       className="text-[#0A66C2] hover:underline inline-flex items-center gap-1 font-semibold"

@@ -329,7 +329,7 @@ export async function getLinkedInProfile(): Promise<LinkedInProfileInfo | null> 
     email: tokens.email,
     picture: tokens.picture,
     personUrn: tokens.personUrn,
-    profileUrl: "https://www.linkedin.com/in/samarth-nimangre-0a3b02421/",
+    profileUrl: "https://www.linkedin.com/in/sam-codesai",
     expiresInDays: remainingDays,
   };
 }
