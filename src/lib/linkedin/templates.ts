@@ -26,7 +26,7 @@ During development, we uncovered three critical failure modes when relying solel
 
 Our Architecture:
 We separated deterministic control flow from language inference.
-• Deterministic Core: A finite-state machine handles navigation, qualification tiers, and Cal.com scheduling in <40ms.
+• Deterministic Core: A finite-state machine handles navigation, qualification tiers, and direct Telegram DM handoff in <40ms.
 • Constrained LLM: Only invoked for semantic intent extraction with strict Zod validation before state transitions.
 
 The project is fully open-source under MIT:

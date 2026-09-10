@@ -85,7 +85,7 @@ ${servicesText}
   - Direct Telegram: ${CONTACT_CONFIG.TELEGRAM_PERSONAL_HANDLE}
   - WhatsApp Intake: +91 8550816706
   - Primary Email: ${CONTACT_CONFIG.EMAIL_ADDRESS}
-  - Architecture Call: ${CONTACT_CONFIG.CAL_URL}
+  - Direct Scoping Chat: ${CONTACT_CONFIG.CAL_URL}
 
 • Grounded Portfolio Knowledge:
 ${faqsText}

@@ -125,9 +125,9 @@ function getInitialStore(): LocalStoreSchema {
     analytics: [],
     auditLogs: [],
     settings: {
-      siteTitle: "Sam Codes — AI Developer & Automation Builder",
+      siteTitle: "Sam Codes — Systems Operator & AI Developer",
       metaDescription:
-        "Samarth Nimangre — student, AI developer and automation builder creating AI systems, workflows, web experiences and digital experiments.",
+        "Samarth Nimangre — systems builder, automation operator, and AI developer creating resilient software and digital experiments.",
       availabilityStatus: "Available for custom builds",
       allowContactForm: true,
       analyticsEnabled: true,

@@ -80,12 +80,12 @@ export const assistantKnowledgeBase: KnowledgeQnA[] = [
     keywords: ["stack", "technology", "tech", "languages", "frameworks", "tools", "python", "typescript", "nextjs"],
     category: "SERVICES",
     answer:
-      "Sam builds with modern, high-velocity production tooling:\n" +
-      "• Frontend: Next.js 15+, React 19, Tailwind CSS v4, Framer Motion.\n" +
-      "• Backend & APIs: Node.js, TypeScript, Python (FastAPI, Playwright, BeautifulSoup).\n" +
-      "• Database & Auth: Supabase (PostgreSQL, Row-Level Security, Realtime).\n" +
-      "• AI & Agents: Google Gemini 3.1 Flash, OpenAI API, LangChain, Model Context Protocol (MCP).\n" +
-      "• Messaging Protocols: Baileys (WhatsApp Web Multi-Device), Telegram Bot API.",
+      "Sam builds with modern 2026 production tooling:\n" +
+      "• Frontend: Next.js 16 (App Router, Turbopack), React 19, Tailwind CSS v4, Motion.\n" +
+      "• Backend & Scraping: Python 3.12+ (Asyncio, NumPy, Pandas, Playwright, Puppeteer), Node.js, TypeScript.\n" +
+      "• Database & Auth: Supabase PostgreSQL (14 Tables, Row-Level Security, B-tree indexes, Automated Backups).\n" +
+      "• AI & Cascades: Google Gemini 3.1 Flash Lite, Claude Code, OpenAI API, Model Context Protocol (MCP).\n" +
+      "• Messaging & Edge: Baileys (WhatsApp Web Multi-Device), Telegram Bot API, Vercel Edge, Docker.",
   },
   {
     id: "guarantees-and-revisions",
@@ -105,7 +105,7 @@ export const assistantKnowledgeBase: KnowledgeQnA[] = [
       `1. WhatsApp: Message our 24/7 business intake line at +91 8550816706.\n` +
       `2. Telegram: Chat with our AI Qualifier (${CONTACT_CONFIG.TELEGRAM_BOT_HANDLE}) or DM Samarth directly (${CONTACT_CONFIG.TELEGRAM_PERSONAL_HANDLE}).\n` +
       `3. Email: Send your project notes to ${CONTACT_CONFIG.EMAIL_ADDRESS}.\n` +
-      `4. Architecture Call: Book a 15-minute scoping call at ${CONTACT_CONFIG.CAL_URL}.\n\n` +
+      `4. Direct Architecture Chat: DM Samarth directly on Telegram at ${CONTACT_CONFIG.TELEGRAM_PERSONAL_HANDLE} (${CONTACT_CONFIG.CAL_URL}).\n\n` +
       `Share a brief summary of what you need built, and Samarth will provide an architectural blueprint and fixed quote within 2–4 hours.`,
   },
   {
@@ -114,7 +114,31 @@ export const assistantKnowledgeBase: KnowledgeQnA[] = [
     keywords: ["who", "sam", "samarth", "background", "about", "location", "student", "age", "years old"],
     category: "ABOUT",
     answer:
-      "Sam (Samarth Nimangre) is a 17-year-old software engineer and automation builder based in Karnataka, India. He builds with intense velocity and craftsmanship — combining modern full-stack frameworks with autonomous AI agent patterns to deliver production-grade software for founders, creators, and businesses.",
+      "Sam (Samarth Nimangre) is a 17-year-old Systems & Automation Operator, Infrastructure Engineer, and AI Developer based in Karnataka, India. He builds high-reliability web scrapers, automated lead pipelines, hardened cloud databases, and autonomous AI agents with intense velocity and craftsmanship.",
+  },
+  {
+    id: "b2b-lead-scraping",
+    question: "How do your B2B lead generation and web scraping pipelines work?",
+    keywords: ["scraper", "scraping", "lead gen", "apollo", "playwright", "enrichment", "leads", "crawler"],
+    category: "SERVICES",
+    answer:
+      "Sam builds resilient asynchronous Python scraping engines (Playwright/Puppeteer) paired with Apollo search APIs, automatic proxy rotation, DOM schema change monitoring, and Google Sheets OAuth 2.0 sync. Leads are normalized, deduplicated, and routed with 99.8% schema accuracy.",
+  },
+  {
+    id: "command-center-architecture",
+    question: "What is the SAM CODES Administrative Command Center?",
+    keywords: ["command center", "admin", "dashboard", "database", "rls", "security", "infrastructure"],
+    category: "PORTFOLIO",
+    answer:
+      "The Command Center is a full-stack Next.js 16 administrative hub managing 14 Supabase PostgreSQL tables. It features zero-trust Row-Level Security, sliding-window IP rate limiters, Web Crypto HMAC-SHA256 session tokens, live telemetry tracking, and automated SHA-256 database backup routines.",
+  },
+  {
+    id: "ecommerce-recommendation-engine",
+    question: "Can you build recommendation systems or machine learning engines?",
+    keywords: ["recommendation", "machine learning", "ml", "ecommerce", "cold start", "algorithm", "cosine"],
+    category: "SERVICES",
+    answer:
+      "Yes! Sam engineered a hybrid e-commerce recommendation engine that solves the cold-start problem (where users have 0 history) using Bayesian average rating smoothing with category priors, and transitions to TF-IDF cosine feature similarity (70/30 hybrid scoring) for returning users.",
   },
 ];
 

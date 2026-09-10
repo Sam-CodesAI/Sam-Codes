@@ -30,7 +30,7 @@ We built a 4-phase deterministic state machine:
 - **Phase 0:** Instant interactive welcome with inline keyboard menus (sub-250ms turn latency).
 - **Phase 1 (Intent & Tier Selection):** Structured qualification paths with budget validation.
 - **Phase 2 (Project Scope Collection):** Context ingestion with length and character sanity guards.
-- **Phase 3 (Booking & Cal.com Dispatch):** Automated scheduling via inline Cal.com / Google Meet router.
+- **Phase 3 (Direct DM & Telegram Router):** Instant direct handoff to Samarth's personal Telegram (@Samarth1306) with pre-filled context.
 
 ### Tech Stack
 - **Runtime:** Node.js / Serverless Edge

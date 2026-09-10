@@ -116,7 +116,7 @@ async function buildWhatsAppSystemPrompt(clientName: string, clientPhone: string
 • Verified Work & Demos:
   - Portfolio: https://sam-codes.vercel.app
   - Live Checkout Conversion Demo: https://sam-codes.vercel.app/demos/dokumentko
-  - Architecture Call: ${CONTACT_CONFIG.CAL_URL}
+  - Direct Scoping Chat: ${CONTACT_CONFIG.CAL_URL}
 • Payment Methods:
   - India: UPI ID '6361209256@ibl' or NEFT/IMPS
   - International: PayPal, Stripe credit card invoice, or Wise

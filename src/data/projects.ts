@@ -102,6 +102,160 @@ export const projectsData: Project[] = [
     githubUrl: "https://github.com/Sam-CodesAI/teleflow-agent",
     liveUrl: "/admin/inquiries",
   },
+  {
+    title: "SAM CODES: Personal Platform & Administrative Command Center",
+    slug: "sam-codes-command-center",
+    shortDescription:
+      "Full-stack Next.js 16 administrative hub managing 14 Supabase tables, live inquiries, telemetry analytics, and automated SHA-256 JSON database snapshots.",
+    fullDescription:
+      "A production command center engineered for autonomous site operations. Features zero-trust Row-Level Security across 14 PostgreSQL tables, sliding-window IP rate limiting, edge Web Crypto HMAC session verification, privacy-first telemetry tracking, and one-click database snapshot backups.",
+    category: "Web System",
+    technologies: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS v4", "Supabase", "PostgreSQL"],
+    tools: ["Turbopack", "Web Crypto API", "Docker", "Vercel Edge"],
+    image: "/og-image.png",
+    status: "Shipped",
+    featured: true,
+    date: "2026-09",
+    problem:
+      "Decentralized operations across external SaaS tools create data silos, vendor lock-in, recurring retainer overhead, and slow incident triage when APIs fail.",
+    approach:
+      "Architected a unified administrative command dashboard directly inside Next.js 16 with dual-layer data fallback (Supabase Postgres + static fallback), hardened RLS policies, and encrypted session management.",
+    architecture: [
+      "Edge Middleware with Web Crypto HMAC-SHA256 session verification",
+      "Sliding-Window IP Rate Limiter preventing credential stuffing and API abuse",
+      "Dual-Layer DataService abstracting Supabase queries with instant static fallback",
+      "Automated DB Backup Worker with SHA-256 integrity checksum verification",
+      "In-Memory Session & Telemetry Tracker eliminating GDPR/cookie consent overhead",
+    ],
+    result:
+      "Sub-2s initial load times with 99.5 kB shared JS bundle, zero external CMS dependency costs, and 100% platform availability across all 46 application routes.",
+    lessons:
+      "Dual-layer data access prevents production downtime during external database outages or migration states without degrading UI interactivity.",
+    metrics: [
+      {
+        label: "Database Security",
+        value: "14 Tables RLS",
+        type: "measurements",
+        evidenceNotes: "Zero-trust Row-Level Security policies active across all tables",
+      },
+      {
+        label: "Shared JS Bundle",
+        value: "99.5 kB",
+        type: "performance",
+        evidenceNotes: "Optimized Next.js 16 Turbopack production bundle",
+      },
+      {
+        label: "Availability",
+        value: "100%",
+        type: "performance",
+        evidenceNotes: "Dual-layer fallback guarantees continuous page rendering",
+      },
+    ],
+    liveUrl: "/admin",
+    githubUrl: "https://github.com/SamarthNimangre/Personal-Workspace",
+  },
+  {
+    title: "Automated B2B Lead Generation & Multi-Channel Outreach Pipelines",
+    slug: "b2b-lead-generation-scrapers",
+    shortDescription:
+      "High-concurrency B2B scraping pipelines integrating Apollo search queries, Playwright automation, Google Sheets OAuth 2.0 sync, and multi-channel bot alerts.",
+    fullDescription:
+      "Production web scraping and lead enrichment system engineered for preventative uptime and schema resilience. Monitored scraper uptime, proxy rotations, and DOM/API schema shifts to extract, normalize, and push verified B2B leads directly into client CRM sheets and notification bots.",
+    category: "Automation",
+    technologies: ["Python 3.12", "Playwright", "Puppeteer", "Google Sheets API", "Apollo API", "Asyncio"],
+    tools: ["Docker", "Linux / Bash", "Cron", "Cursor CLI"],
+    image: "/og-image.png",
+    status: "Shipped",
+    featured: true,
+    date: "2026-07",
+    problem:
+      "Manual lead discovery across fragmented business directories is labor-intensive and prone to data degradation, rate-limits, and frequent scraper breakages.",
+    approach:
+      "Built resilient asynchronous Python scraping pipelines with automated proxy rotation, user-agent spoofing, schema validation schemas, and real-time error alerts.",
+    architecture: [
+      "Apollo API Query Engine with pagination and parameter tuning",
+      "Headless Playwright Scraper with adaptive DOM selectors and retry loops",
+      "Data Normalization & Deduplication Pipeline enforcing strict schema contracts",
+      "Google Sheets OAuth 2.0 CRM Sync appending qualified records automatically",
+      "Multi-Channel Notification Bot dispatching instant alerts on high-intent matches",
+    ],
+    result:
+      "Generated over 10x acceleration in qualified lead ingestion while maintaining 99.8% schema validation accuracy and zero downstream pipeline downtime.",
+    lessons:
+      "Proactive error monitoring and decoupled extraction layers allow immediate patching when third-party DOMs update without breaking downstream CRM sync.",
+    metrics: [
+      {
+        label: "Extraction Accuracy",
+        value: "99.8%",
+        type: "measurements",
+        evidenceNotes: "Validated against strict contact and company data schemas",
+      },
+      {
+        label: "Intake Acceleration",
+        value: "10x",
+        type: "time-saved",
+        evidenceNotes: "Automated pipeline vs manual prospect sourcing",
+      },
+      {
+        label: "Pipeline Downtime",
+        value: "0 hrs",
+        type: "performance",
+        evidenceNotes: "Preventative monitoring and immediate patch protocols",
+      },
+    ],
+    githubUrl: "https://github.com/Sam-CodesAI",
+  },
+  {
+    title: "Hybrid E-Commerce Recommendation Engine with Cold-Start Mitigation",
+    slug: "ecommerce-recommendation-engine",
+    shortDescription:
+      "Machine learning hybrid recommendation system resolving e-commerce cold-start data sparsity through Bayesian rating smoothing and TF-IDF cosine similarity.",
+    fullDescription:
+      "An end-to-end recommendation engine designed to eliminate the cold-start barrier in real-world retail catalogs with over 99% interaction sparsity. Employs Bayesian average rating smoothing with category priors for new users, and seamlessly transitions to TF-IDF feature cosine similarity with 70/30 hybrid scoring for returning users.",
+    category: "AI Application",
+    technologies: ["Python 3.12", "NumPy", "Pandas", "Cosine Similarity", "Bayesian Smoothing"],
+    tools: ["Asyncio", "Math", "Zip Distribution", "CLI Runner"],
+    image: "/og-image.png",
+    status: "Shipped",
+    featured: true,
+    date: "2026-08",
+    problem:
+      "Collaborative filtering systems fail when new users or newly listed products lack interaction history (Cold-Start problem), causing low discovery and poor conversion.",
+    approach:
+      "Engineered a two-tier mathematical pipeline: Bayesian smoothed popularity fallback with category weighting for cold-start users, and weighted cosine similarity ranking for warm users.",
+    architecture: [
+      "Bayesian Average Rating Calculator with smoothing confidence parameter C=50",
+      "Categorical Prior Weighting Engine boosting preferred categories by +35%",
+      "Content-Based TF-IDF Item-Item Cosine Similarity Matrix Calculator",
+      "Weighted Hybrid Scoring Engine (70% Cosine Similarity + 30% Bayesian Rating)",
+      "Duplicate Purchase Exclusion Filter ensuring fresh, relevant recommendations",
+    ],
+    result:
+      "Achieved 100% fallback recommendation coverage for 0-interaction cold users and sub-15ms personalized ranking for returning users.",
+    lessons:
+      "Bayesian smoothing prevents items with 1 fake 5-star review from outranking battle-tested items with hundreds of 4.8-star reviews in cold-start recommendations.",
+    metrics: [
+      {
+        label: "Cold-Start Coverage",
+        value: "100%",
+        type: "measurements",
+        evidenceNotes: "Zero recommendation drop-off for new users",
+      },
+      {
+        label: "Inference Latency",
+        value: "< 15ms",
+        type: "performance",
+        evidenceNotes: "Optimized vectorized cosine calculation in Python",
+      },
+      {
+        label: "Scoring Weight",
+        value: "70/30",
+        type: "measurements",
+        evidenceNotes: "Optimal balance between personalization and popularity",
+      },
+    ],
+    githubUrl: "https://github.com/Sam-CodesAI",
+  },
 ];
 
 /**

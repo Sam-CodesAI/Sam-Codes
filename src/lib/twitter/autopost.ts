@@ -20,7 +20,7 @@ export const PRESET_DEV_TWEETS: TweetTemplate[] = [
 
 • 4-phase deterministic state machine
 • Sub-300ms turn latency on serverless edge
-• Interactive inline keyboards & Cal.com booking
+• Interactive inline keyboards & direct Telegram handoff
 • 100% TypeScript + Docker ready
 
 Code: https://github.com/Sam-CodesAI/teleflow-agent

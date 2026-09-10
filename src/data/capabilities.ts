@@ -20,37 +20,52 @@ export const buildingWithStack: TechItem[] = [
   {
     name: "Next.js 16 & React 19",
     category: "Frontend",
-    description: "App router, server components, and responsive mobile interfaces",
+    description: "App router, Turbopack, server components, and responsive mobile interfaces",
   },
   {
     name: "TypeScript",
     category: "Frontend",
-    description: "Strict static typing and clean modular component architecture",
+    description: "Strict static typing, exhaustive schemas, and clean modular architecture",
   },
   {
     name: "Tailwind CSS v4",
     category: "Frontend",
-    description: "Utility-first design system with hardware-accelerated animations",
+    description: "Utility-first design system with hardware-accelerated animations & zero CLS",
   },
   {
-    name: "Python 3.12+",
+    name: "Python 3.12+ (Asyncio, NumPy)",
     category: "Backend & AI",
-    description: "Automation pipelines, API bridges, data extraction, and backend scripts",
+    description: "High-concurrency scrapers, recommendation engines, and automation pipelines",
   },
   {
-    name: "Claude & OpenAI APIs",
+    name: "Google Gemini AI & Model Cascading",
     category: "Backend & AI",
-    description: "Function calling, structured JSON output, and context-grounded retrieval",
+    description: "Gemini 3.1 Flash Lite fallback cascades, structured JSON extraction, and zero-hallucination Q&A",
   },
   {
-    name: "Supabase & Postgres",
+    name: "Claude Code, OpenAI & Cursor CLI",
+    category: "Backend & AI",
+    description: "Agentic coding environments, function calling, and automated diagnostics",
+  },
+  {
+    name: "Lead Scraping & Enrichment",
+    category: "Backend & AI",
+    description: "Apollo API, Playwright, Puppeteer, proxy rotation, and Google Sheets CRM sync",
+  },
+  {
+    name: "Supabase PostgreSQL & RLS",
     category: "Databases & APIs",
-    description: "Relational database schema, user auth, and real-time triggers",
+    description: "Zero-trust Row-Level Security, composite B-tree indexes, and automated JSON backups",
   },
   {
-    name: "Vercel & Cloudflare",
+    name: "Docker & Linux / Bash",
     category: "Tools & Cloud",
-    description: "Global edge deployments, serverless functions, and custom domain routing",
+    description: "Containerized background bridges (Baileys WhatsApp), headless CI/CD, and serverless tasks",
+  },
+  {
+    name: "Vercel Edge & Cloudflare",
+    category: "Tools & Cloud",
+    description: "Global edge deployments, sub-300ms API routes, and custom domain SSL",
   },
   {
     name: "Git & GitHub",
