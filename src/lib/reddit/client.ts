@@ -218,6 +218,102 @@ export async function refreshRedditToken(
 }
 
 /**
+ * Generates the Reddit OAuth 2.0 authorization URL for u/SamarthBuilds_.
+ */
+export function getRedditAuthUrl(
+  redirectUri: string = "https://sam-codes.vercel.app/api/admin/reddit/callback",
+  state: string = "sam_codes_reddit_oauth"
+): string {
+  const scopes = [
+    "identity",
+    "submit",
+    "read",
+    "privatemessages",
+    "edit",
+    "mysubreddits",
+    "history",
+  ].join(" ");
+
+  const params = new URLSearchParams({
+    client_id: DEV_CLIENT_ID,
+    response_type: "code",
+    state,
+    redirect_uri: redirectUri,
+    duration: "permanent",
+    scope: scopes,
+  });
+
+  return `https://www.reddit.com/api/v1/authorize?${params.toString()}`;
+}
+
+/**
+ * Exchanges Reddit authorization code for permanent Access & Refresh tokens.
+ */
+export async function exchangeRedditAuthCode(
+  code: string,
+  redirectUri: string = "https://sam-codes.vercel.app/api/admin/reddit/callback"
+): Promise<{ success: boolean; tokens?: RedditTokenData; error?: string }> {
+  const body = new URLSearchParams({
+    grant_type: "authorization_code",
+    code,
+    redirect_uri: redirectUri,
+  });
+
+  const basicAuth = Buffer.from(`${DEV_CLIENT_ID}:`).toString("base64");
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const res = await fetch("https://www.reddit.com/api/v1/access_token", {
+      method: "POST",
+      headers: {
+        "User-Agent": USER_AGENT,
+        Authorization: `Basic ${basicAuth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: body.toString(),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    const data = (await res.json()) as {
+      access_token?: string;
+      expires_in?: number;
+      scope?: string;
+      refresh_token?: string;
+      error?: string;
+      message?: string;
+    };
+
+    if (res.ok && data.access_token) {
+      const expiresIn = data.expires_in || 86400;
+      const tokens: RedditTokenData = {
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token || "",
+        expiresAt: Date.now() + expiresIn * 1000 - 60000,
+        tokenType: "bearer",
+        scope: data.scope || "*",
+        username: "SamarthBuilds_",
+        updatedAt: new Date().toISOString(),
+      };
+
+      await saveRedditTokens(tokens);
+      return { success: true, tokens };
+    }
+
+    return {
+      success: false,
+      error: data.message || data.error || `Exchange failed (HTTP ${res.status})`,
+    };
+  } catch (err) {
+    clearTimeout(timeout);
+    const msg = err instanceof Error ? err.message : String(err);
+    return { success: false, error: `Token exchange request failed: ${msg}` };
+  }
+}
+
+/**
  * Returns a guaranteed fresh Reddit Access Token (auto-refreshes if needed).
  */
 export async function getValidRedditAccessToken(): Promise<string | null> {

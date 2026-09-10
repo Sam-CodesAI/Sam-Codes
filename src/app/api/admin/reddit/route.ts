@@ -5,6 +5,7 @@ import {
   getRedditRecentPosts,
   submitRedditPost,
   updateRedditProfileDisplayName,
+  getRedditAuthUrl,
 } from "@/lib/reddit/client";
 import { PRESET_REDDIT_POSTS } from "@/lib/reddit/templates";
 
@@ -22,11 +23,13 @@ export async function GET(): Promise<NextResponse> {
   try {
     const account = await getRedditAccountStatus();
     const recentPosts = account ? await getRedditRecentPosts(5, account.username) : [];
+    const authUrl = getRedditAuthUrl();
 
     return NextResponse.json({
       success: true,
       connected: !!account?.connected,
       account,
+      authUrl,
       recentPosts,
       templates: PRESET_REDDIT_POSTS,
     });

@@ -108,12 +108,15 @@ interface RedditStatusData {
   success: boolean;
   connected: boolean;
   account?: RedditAccountInfo;
+  authUrl?: string;
   recentPosts?: RedditPostSummary[];
   templates?: RedditPostTemplate[];
   error?: string;
 }
 
 const POPULAR_SUBREDDITS = [
+  "DoneDirtCheap",
+  "freelance_forhire",
   "TelegramBots",
   "buildinpublic",
   "webdev",
@@ -904,8 +907,18 @@ export default function AdminSocialsPage() {
               </div>
             </div>
 
-            {/* Refresh Sync Button */}
+            {/* Refresh Sync and Connect Buttons */}
             <div className="flex items-center gap-2">
+              {!redditData?.connected && redditData?.authUrl && (
+                <a
+                  href={redditData.authUrl}
+                  className="px-3.5 py-2 rounded-xl bg-[#FF4500] hover:bg-[#FF4500]/90 text-white font-mono text-xs font-bold transition-all shadow-md shadow-[#FF4500]/20 min-h-[44px] flex items-center gap-1.5"
+                  title="Authorize u/SamarthBuilds_ via Reddit OAuth"
+                >
+                  <Key size={13} />
+                  <span>Connect Reddit</span>
+                </a>
+              )}
               <button
                 type="button"
                 onClick={fetchRedditStatus}
