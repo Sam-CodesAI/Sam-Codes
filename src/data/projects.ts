@@ -44,6 +44,65 @@ export interface LabExperiment {
  */
 export const projectsData: Project[] = [
   {
+    title: "SutraDB (सूत्र DB): Ultra-Fast Hybrid Vector Search & BM25 Lexical Engine",
+    slug: "sutradb-hybrid-vector-engine",
+    shortDescription:
+      "Zero-dependency hybrid vector database in pure Python combining SIMD-accelerated linear algebra, Robertson-Spärck Jones BM25 ranking, and in-flight compound metadata bitmasks.",
+    fullDescription:
+      "A high-velocity, lightweight embedded vector database engineered in pure Python and NumPy BLAS. Overcomes the multi-gigabyte dependency bloat of Chroma and the network latency of cloud-managed vector databases (Pinecone). Features pre-normalized unit vector SIMD dot-product search (<0.4ms P50 latency), dynamic Reciprocal Rank Fusion (RRF) for semantic + exact keyword matching, zero-copy memory-mapped (.sutra) persistence, and an append-only CRC32 Write-Ahead Log (WAL).",
+    category: "AI Application",
+    technologies: ["Python 3.12", "NumPy BLAS", "BM25Okapi", "RRF Fusion", "mmap Binary", "REST Micro-server"],
+    tools: ["Pytest", "AVX SIMD", "Memory Mapping", "Write-Ahead Log"],
+    image: "/og-image.png",
+    status: "Shipped",
+    featured: true,
+    date: "2026-09",
+    problem:
+      "Modern vector databases suffer from two extremes: either massive dependency bloat and heavy process overhead (Chroma with DuckDB/SQLite/ClickHouse/Pydantic migrations) or heavy cloud SaaS lock-in with 30-60ms network roundtrip latencies per query (Pinecone). Furthermore, 95% of real-world AI applications manage under 100,000 documents and need sub-millisecond retrieval with compound metadata filtering, rather than a multi-node Kubernetes cluster.",
+    approach:
+      "Engineered a clean-room, zero-dependency hybrid search engine in pure Python. Vectors are pre-normalized upon insertion to reduce Cosine Similarity to pure matrix-vector multiplication executed in hardware L1/L2 cache lines. Built a native Robertson-Spärck Jones BM25 lexical inverted index and unified them via Reciprocal Rank Fusion (RRF). Compiled compound metadata filters ($eq, $gte, $in, $contains) into in-flight boolean bitmasks and designed a 64-byte aligned .sutra binary layout for zero-copy mmap loading.",
+    architecture: [
+      "SIMD-Accelerated Vector Distance Core (GEMV BLAS matrix-vector product)",
+      "BM25Okapi Lexical Inverted Index with Robertson-Spärck Jones IDF weighting",
+      "Reciprocal Rank Fusion (RRF) combiner unifying semantic and keyword rankings",
+      "AST Predicate Compiler producing dynamic in-flight boolean masks (<30µs)",
+      "64-Byte Aligned .sutra Binary Container with mmap zero-copy read support",
+      "Append-Only Write-Ahead Log (WAL) with CRC32 integrity verification",
+      "Embedded Zero-Dependency HTTP REST Micro-server (/health, /insert, /query)",
+    ],
+    result:
+      "Achieved 52,000+ documents/sec ingestion throughput, sub-0.4ms P50 vector query latency, and ~22MB RAM footprint for 5,000 documents. Passed 20/20 comprehensive unit, integration, and benchmark tests with 100% precision recall.",
+    lessons:
+      "Pre-normalizing vectors at insertion time completely eliminates square roots and division from the query hot path. In hybrid search, thresholding dense scores before rank assignment prevents unrelated documents from receiving false RRF bonuses.",
+    metrics: [
+      {
+        label: "Vector Query P50",
+        value: "0.36ms",
+        type: "performance",
+        evidenceNotes: "Measured across 1,000 query iterations on 5k 128-dim vectors",
+      },
+      {
+        label: "Ingestion Throughput",
+        value: "52,600/s",
+        type: "performance",
+        evidenceNotes: "Batch insert throughput on Linux 4-vCPU environment",
+      },
+      {
+        label: "Test Suite Pass Rate",
+        value: "20 / 20",
+        type: "tests",
+        evidenceNotes: "100% passing pytest suite covering math, BM25, filters, WAL, and HTTP server",
+      },
+      {
+        label: "Memory Footprint",
+        value: "~22 MB",
+        type: "measurements",
+        evidenceNotes: "Total process RSS for 5,000 documents with metadata",
+      },
+    ],
+    githubUrl: "https://github.com/Sam-CodesAI/SutraDB",
+  },
+  {
     title: "Teleflow Agent: Autonomous Telegram AI Lead Qualifier & Edge CRM Router",
     slug: "telegram-ai-lead-agent",
     shortDescription:
