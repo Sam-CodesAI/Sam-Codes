@@ -48,6 +48,8 @@ export interface SubmitPostParams {
   text: string;
   kind?: "self" | "link";
   url?: string;
+  flairId?: string;
+  flairText?: string;
 }
 
 export interface SubmitPostResult {
@@ -473,6 +475,14 @@ export async function submitRedditPost(
 
   if (params.url) {
     body.set("url", params.url.trim());
+  }
+
+  if (params.flairId) {
+    body.set("flair_id", params.flairId.trim());
+  }
+
+  if (params.flairText) {
+    body.set("flair_text", params.flairText.trim());
   }
 
   const controller = new AbortController();
