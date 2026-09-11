@@ -323,6 +323,15 @@ export const projectsData: Project[] = [
  */
 export const experimentsData: LabExperiment[] = [
   {
+    id: "exp-sutradb-engine",
+    title: "SutraDB: Zero-Dependency Hybrid Vector & BM25 Engine",
+    state: "SYSTEM IN DEVELOPMENT",
+    category: "AI Application",
+    description:
+      "In-memory vector database in pure Python using SIMD unit-vector BLAS matrix multiplication (<0.4ms P50 latency), Robertson-Spärck Jones BM25 lexical ranking, and zero-copy mmap persistence.",
+    techStack: ["Python 3.12", "NumPy BLAS", "BM25Okapi", "RRF Fusion", "mmap"],
+  },
+  {
     id: "exp-agent-loop",
     title: "Autonomous Multi-Agent Loop Runner",
     state: "AGENT WORKFLOW",
