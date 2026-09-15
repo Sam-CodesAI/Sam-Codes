@@ -58,19 +58,9 @@ async function sendTelegramAlert(text: string) {
     const token = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
 
+    // Require env vars to be properly set — never read .env from disk in production containers
     if (!token || !chatId) {
-      // Fallback: check .env on disk if not in process.env
-      const envPath = path.join(process.cwd(), ".env");
-      if (!fs.existsSync(envPath)) return;
-      const env = fs.readFileSync(envPath, "utf8");
-      const tokenMatch = env.match(/TELEGRAM_BOT_TOKEN=(.*)/);
-      const chatMatch = env.match(/TELEGRAM_ADMIN_CHAT_ID=(.*)/);
-      if (!tokenMatch || !chatMatch) return;
-      await fetch(`https://api.telegram.org/bot${tokenMatch[1].trim()}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: chatMatch[1].trim(), text, parse_mode: "Markdown" }),
-      });
+      console.warn("[WhatsApp Bridge] TELEGRAM_BOT_TOKEN or TELEGRAM_ADMIN_CHAT_ID not set. Skipping alert.");
       return;
     }
 

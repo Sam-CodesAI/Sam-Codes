@@ -59,7 +59,7 @@ export interface SubmitPostResult {
   error?: string;
 }
 
-const DEV_CLIENT_ID = "TWTsqXa53CexlrYGBWaesQ";
+const DEV_CLIENT_ID = process.env.REDDIT_CLIENT_ID || "TWTsqXa53CexlrYGBWaesQ"; // TODO: set REDDIT_CLIENT_ID in env to remove hardcoded fallback
 const USER_AGENT = "web:sam-codes:v1.2.0 (by /u/Sam_CodeAI)";
 const LOCAL_TOKEN_CACHE = path.join(process.cwd(), ".reddit-tokens.json");
 const DEVVIT_TOKEN_FILE = path.join(
