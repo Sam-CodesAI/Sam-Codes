@@ -15,6 +15,16 @@ export interface Milestone {
  */
 export const milestonesData: Milestone[] = [
   {
+    id: "milestone-sutradb",
+    category: "OPEN SOURCE",
+    title: "SutraDB: High-Performance Hybrid Vector Search Engine (PyPI Release v2.1.0)",
+    organizationOrEvent: "PyPI / Open Source Release",
+    date: "September 2026",
+    description:
+      "Engineered and published sutradb-core on PyPI. Combines pure Python SIMD BLAS dense search (<0.4ms P50 latency), BM25Okapi lexical inverted indexing, IVF-Flat clustering, and Reciprocal Rank Fusion with 100% test coverage.",
+    url: "https://pypi.org/project/sutradb-core/",
+  },
+  {
     id: "milestone-teleflow",
     category: "OPEN SOURCE",
     title: "Teleflow Agent: Autonomous Conversational Lead Qualification Engine",

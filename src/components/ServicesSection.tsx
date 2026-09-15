@@ -1,17 +1,19 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { servicesData, ServiceOffering } from "@/data/services";
 import { soundFx } from "@/utils/sound";
 import SpotlightCard from "@/components/SpotlightCard";
 import MotionReveal from "@/components/MotionReveal";
-import { Wrench, ArrowUpRight, Check } from "lucide-react";
+import { Wrench, ArrowUpRight, Check, Coins } from "lucide-react";
 
 export default function ServicesSection({
   services = servicesData,
 }: {
   services?: ServiceOffering[];
 }) {
+  const [currency, setCurrency] = useState<"USD" | "INR">("USD");
+
   return (
     <section
       id="services"
@@ -31,6 +33,38 @@ export default function ServicesSection({
         <p className="text-base sm:text-lg text-slate-300 max-w-2xl font-normal leading-relaxed">
           I build focused digital systems for people who have something worth automating, improving, or launching.
         </p>
+
+        {/* Currency Switcher */}
+        <div className="inline-flex items-center p-1 rounded-full bg-white/[0.04] border border-white/[0.08] mt-6 backdrop-blur-sm">
+          <button
+            type="button"
+            onClick={() => {
+              soundFx.playHover();
+              setCurrency("USD");
+            }}
+            className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
+              currency === "USD"
+                ? "bg-sky-500 text-slate-950 font-bold shadow-md shadow-sky-500/25"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            USD ($)
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              soundFx.playHover();
+              setCurrency("INR");
+            }}
+            className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
+              currency === "INR"
+                ? "bg-sky-500 text-slate-950 font-bold shadow-md shadow-sky-500/25"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            INR (₹)
+          </button>
+        </div>
       </MotionReveal>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -63,10 +97,13 @@ export default function ServicesSection({
                 {svc.pricing && (
                   <div className="flex flex-wrap items-center gap-2 mb-4 text-xs font-mono">
                     <span className="px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold">
-                      {svc.pricing.inr}
+                      {currency === "USD" ? (svc.pricing.usd || svc.pricing.inr) : svc.pricing.inr}
                     </span>
                     <span className="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08] text-slate-300 text-[11px]">
                       ⏱ {svc.pricing.turnaround}
+                    </span>
+                    <span className="text-[10px] text-slate-500 ml-auto">
+                      {currency === "USD" ? svc.pricing.inr : svc.pricing.usd}
                     </span>
                   </div>
                 )}

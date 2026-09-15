@@ -118,7 +118,7 @@ export default function AboutSection({ profile = profileData }: { profile?: Prof
                   <span className="text-sky-400 select-none">❯</span>
                   <div>
                     <span className="text-slate-500">ai_tools: </span>
-                    <span className="text-indigo-300">[&quot;Claude 3.7&quot;, &quot;Cursor&quot;, &quot;OpenAI API&quot;, &quot;Ollama&quot;]</span>
+                    <span className="text-indigo-300">[&quot;Claude 4.6&quot;, &quot;Cursor&quot;, &quot;Gemini 3.8&quot;, &quot;Ollama&quot;]</span>
                   </div>
                 </div>
 
