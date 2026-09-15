@@ -27,5 +27,7 @@
 - **Zero-Limitation Scope:** Never artificially truncate, simplify, or defer complex implementations. Tackle full-scale architectures, distributed systems, deep algorithmic problems, and multi-file refactors without hesitation.
 - **Exhaustive Edge-Case Coverage:** Implement comprehensive edge-case handling, data validation schemas, transaction rollbacks, rate-limiting, and resilient fallbacks in all production code.
 - **Autonomous Multi-Agent Orchestration:** Flexibly deploy specialized subagents (`fullstack_engineer`, `qa_security_auditor`, `research`) to divide and conquer large feature sets in parallel.
-- **Continuous Pre-Flight Verification:** Automatically execute type-checkers (`tsc --noEmit`, `mypy`), linters, and test suites across all modified files before concluding any task.
-
+## 7. Zero Outbound Direct Message Invariant (Strict Account Guardrail)
+- **Physical Platform Block:** The user's Reddit account (`u/SamarthBuilds_`) is fresh (<30 karma) and physically blocked by Reddit from initiating direct chats or invites (*"You need a more established account to send chat invites"*). On X, cold DMs are paywalled or restricted.
+- **Absolute Prohibition on Outbound DM Instructions:** NEVER instruct, suggest, or assume the user can initiate cold DMs or chat requests. Any strategy relying on outbound private messaging is dead on arrival.
+- **The Inbound Flip Standard:** All proposals, sample code, and proofs must be embedded directly inside the **public comment thread** on the client's post. This solves the problem publicly, earns upvotes for comment karma, and drives the client to initiate contact directly or reach out via Telegram (`@Samarth1306`).

@@ -85,7 +85,8 @@ export default function OptimizedView({ items }: { items: string[] }) {
 };
 
 /**
- * Generate high-converting Bid & DM for a specific target task
+ * Generate high-converting Public Comment Pitch (The Inbound Flip)
+ * Zero Outbound DMs: The proof is in the comment, client initiates DM or Telegram
  */
 export function formatPitchForTask(lead: {
   category: "SCRAPER" | "BOT" | "WEB" | "AUTOMATION";
@@ -93,21 +94,32 @@ export function formatPitchForTask(lead: {
   author: string;
   taskTitle: string;
 }): { bid: string; dm: string } {
-  const bid = `$bid - Built a working test snippet for your schema. Sent a 5-row sample in your DM.`;
+  const snippet = SAMPLE_PROTOTYPES[lead.category]?.deliverable || SAMPLE_PROTOTYPES.SCRAPER.deliverable;
 
+  // The Inbound Flip: Everything is in the public comment because fresh accounts cannot send outbound chat invites
+  const bid = `$bid - Built a working snippet for your task directly:
+
+\`\`\`python
+${snippet}
+\`\`\`
+
+- Turnaround: Under 3-6 hours.
+- Budget: ${lead.budget} (zero upfront; verify 100% of deliverables before payment).
+- Portfolio: https://sam-codes.vercel.app
+- Since my Reddit account is fresh and restricted from initiating outbound chat invites, feel free to initiate a chat with me here or ping me directly on Telegram: @Samarth1306`;
+
+  // Fallback direct copy text ONLY if the client messages first and requests clarification
   const dm = `
 Hey u/${lead.author},
 
-Saw your post regarding "${lead.taskTitle}". Instead of a generic pitch, I wrote a quick test snippet to verify your target schema:
+Thanks for reaching out regarding "${lead.taskTitle}". Here is the quick architecture and plan to deliver this within a few hours:
 
-${SAMPLE_PROTOTYPES[lead.category]?.deliverable || SAMPLE_PROTOTYPES.SCRAPER.deliverable}
+${snippet}
 
 - Turnaround: Under 3 hours.
-- Budget: ${lead.budget} (zero payment until you inspect and verify 100% of the deliverables).
+- Budget: ${lead.budget} (zero risk: full inspection before release).
 - Live Portfolio: https://sam-codes.vercel.app
 - Direct Telegram: https://t.me/Samarth1306
-
-Let me know if you want me to run the full dataset/codebase for you!
 `.trim();
 
   return { bid, dm };
