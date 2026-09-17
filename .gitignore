@@ -41,3 +41,7 @@ sam-codeai-manager/
 .seen-leads.json
 .whatsapp-auth/
 designs/
+.google-credentials.json
+.gmail-tokens.json
+*credentials*.json
+*token*.json
