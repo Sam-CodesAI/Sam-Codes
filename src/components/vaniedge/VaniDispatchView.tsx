@@ -63,12 +63,12 @@ export default function VaniDispatchView({
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-amber-400" />
             <span className="text-xs uppercase font-mono font-bold tracking-wider text-amber-400">
-              Autonomous Operational Dispatch Queue
+              Automated Bookings & Orders
             </span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Live Dispatched Booking Queue</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Customer Bookings & Orders</h2>
           <p className="text-xs sm:text-sm text-slate-400">
-            Appointments, food deliveries, and emergency rescue units captured with sub-second turnaround.
+            Appointments, food deliveries, and service requests captured automatically during incoming phone calls.
           </p>
         </div>
 
@@ -78,7 +78,7 @@ export default function VaniDispatchView({
           className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black font-semibold text-xs transition-colors shadow-lg shadow-amber-500/20 shrink-0 cursor-pointer"
         >
           <Download className="w-3.5 h-3.5" />
-          <span>Export CSV Spreadsheet</span>
+          <span>Export CSV</span>
         </button>
       </div>
 

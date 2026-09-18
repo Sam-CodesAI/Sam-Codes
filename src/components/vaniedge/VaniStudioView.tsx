@@ -138,13 +138,13 @@ export default function VaniStudioView({
       <div className="text-center space-y-2 max-w-2xl mx-auto">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-medium">
           <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Sub-Second Edge Telephony Studio • Hack Devengers 2.0</span>
+          <span>Live Voice Assistant • 24/7 Answering</span>
         </div>
         <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
-          Autonomous <span className="bg-gradient-to-r from-emerald-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent">Voice AI Telephony</span> Studio
+          AI Voice Assistant <span className="bg-gradient-to-r from-emerald-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent">for Local Businesses</span>
         </h1>
         <p className="text-xs sm:text-sm text-slate-400">
-          Speak via microphone, dial the live carrier line, or switch business personas to test instant vernacular dispatching.
+          Speak naturally in your preferred language, choose your business type, or call our live phone number directly.
         </p>
       </div>
 
@@ -185,9 +185,10 @@ export default function VaniStudioView({
             </button>
           </div>
 
-          <span className="text-[11px] font-mono text-slate-400">
-            Edge Node: <span className="text-emerald-400 font-semibold">{activeRegion}</span>
-          </span>
+          <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Assistant Online</span>
+          </div>
         </div>
 
         {/* Sliders and Selectors */}
@@ -384,16 +385,9 @@ export default function VaniStudioView({
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center justify-between text-[10px] text-slate-400">
                     <span className="font-semibold text-slate-300">
-                      {msg.sender === "agent" ? "VaniEdge AI (Edge)" : "You (Caller)"}
+                      {msg.sender === "agent" ? "AI Voice Assistant" : "You (Caller)"}
                     </span>
-                    <div className="flex items-center gap-2 font-mono">
-                      {msg.latencyMs && (
-                        <span className="px-1.5 py-0.5 rounded bg-slate-800 text-emerald-400 tabular-nums">
-                          {msg.latencyMs}ms
-                        </span>
-                      )}
-                      <span>{msg.timestamp}</span>
-                    </div>
+                    <span className="font-mono text-slate-500">{msg.timestamp}</span>
                   </div>
                   <p className="text-xs leading-relaxed">{msg.text}</p>
 

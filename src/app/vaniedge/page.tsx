@@ -522,12 +522,11 @@ export default function VaniEdgePage() {
       const alertMsg: Message = {
         id: `glitch-${Date.now()}`,
         sender: "agent",
-        text: "⚡ [FAILOVER WATCHDOG ACTIVATED]: Upstream latency exceeded 1,200ms threshold. Mid-call Twilio REST redirection executed. Live call rescued to backup PSTN queue without dropped connection.",
+        text: "🛡️ [CALL BACKUP ACTIVATED]: Line delay detected. Live call was seamlessly protected and maintained with zero drop.",
         timestamp: "Just now",
-        latencyMs: 14.8,
       };
       setTranscript((prev) => [...prev, alertMsg]);
-      speakVoiceResponse("Notice: Call protected by edge failover watchdog.");
+      speakVoiceResponse("Notice: Call protected by automated backup system.");
     }, 1200);
   };
 
@@ -724,12 +723,12 @@ export default function VaniEdgePage() {
                   {activeTab === "studio"
                     ? "Voice Studio"
                     : activeTab === "dashboard"
-                    ? "Fleet Telemetry"
+                    ? "Analytics"
                     : activeTab === "sutradb"
-                    ? "SutraDB RAG"
+                    ? "Knowledge Base"
                     : activeTab === "dispatch"
-                    ? "Dispatch Queue"
-                    : "Carrier Telephony"}
+                    ? "Bookings & Orders"
+                    : "Phone Setup"}
                 </span>
               </div>
             </div>
@@ -756,7 +755,7 @@ export default function VaniEdgePage() {
                 }`}
               >
                 <BarChart3 className="w-3.5 h-3.5" />
-                <span>Dashboard</span>
+                <span>Analytics</span>
               </button>
               <button
                 onClick={() => setActiveTab("sutradb")}
@@ -767,7 +766,7 @@ export default function VaniEdgePage() {
                 }`}
               >
                 <Database className="w-3.5 h-3.5" />
-                <span>SutraDB ({knowledgeList.length})</span>
+                <span>Knowledge ({knowledgeList.length})</span>
               </button>
               <button
                 onClick={() => setActiveTab("dispatch")}
@@ -778,7 +777,7 @@ export default function VaniEdgePage() {
                 }`}
               >
                 <Calendar className="w-3.5 h-3.5" />
-                <span>Dispatch ({tickets.length})</span>
+                <span>Bookings ({tickets.length})</span>
               </button>
               <button
                 onClick={() => setActiveTab("telephony")}
@@ -789,7 +788,7 @@ export default function VaniEdgePage() {
                 }`}
               >
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Telephony</span>
+                <span>Phone Setup</span>
               </button>
             </nav>
 

@@ -108,12 +108,12 @@ export default function VaniKnowledgeView({
           <div className="flex items-center gap-2">
             <Database className="w-4 h-4 text-indigo-400" />
             <span className="text-xs uppercase font-mono font-bold tracking-wider text-indigo-400">
-              SutraDB In-Memory Hybrid Vector Engine
+              Smart Knowledge Base & Trained FAQs
             </span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Edge Knowledge Base & Document Vectors</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Business Information & Service Details</h2>
           <p className="text-xs sm:text-sm text-slate-400">
-            64-dimensional character n-gram dense semantic hashing fused with BM25 Okapi lexical ranking with 0ms SaaS fee.
+            Add your business hours, menus, consultation fees, and services so the voice assistant can answer customers instantly.
           </p>
         </div>
 
@@ -121,10 +121,10 @@ export default function VaniKnowledgeView({
           <button
             onClick={handleExportJSON}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white font-medium text-xs transition-colors cursor-pointer"
-            title="Export full knowledge base as JSON"
+            title="Export knowledge base as JSON"
           >
             <Download className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Export JSON</span>
+            <span className="hidden sm:inline">Export</span>
           </button>
 
           <label className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white font-medium text-xs transition-colors cursor-pointer">
@@ -138,7 +138,7 @@ export default function VaniKnowledgeView({
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold text-xs transition-colors shadow-lg shadow-indigo-500/20 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Ingest Document</span>
+            <span>Add Information</span>
           </button>
         </div>
       </div>
@@ -150,15 +150,15 @@ export default function VaniKnowledgeView({
           <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
             <div className="flex items-center gap-2">
               <Cpu className="w-4 h-4 text-indigo-400" />
-              <span className="font-semibold text-sm text-slate-200">Live Hybrid Similarity Tester</span>
+              <span className="font-semibold text-sm text-slate-200">Search & Answer Preview</span>
             </div>
             <span className="text-[10px] font-mono text-emerald-400">
-              {queryLatency !== null ? `${queryLatency}ms Execution` : "0ms SaaS Latency"}
+              Instant Lookup
             </span>
           </div>
 
           <p className="text-xs text-slate-400 leading-relaxed">
-            Test real-time hybrid retrieval: character bigram cosine embeddings (0.60) + BM25 Okapi lexical term scoring (0.40).
+            Type any customer question below to preview how the voice assistant finds the answer from your business data:
           </p>
 
           <div className="space-y-2">
@@ -186,7 +186,7 @@ export default function VaniKnowledgeView({
           <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
             {testResults.length === 0 ? (
               <div className="p-4 rounded-xl bg-slate-950/50 border border-slate-900 text-center text-slate-500 text-xs">
-                Type any query above to run instant in-memory vector matching.
+                Type any query above to test instant answer matching.
               </div>
             ) : (
               testResults.map((res, i) => (
@@ -197,7 +197,7 @@ export default function VaniKnowledgeView({
                   <div className="flex justify-between items-center text-slate-300 font-semibold">
                     <span className="truncate max-w-[200px]">{res.document.title}</span>
                     <span className="font-mono text-emerald-400 font-bold">
-                      {(res.fusedScore * 100).toFixed(1)}% Match
+                      {(res.fusedScore * 100).toFixed(0)}% Relevance
                     </span>
                   </div>
 
@@ -208,33 +208,18 @@ export default function VaniKnowledgeView({
                     />
                   </div>
 
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono">
-                    <span>Dense Cosine: {(res.vectorScore * 100).toFixed(0)}%</span>
-                    <span>BM25: {res.bm25Score.toFixed(2)}</span>
-                    {res.matchedTerms.length > 0 && (
-                      <span className="text-cyan-400 truncate max-w-[100px]">
-                        [{res.matchedTerms.join(", ")}]
-                      </span>
-                    )}
-                  </div>
+                  <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                    {res.document.content}
+                  </p>
                 </div>
               ))
             )}
           </div>
 
-          <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-400 space-y-1">
-            <div className="flex justify-between">
-              <span>Dense Vector Weight:</span>
-              <span className="font-mono text-indigo-300">0.60 (Cosine Sim)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Lexical BM25 Weight:</span>
-              <span className="font-mono text-cyan-300">0.40 (Okapi)</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Memory Index Cache:</span>
-              <span className="font-mono text-emerald-300">{knowledgeList.length} In-RAM Vectors</span>
-            </div>
+          <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-400">
+            <span className="text-slate-500">
+              💡 Tip: Adding clear details about pricing, timings, and services helps the voice assistant answer caller questions accurately.
+            </span>
           </div>
         </Vani3DCard>
 
@@ -273,7 +258,7 @@ export default function VaniKnowledgeView({
               type="text"
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
-              placeholder="Search indexed knowledge chunks..."
+              placeholder="Search business information & FAQs..."
               className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
             />
           </div>
@@ -314,7 +299,7 @@ export default function VaniKnowledgeView({
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <Plus className="w-4 h-4 text-indigo-400" />
-                <h3 className="text-sm font-bold text-white">Ingest New Knowledge Document</h3>
+                <h3 className="text-sm font-bold text-white">Add Business Information</h3>
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
@@ -326,7 +311,7 @@ export default function VaniKnowledgeView({
 
             <div className="space-y-3">
               <div>
-                <label className="text-[11px] text-slate-400 block mb-1">Document Title</label>
+                <label className="text-[11px] text-slate-400 block mb-1">Title</label>
                 <input
                   type="text"
                   placeholder="e.g. Dr. Sharma Consultation Fee & Timing"
@@ -337,7 +322,7 @@ export default function VaniKnowledgeView({
               </div>
 
               <div>
-                <label className="text-[11px] text-slate-400 block mb-1">Category Domain</label>
+                <label className="text-[11px] text-slate-400 block mb-1">Business Domain</label>
                 <select
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value as any)}
@@ -351,9 +336,9 @@ export default function VaniKnowledgeView({
               </div>
 
               <div>
-                <label className="text-[11px] text-slate-400 block mb-1">Document Knowledge Content</label>
+                <label className="text-[11px] text-slate-400 block mb-1">Information Details</label>
                 <textarea
-                  placeholder="Full text rules, pricing, timings, policies, or menu descriptions..."
+                  placeholder="Full details, pricing, timings, policies, or menu descriptions..."
                   value={newContent}
                   onChange={(e) => setNewContent(e.target.value)}
                   rows={5}
@@ -374,7 +359,7 @@ export default function VaniKnowledgeView({
                 disabled={!newTitle.trim() || !newContent.trim()}
                 className="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 text-white font-semibold shadow-lg shadow-indigo-500/20 transition-colors cursor-pointer"
               >
-                Index into Memory
+                Save Article
               </button>
             </div>
           </div>
