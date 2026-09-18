@@ -50,8 +50,8 @@ export default function VaniVoiceOrb3D({
     let animId: number;
     let angleX = 0;
     let angleY = 0;
-    const radius = 105;
-    const focalLength = 320;
+    const radius = 82;
+    const focalLength = 280;
 
     // Generate 3D spherical point cloud (220 particles with Fibonacci sphere distribution)
     const numParticles = 220;
@@ -74,7 +74,7 @@ export default function VaniVoiceOrb3D({
         baseY: y,
         baseZ: z,
         color: colors[i % colors.length],
-        size: Math.random() * 1.8 + 1.2,
+        size: Math.random() * 1.6 + 1.0,
       });
     }
 
@@ -92,13 +92,13 @@ export default function VaniVoiceOrb3D({
         pulsePhase += isSpeaking ? 0.12 : isListening ? 0.08 : 0.03;
 
         const amp = isSpeaking
-          ? Math.sin(pulsePhase) * 22
+          ? Math.sin(pulsePhase) * 16
           : isListening
-          ? Math.sin(pulsePhase) * 12
+          ? Math.sin(pulsePhase) * 10
           : 2;
 
         // Draw ambient radial glow
-        const glowGrad = ctx.createRadialGradient(centerX, centerY, 10, centerX, centerY, 140);
+        const glowGrad = ctx.createRadialGradient(centerX, centerY, 8, centerX, centerY, 110);
         const glowColor = isSpeaking
           ? "rgba(16, 185, 129, 0.22)"
           : isListening
@@ -167,8 +167,8 @@ export default function VaniVoiceOrb3D({
           for (let j = i + 1; j < Math.min(i + 4, projected.length); j++) {
             const p2 = projected[j];
             const dist = Math.hypot(p1.px - p2.px, p1.py - p2.py);
-            if (dist < 44) {
-              const alpha = Math.max(0.05, Math.min(0.35, (1 - dist / 44) * 0.35));
+            if (dist < 36) {
+              const alpha = Math.max(0.05, Math.min(0.35, (1 - dist / 36) * 0.35));
               ctx.strokeStyle = isSpeaking
                 ? `rgba(16, 185, 129, ${alpha})`
                 : isListening
@@ -244,7 +244,7 @@ export default function VaniVoiceOrb3D({
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative flex flex-col items-center justify-center p-4 select-none"
+      className="relative flex flex-col items-center justify-center p-1 select-none"
       style={{
         perspective: "1000px",
       }}
@@ -259,7 +259,7 @@ export default function VaniVoiceOrb3D({
       >
         {/* Holographic Ambient Glow Layers */}
         <div
-          className={`absolute w-60 h-60 rounded-full blur-3xl -z-10 transition-all duration-500 ${
+          className={`absolute w-44 h-44 rounded-full blur-2xl -z-10 transition-all duration-500 ${
             isSpeaking
               ? "bg-emerald-500/25 scale-110"
               : isListening
@@ -271,9 +271,9 @@ export default function VaniVoiceOrb3D({
         {/* 3D Canvas Sphere */}
         <canvas
           ref={canvasRef}
-          width={320}
-          height={320}
-          className="w-64 h-64 sm:w-72 sm:h-72 cursor-grab active:cursor-grabbing"
+          width={240}
+          height={240}
+          className="w-44 h-44 sm:w-48 sm:h-48 cursor-grab active:cursor-grabbing"
         />
       </div>
     </div>

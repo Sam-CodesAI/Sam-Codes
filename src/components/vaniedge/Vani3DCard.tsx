@@ -74,7 +74,7 @@ export default function Vani3DCard({
       )}
 
       {/* Card Content with 3D Depth */}
-      <div style={{ transform: "translateZ(10px)" }}>{children}</div>
+      <div className="h-full w-full" style={{ transform: "translateZ(10px)" }}>{children}</div>
     </div>
   );
 }
