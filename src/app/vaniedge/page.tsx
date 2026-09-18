@@ -843,13 +843,25 @@ export default function VaniEdgePage() {
               selectedPersona={selectedPersona}
               onSelectPersona={(p) => {
                 setSelectedPersona(p);
-                setBusinessName(
-                  p === "clinic"
-                    ? "Dr. Sharma Healthcare Clinic"
-                    : p === "restaurant"
-                    ? "Bhojanalaya Cloud Kitchen"
-                    : "Apex Roadside Assistance"
-                );
+                if (p === "clinic") {
+                  setBusinessName("Dr. Sharma Healthcare Clinic");
+                  setSelectedVoice("sarah");
+                  setSpeechRate(1.0);
+                  setSpeechPitch(1.0);
+                  setSpeechEngine("elevenlabs");
+                } else if (p === "restaurant") {
+                  setBusinessName("Bhojanalaya Cloud Kitchen");
+                  setSelectedVoice("bella");
+                  setSpeechRate(1.05);
+                  setSpeechPitch(1.05);
+                  setSpeechEngine("elevenlabs");
+                } else {
+                  setBusinessName("Apex Roadside Assistance");
+                  setSelectedVoice("adam");
+                  setSpeechRate(1.1);
+                  setSpeechPitch(0.95);
+                  setSpeechEngine("elevenlabs");
+                }
               }}
               selectedLanguage={selectedLanguage}
               onSelectLanguage={setSelectedLanguage}
