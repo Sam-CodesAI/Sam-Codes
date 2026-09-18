@@ -7,7 +7,7 @@ const VOICE_MAP: Record<string, string> = {
   sarah: "EXAVITQu4vr4xnSDxMaL", // Reassuring, Mature
   rachel: "21m00Tcm4TlvDq8ikWAM", // Calm, Professional
   adam: "pNInz6obpgDQGcFmaJgB", // Authoritative
-  bella: "EXAVITQu4vr4xnSDxMaL", // Warm
+  bella: "piTKgcLEGmPE4e6mEKli", // Warm, Friendly
 };
 
 export async function POST(req: NextRequest) {

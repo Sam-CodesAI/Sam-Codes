@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     const extractedEntities: Record<string, string> = {};
 
     // 1. Name Extraction
-    const nameMatch = message.match(/(?:my name is|i am|for|this is|caller is)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i) ||
+    const nameMatch = message.match(/(?:my name is|i am|this is|caller is)\s+([A-Za-z]+(?:\s+(?!and\b|phone\b|with\b|for\b|at\b)[A-Za-z]+)?)/i) ||
       message.match(/(?:नाम\s*(?:है)?|ಹೆಸರು)\s*[:=]?\s*([^\s,]+)/i);
     if (nameMatch) {
       extractedEntities["callerName"] = nameMatch[1].trim();
