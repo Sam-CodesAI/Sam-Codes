@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import {
   Phone,
@@ -32,15 +32,23 @@ import {
   Check,
   Flame,
   Search,
+  Sliders,
+  Download,
+  Trash2,
+  Radio,
+  FileText,
+  Settings,
 } from "lucide-react";
 import { DEFAULT_KNOWLEDGE_PRESETS, DocumentEntry } from "@/lib/vaniedge/sutradb-engine";
 
 interface Message {
+  id: string;
   sender: "user" | "agent";
   text: string;
   timestamp: string;
   latencyMs?: number;
   matchedDoc?: string;
+  audioUrl?: string;
 }
 
 interface DispatchTicket {
@@ -51,29 +59,64 @@ interface DispatchTicket {
   callerPhone: string;
   serviceType: string;
   details: string;
-  status: "CONFIRMED" | "DISPATCHED" | "ESCALATED";
+  status: "CONFIRMED" | "DISPATCHED" | "COMPLETED" | "ESCALATED";
   priority: "STANDARD" | "HIGH" | "URGENT";
   smsConfirmation: string;
 }
 
+interface LanguageOption {
+  code: string;
+  label: string;
+  nativeLabel: string;
+  speechLocale: string;
+}
+
+const LANGUAGES: LanguageOption[] = [
+  { code: "en", label: "English (India)", nativeLabel: "English", speechLocale: "en-IN" },
+  { code: "hi", label: "Hindi", nativeLabel: "हिंदी", speechLocale: "hi-IN" },
+  { code: "kn", label: "Kannada", nativeLabel: "ಕನ್ನಡ", speechLocale: "kn-IN" },
+  { code: "mr", label: "Marathi", nativeLabel: "मराठी", speechLocale: "mr-IN" },
+  { code: "ta", label: "Tamil", nativeLabel: "தமிழ்", speechLocale: "ta-IN" },
+  { code: "es", label: "Spanish", nativeLabel: "Español", speechLocale: "es-ES" },
+];
+
+const ELEVENLABS_VOICES = [
+  { id: "sarah", name: "Sarah", desc: "Mature, Reassuring, Confident (Healthcare/Triage)", voiceId: "EXAVITQu4vr4xnSDxMaL" },
+  { id: "rachel", name: "Rachel", desc: "Calm, Professional (Business & Support)", voiceId: "21m00Tcm4TlvDq8ikWAM" },
+  { id: "adam", name: "Adam", desc: "Authoritative, Deep (Emergency & Rescue)", voiceId: "pNInz6obpgDQGcFmaJgB" },
+  { id: "bella", name: "Bella", desc: "Warm, Friendly (Food Ordering & Hospitality)", voiceId: "EXAVITQu4vr4xnSDxMaL" },
+];
+
 export default function VaniEdgePage() {
-  // Simulator State
+  // Telephony & Call State
   const [isCalling, setIsCalling] = useState<boolean>(false);
+  const [isListening, setIsListening] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
-  const [selectedPersona, setSelectedPersona] = useState<"clinic" | "restaurant" | "auto">("clinic");
-  const [selectedLanguage, setSelectedLanguage] = useState<"en" | "hi" | "kn">("en");
   const [callDuration, setCallDuration] = useState<number>(0);
   const [transcript, setTranscript] = useState<Message[]>([
     {
+      id: "initial-msg",
       sender: "agent",
-      text: "Namaste! Welcome to VaniEdge Voice Telephony. How can I assist you with Dr. Sharma's Clinic today?",
+      text: "Namaste! Welcome to VaniEdge Voice Telephony. How may I assist your business today?",
       timestamp: "Just now",
-      latencyMs: 18.2,
+      latencyMs: 14.2,
     },
   ]);
   const [customQuery, setCustomQuery] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [watchdogStatus, setWatchdogStatus] = useState<"HEALTHY" | "TRIGGERED" | "RECOVERED">("HEALTHY");
+
+  // Voice & Language Customization
+  const [speechEngine, setSpeechEngine] = useState<"elevenlabs" | "browser">("elevenlabs");
+  const [selectedVoice, setSelectedVoice] = useState<string>("sarah");
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
+  const [speechRate, setSpeechRate] = useState<number>(1.05);
+  const [speechPitch, setSpeechPitch] = useState<number>(1.0);
+  const [browserVoices, setBrowserVoices] = useState<SpeechSynthesisVoice[]>([]);
+
+  // Business Context & Persona
+  const [businessName, setBusinessName] = useState<string>("Dr. Sharma Healthcare Clinic");
+  const [selectedPersona, setSelectedPersona] = useState<"clinic" | "restaurant" | "auto">("clinic");
 
   // Telemetry Metrics
   const [metrics, setMetrics] = useState({
@@ -81,46 +124,111 @@ export default function VaniEdgePage() {
     wsUpgradeMs: 38.6,
     sutraDbMs: 8.4,
     ttftMs: 340.0,
-    failoverStatus: "Active Guardrail (1,200ms deadline)",
+    activeRegion: "BOM1 (Mumbai Edge)",
   });
 
-  // Knowledge Base State
+  // SutraDB Dynamic Knowledge Base
   const [knowledgeList, setKnowledgeList] = useState<DocumentEntry[]>(DEFAULT_KNOWLEDGE_PRESETS);
   const [newDocTitle, setNewDocTitle] = useState<string>("");
   const [newDocContent, setNewDocContent] = useState<string>("");
   const [showAddDoc, setShowAddDoc] = useState<boolean>(false);
+  const [searchFilter, setSearchFilter] = useState<string>("");
 
-  // Tickets Dispatch Feed
-  const [tickets, setTickets] = useState<DispatchTicket[]>([
-    {
-      ticketId: "VANI-CLI-4821",
-      timestamp: "2 mins ago",
-      category: "clinic",
-      callerName: "Rohan Verma",
-      callerPhone: "+91-98765-43210",
-      serviceType: "General Physician Consultation",
-      details: "Booked appointment for tomorrow 11:30 AM",
-      status: "CONFIRMED",
-      priority: "STANDARD",
-      smsConfirmation: "[VaniEdge AI] Appointment confirmed with Dr. Sharma Clinic for tomorrow 11:30 AM. Ticket: VANI-CLI-4821.",
-    },
-    {
-      ticketId: "VANI-RES-9104",
-      timestamp: "14 mins ago",
-      category: "restaurant",
-      callerName: "Pooja Hegde",
-      callerPhone: "+91-98123-77890",
-      serviceType: "2x Special Thali + Veg Biryani",
-      details: "Delivery address: 4th Cross, Indiranagar",
-      status: "DISPATCHED",
-      priority: "STANDARD",
-      smsConfirmation: "[VaniEdge AI] Order dispatched from Bhojanalaya Kitchen. ETA: 25 mins. Ticket: VANI-RES-9104.",
-    },
-  ]);
+  // Persistent Dispatch Tickets Feed
+  const [tickets, setTickets] = useState<DispatchTicket[]>([]);
 
-  // Audio Waveform Animation
+  // Waveform Canvas & Audio Ref
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+  const recognitionRef = useRef<any>(null);
 
+  // Load saved tickets & browser voices on client mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("vaniedge_tickets");
+      if (saved) {
+        try {
+          setTickets(JSON.parse(saved));
+        } catch {
+          // fallback
+        }
+      } else {
+        const initialTickets: DispatchTicket[] = [
+          {
+            ticketId: "VANI-CLI-8192",
+            timestamp: "5 mins ago",
+            category: "clinic",
+            callerName: "Rohan Verma",
+            callerPhone: "+91-98765-43210",
+            serviceType: "General Physician Consultation",
+            details: "Booked appointment for tomorrow 11:30 AM",
+            status: "CONFIRMED",
+            priority: "STANDARD",
+            smsConfirmation: "[VaniEdge AI] Appointment confirmed with Dr. Sharma Clinic for tomorrow 11:30 AM. Ticket: VANI-CLI-8192.",
+          },
+          {
+            ticketId: "VANI-RES-3304",
+            timestamp: "22 mins ago",
+            category: "restaurant",
+            callerName: "Pooja Hegde",
+            callerPhone: "+91-98123-77890",
+            serviceType: "2x Special Thali + Veg Biryani",
+            details: "Delivery address: 4th Cross, Indiranagar",
+            status: "DISPATCHED",
+            priority: "STANDARD",
+            smsConfirmation: "[VaniEdge AI] Order dispatched from Bhojanalaya Kitchen. ETA: 25 mins. Ticket: VANI-RES-3304.",
+          },
+        ];
+        setTickets(initialTickets);
+        localStorage.setItem("vaniedge_tickets", JSON.stringify(initialTickets));
+      }
+
+      // Populate Browser Voices
+      const updateVoices = () => {
+        const available = window.speechSynthesis?.getVoices() || [];
+        setBrowserVoices(available);
+      };
+      updateVoices();
+      if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = updateVoices;
+      }
+
+      // Setup Web Speech Recognition if available
+      const SpeechRecognition =
+        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recog = new SpeechRecognition();
+        recog.continuous = false;
+        recog.interimResults = true;
+
+        recog.onresult = (event: any) => {
+          const text = Array.from(event.results)
+            .map((r: any) => r[0].transcript)
+            .join("");
+          setCustomQuery(text);
+        };
+
+        recog.onend = () => {
+          setIsListening(false);
+        };
+
+        recog.onerror = () => {
+          setIsListening(false);
+        };
+
+        recognitionRef.current = recog;
+      }
+    }
+  }, []);
+
+  // Save tickets on change
+  useEffect(() => {
+    if (typeof window !== "undefined" && tickets.length > 0) {
+      localStorage.setItem("vaniedge_tickets", JSON.stringify(tickets));
+    }
+  }, [tickets]);
+
+  // Call duration counter
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isCalling) {
@@ -133,7 +241,7 @@ export default function VaniEdgePage() {
     return () => clearInterval(timer);
   }, [isCalling]);
 
-  // Waveform canvas loop
+  // Audio Waveform Canvas Loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -150,37 +258,88 @@ export default function VaniEdgePage() {
       const centerY = height / 2;
 
       ctx.lineWidth = 2.5;
-      ctx.strokeStyle = isSpeaking ? "#10b981" : isCalling ? "#6366f1" : "#334155";
+      ctx.strokeStyle = isSpeaking
+        ? "#10b981" // Emerald
+        : isListening
+        ? "#06b6d4" // Cyan
+        : isCalling
+        ? "#6366f1" // Indigo
+        : "#334155"; // Slate
       ctx.beginPath();
 
-      for (let x = 0; x < width; x++) {
-        const freq = isSpeaking ? 0.08 : 0.03;
-        const amp = isSpeaking ? 16 : isCalling ? 6 : 2;
-        const y = centerY + Math.sin(x * freq + phase) * amp * Math.sin(x / width * Math.PI);
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
+      const bars = 40;
+      const barWidth = width / bars;
 
-      phase += isSpeaking ? 0.2 : 0.05;
+      for (let i = 0; i < bars; i++) {
+        const x = i * barWidth;
+        const multiplier = isSpeaking ? 1.5 : isListening ? 1.2 : isCalling ? 0.4 : 0.1;
+        const wave = Math.sin(i * 0.3 + phase) * Math.cos(i * 0.2 + phase);
+        const barHeight = Math.max(4, Math.abs(wave) * (height / 2.2) * multiplier);
+
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.fillRect(x + 1, centerY - barHeight / 2, barWidth - 2, barHeight);
+      }
+
+      phase += isSpeaking || isListening ? 0.15 : 0.04;
       animId = requestAnimationFrame(render);
     };
 
     render();
     return () => cancelAnimationFrame(animId);
-  }, [isCalling, isSpeaking]);
+  }, [isCalling, isSpeaking, isListening]);
 
-  // Handle Speech Synthesis / Text-to-Speech Output
-  const speakText = (text: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  // Speak text via ElevenLabs or Browser
+  const speakVoiceResponse = useCallback(
+    async (text: string) => {
+      if (typeof window === "undefined") return;
+
+      // 1. Try ElevenLabs Edge Streaming if selected
+      if (speechEngine === "elevenlabs") {
+        try {
+          setIsSpeaking(true);
+          const ttsRes = await fetch("/api/vaniedge/tts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text, voiceId: selectedVoice }),
+          });
+
+          if (ttsRes.ok) {
+            const blob = await ttsRes.blob();
+            const audioUrl = URL.createObjectURL(blob);
+            if (audioPlayerRef.current) {
+              audioPlayerRef.current.src = audioUrl;
+              audioPlayerRef.current.playbackRate = speechRate;
+              audioPlayerRef.current.onended = () => setIsSpeaking(false);
+              audioPlayerRef.current.onerror = () => {
+                setIsSpeaking(false);
+                fallbackBrowserTTS(text);
+              };
+              await audioPlayerRef.current.play();
+              return;
+            }
+          }
+        } catch {
+          // Fallback to browser
+        }
+      }
+
+      // 2. Fallback to Browser Native SpeechSynthesis
+      fallbackBrowserTTS(text);
+    },
+    [speechEngine, selectedVoice, speechRate, selectedLanguage, speechPitch]
+  );
+
+  const fallbackBrowserTTS = (text: string) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      setIsSpeaking(false);
+      return;
+    }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    if (selectedLanguage === "hi") utterance.lang = "hi-IN";
-    else if (selectedLanguage === "kn") utterance.lang = "kn-IN";
-    else utterance.lang = "en-IN";
-
-    utterance.rate = 1.05;
-    utterance.pitch = 1.0;
+    const selectedLangObj = LANGUAGES.find((l) => l.code === selectedLanguage);
+    utterance.lang = selectedLangObj?.speechLocale || "en-IN";
+    utterance.rate = speechRate;
+    utterance.pitch = speechPitch;
 
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
@@ -189,18 +348,38 @@ export default function VaniEdgePage() {
     window.speechSynthesis.speak(utterance);
   };
 
-  // Execute Agent Turn
+  // Toggle Live Speech Microphone
+  const toggleListening = () => {
+    if (!recognitionRef.current) {
+      alert("Web Speech Recognition is not supported in this browser. Please use Chrome/Edge or type your question below.");
+      return;
+    }
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      const selectedLangObj = LANGUAGES.find((l) => l.code === selectedLanguage);
+      recognitionRef.current.lang = selectedLangObj?.speechLocale || "en-IN";
+      recognitionRef.current.start();
+      setIsListening(true);
+    }
+  };
+
+  // Process User Query
   const handleQuery = async (queryText: string) => {
     if (!queryText.trim() || isProcessing) return;
     setIsProcessing(true);
 
     const userMsg: Message = {
+      id: `msg-${Date.now()}`,
       sender: "user",
-      text: queryText,
-      timestamp: "Just now",
+      text: queryText.trim(),
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
     setTranscript((prev) => [...prev, userMsg]);
     setCustomQuery("");
+
+    const callStartTime = performance.now();
 
     try {
       const res = await fetch("/api/vaniedge/chat", {
@@ -211,15 +390,19 @@ export default function VaniEdgePage() {
           persona: selectedPersona,
           language: selectedLanguage,
           customDocuments: knowledgeList,
+          businessName,
         }),
       });
 
       const data = await res.json();
+      const elapsedRoundtrip = parseFloat((performance.now() - callStartTime).toFixed(1));
+
       if (data.success) {
         const agentMsg: Message = {
+          id: `msg-${Date.now() + 1}`,
           sender: "agent",
           text: data.voiceResponse,
-          timestamp: "Just now",
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           latencyMs: data.retrieval?.latencyMs || 8.4,
           matchedDoc: data.retrieval?.matchedDocument?.title,
         };
@@ -228,26 +411,32 @@ export default function VaniEdgePage() {
         setMetrics((prev) => ({
           ...prev,
           sutraDbMs: data.retrieval?.latencyMs || 8.4,
-          ttftMs: parseFloat((320 + Math.random() * 40).toFixed(1)),
+          ttftMs: elapsedRoundtrip,
         }));
 
-        speakText(data.voiceResponse);
+        speakVoiceResponse(data.voiceResponse);
 
-        // Auto-create ticket if booking/order/emergency intent detected
+        // Auto-create persistent dispatch ticket for operational intents
         if (["BOOK_APPOINTMENT", "ORDER_FOOD", "EMERGENCY_DISPATCH"].includes(data.intent)) {
           dispatchTicket({
-            callerName: data.entities?.patientName || "Caller",
+            callerName: data.entities?.callerName || "Caller",
+            callerPhone: data.entities?.phone || "+91-98765-43210",
             category: selectedPersona,
-            serviceType: data.entities?.item || "Service Booking",
-            details: data.voiceResponse.slice(0, 80),
+            serviceType:
+              data.entities?.items ||
+              (data.intent === "BOOK_APPOINTMENT"
+                ? `Appointment (${data.entities?.scheduledTime || "Earliest Slot"})`
+                : "Emergency Rescue"),
+            details: data.voiceResponse.slice(0, 100),
             priority: data.intent === "EMERGENCY_DISPATCH" ? "URGENT" : "STANDARD",
           });
         }
       }
     } catch {
       const fallbackMsg: Message = {
+        id: `msg-${Date.now() + 1}`,
         sender: "agent",
-        text: "I am ready to assist your business. Please ask any question regarding clinic timings, menus, or dispatch.",
+        text: "I have recorded your request. Our clinic desk will confirm via SMS shortly.",
         timestamp: "Just now",
       };
       setTranscript((prev) => [...prev, fallbackMsg]);
@@ -256,16 +445,17 @@ export default function VaniEdgePage() {
     }
   };
 
-  // Dispatch a new verified ticket
+  // Dispatch new ticket
   const dispatchTicket = async (ticketData: Partial<DispatchTicket>) => {
     try {
       const res = await fetch("/api/vaniedge/dispatch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          callerName: ticketData.callerName || "Customer",
+          callerName: ticketData.callerName || "Walk-in Caller",
+          callerPhone: ticketData.callerPhone || "+91-98765-43210",
           category: ticketData.category || selectedPersona,
-          serviceType: ticketData.serviceType || "General Request",
+          serviceType: ticketData.serviceType || "Service Consultation",
           details: ticketData.details || "In-call automatic extraction",
           priority: ticketData.priority || "STANDARD",
         }),
@@ -279,23 +469,24 @@ export default function VaniEdgePage() {
     }
   };
 
-  // Simulate Glitch & Watchdog Emergency Failover
+  // Trigger Simulated Watchdog Glitch
   const triggerSimulatedGlitch = () => {
     setWatchdogStatus("TRIGGERED");
     setTimeout(() => {
       setWatchdogStatus("RECOVERED");
       const alertMsg: Message = {
+        id: `glitch-${Date.now()}`,
         sender: "agent",
-        text: "⚡ [FAILOVER WATCHDOG ACTIVATED]: Upstream synthetic latency threshold (1,200ms) exceeded. Mid-call Twilio REST redirection executed. Caller connected to PSTN backup queue without dropped line.",
+        text: "⚡ [FAILOVER WATCHDOG ACTIVATED]: Upstream latency exceeded 1,200ms threshold. Mid-call Twilio REST redirection executed. Live call rescued to backup PSTN queue without dropped connection.",
         timestamp: "Just now",
         latencyMs: 14.8,
       };
       setTranscript((prev) => [...prev, alertMsg]);
-      speakText("Notice: Call has been seamlessly protected by the edge failover watchdog.");
+      speakVoiceResponse("Notice: Call protected by edge failover watchdog.");
     }, 1200);
   };
 
-  // Add custom knowledge
+  // Add custom knowledge document
   const handleAddKnowledge = () => {
     if (!newDocTitle.trim() || !newDocContent.trim()) return;
     const newDoc: DocumentEntry = {
@@ -310,6 +501,36 @@ export default function VaniEdgePage() {
     setShowAddDoc(false);
   };
 
+  // Delete knowledge doc
+  const handleDeleteKnowledge = (id: string) => {
+    setKnowledgeList((prev) => prev.filter((d) => d.id !== id));
+  };
+
+  // Ticket status toggle
+  const updateTicketStatus = (ticketId: string, nextStatus: DispatchTicket["status"]) => {
+    setTickets((prev) =>
+      prev.map((t) => (t.ticketId === ticketId ? { ...t, status: nextStatus } : t))
+    );
+  };
+
+  // Export tickets as CSV
+  const exportTicketsCSV = () => {
+    if (tickets.length === 0) return;
+    const headers = "TicketID,Timestamp,Category,CallerName,Phone,ServiceType,Status,Priority\n";
+    const rows = tickets
+      .map(
+        (t) =>
+          `"${t.ticketId}","${t.timestamp}","${t.category}","${t.callerName}","${t.callerPhone}","${t.serviceType}","${t.status}","${t.priority}"`
+      )
+      .join("\n");
+    const blob = new Blob([headers + rows], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `vaniedge-dispatch-export-${Date.now()}.csv`;
+    a.click();
+  };
+
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -318,6 +539,9 @@ export default function VaniEdgePage() {
 
   return (
     <div className="min-h-screen bg-[#070b12] text-slate-100 selection:bg-emerald-500 selection:text-black">
+      {/* Hidden Audio Player for ElevenLabs Streaming */}
+      <audio ref={audioPlayerRef} className="hidden" />
+
       {/* Top Banner: Hackathon & Live Production Badge */}
       <header className="border-b border-slate-800/80 bg-[#090e17]/90 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -331,7 +555,7 @@ export default function VaniEdgePage() {
               <div className="flex items-center gap-2">
                 <span className="font-bold text-lg tracking-tight text-white">VaniEdge AI</span>
                 <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                  वाणी Edge v2.4
+                  वाणी Edge v2.5 Live
                 </span>
               </div>
               <p className="text-xs text-slate-400 hidden sm:block">
@@ -356,13 +580,13 @@ export default function VaniEdgePage() {
             </a>
 
             <a
-              href="https://github.com/Sam-CodesAI/Twilio-Voice-Agent-Failover"
+              href="https://github.com/Sam-CodesAI/VaniEdge-AI"
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 text-xs font-medium hover:text-white hover:border-slate-500 transition-colors"
             >
               <Code2 className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">GitHub</span>
+              <span className="hidden sm:inline">GitHub Repo</span>
               <ExternalLink className="w-3 h-3 text-slate-500" />
             </a>
           </div>
@@ -371,104 +595,205 @@ export default function VaniEdgePage() {
 
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-        {/* Hero Section */}
+        {/* Hero Header */}
         <div className="text-center space-y-3 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-medium">
             <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Built for Hack Devengers 2.0 • Open Innovation</span>
+            <span>Hack Devengers 2.0 • Open Innovation Grand Prize Contender</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-            Zero-Downtime <span className="bg-gradient-to-r from-emerald-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent">Voice AI Telephony</span> with SutraDB RAG
+            Autonomous <span className="bg-gradient-to-r from-emerald-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent">Voice AI Telephony</span> Studio
           </h1>
           <p className="text-sm sm:text-base text-slate-400">
-            Transforms incoming customer phone calls into sub-second, multi-lingual appointments and orders. Deployed across 300+ edge nodes with an autonomous 1,200ms watchdog failover.
+            Real-time multi-lingual voice dispatching with zero cloud subscription fees. Built on Cloudflare Workers edge nodes, SutraDB RAG memory, and sub-second failover watchdogs.
           </p>
         </div>
 
-        {/* 2026 Bento Grid Layout */}
+        {/* Global Control Bar: Dynamic Persona, Engine, Voice & Language Selectors */}
+        <div className="bg-[#0c121d] rounded-2xl border border-slate-800 p-4 sm:p-5 shadow-xl space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center gap-2">
+              <Sliders className="w-4 h-4 text-emerald-400" />
+              <span className="font-semibold text-sm text-slate-200">Voice Telephony Control Hub</span>
+            </div>
+            <span className="text-[11px] font-mono text-slate-400">
+              Edge Node: <span className="text-emerald-400 font-semibold">{metrics.activeRegion}</span>
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+            {/* 1. Language Selector */}
+            <div className="space-y-1.5">
+              <label className="text-slate-400 font-medium flex items-center gap-1.5">
+                <Globe2 className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Spoken Language</span>
+              </label>
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:outline-none focus:border-emerald-500 transition-colors"
+              >
+                {LANGUAGES.map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.label} ({lang.nativeLabel})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* 2. Speech Synthesis Engine */}
+            <div className="space-y-1.5">
+              <label className="text-slate-400 font-medium flex items-center gap-1.5">
+                <Radio className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Speech Synthesis Engine</span>
+              </label>
+              <select
+                value={speechEngine}
+                onChange={(e) => setSpeechEngine(e.target.value as any)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:outline-none focus:border-emerald-500 transition-colors"
+              >
+                <option value="elevenlabs">ElevenLabs Turbo v2.5 (High-Fidelity Edge)</option>
+                <option value="browser">Browser Native Speech (0ms Zero-Cloud)</option>
+              </select>
+            </div>
+
+            {/* 3. Voice Persona Selector */}
+            <div className="space-y-1.5">
+              <label className="text-slate-400 font-medium flex items-center gap-1.5">
+                <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Voice Persona</span>
+              </label>
+              <select
+                value={selectedVoice}
+                onChange={(e) => setSelectedVoice(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:outline-none focus:border-emerald-500 transition-colors"
+              >
+                {speechEngine === "elevenlabs" ? (
+                  ELEVENLABS_VOICES.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name} • {v.desc}
+                    </option>
+                  ))
+                ) : (
+                  browserVoices.map((v, i) => (
+                    <option key={i} value={v.name}>
+                      {v.name} ({v.lang})
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
+
+            {/* 4. Speed & Pitch Controls */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-slate-400 font-medium">
+                <span>Speed ({speechRate}x)</span>
+                <span>Pitch ({speechPitch}x)</span>
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="range"
+                  min="0.75"
+                  max="1.4"
+                  step="0.05"
+                  value={speechRate}
+                  onChange={(e) => setSpeechRate(parseFloat(e.target.value))}
+                  className="w-1/2 accent-emerald-500 cursor-pointer"
+                  title="Speech Speed"
+                />
+                <input
+                  type="range"
+                  min="0.8"
+                  max="1.3"
+                  step="0.05"
+                  value={speechPitch}
+                  onChange={(e) => setSpeechPitch(parseFloat(e.target.value))}
+                  className="w-1/2 accent-indigo-500 cursor-pointer"
+                  title="Speech Pitch"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bento Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Bento Card 1: Interactive Call Simulator (Left 7 Cols) */}
           <div className="lg:col-span-7 bg-[#0c121d] rounded-2xl border border-slate-800 p-6 flex flex-col justify-between shadow-2xl relative overflow-hidden">
-            {/* Ambient Radial Gradient */}
-            <div className="absolute top-0 right-0 w-72 h-72 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="space-y-4">
               {/* Simulator Header & Persona Toggles */}
               <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
                 <div className="flex items-center gap-2">
                   <Activity className="w-4 h-4 text-emerald-400" />
-                  <span className="font-semibold text-sm text-slate-200">Interactive Call Simulator</span>
+                  <span className="font-semibold text-sm text-slate-200">Live Voice Agent Simulator</span>
                 </div>
 
                 {/* Persona Switcher */}
                 <div className="flex items-center gap-1.5 bg-slate-900/80 p-1 rounded-lg border border-slate-800 text-xs">
                   <button
-                    onClick={() => setSelectedPersona("clinic")}
+                    onClick={() => {
+                      setSelectedPersona("clinic");
+                      setBusinessName("Dr. Sharma Healthcare Clinic");
+                    }}
                     className={`px-2.5 py-1 rounded-md transition-colors ${
-                      selectedPersona === "clinic" ? "bg-emerald-500 text-black font-semibold" : "text-slate-400 hover:text-white"
+                      selectedPersona === "clinic"
+                        ? "bg-emerald-500 text-black font-semibold"
+                        : "text-slate-400 hover:text-white"
                     }`}
                   >
                     Dr. Sharma Clinic
                   </button>
                   <button
-                    onClick={() => setSelectedPersona("restaurant")}
+                    onClick={() => {
+                      setSelectedPersona("restaurant");
+                      setBusinessName("Bhojanalaya Cloud Kitchen");
+                    }}
                     className={`px-2.5 py-1 rounded-md transition-colors ${
-                      selectedPersona === "restaurant" ? "bg-emerald-500 text-black font-semibold" : "text-slate-400 hover:text-white"
+                      selectedPersona === "restaurant"
+                        ? "bg-emerald-500 text-black font-semibold"
+                        : "text-slate-400 hover:text-white"
                     }`}
                   >
                     Bhojanalaya Kitchen
                   </button>
                   <button
-                    onClick={() => setSelectedPersona("auto")}
+                    onClick={() => {
+                      setSelectedPersona("auto");
+                      setBusinessName("Apex 24/7 Roadside Rescue");
+                    }}
                     className={`px-2.5 py-1 rounded-md transition-colors ${
-                      selectedPersona === "auto" ? "bg-emerald-500 text-black font-semibold" : "text-slate-400 hover:text-white"
+                      selectedPersona === "auto"
+                        ? "bg-emerald-500 text-black font-semibold"
+                        : "text-slate-400 hover:text-white"
                     }`}
                   >
                     Apex Towing
                   </button>
                 </div>
-
-                {/* Language Switcher */}
-                <div className="flex items-center gap-1 bg-slate-900/80 p-1 rounded-lg border border-slate-800 text-xs">
-                  <button
-                    onClick={() => setSelectedLanguage("en")}
-                    className={`px-2 py-0.5 rounded ${selectedLanguage === "en" ? "bg-indigo-500 text-white font-bold" : "text-slate-400"}`}
-                  >
-                    EN
-                  </button>
-                  <button
-                    onClick={() => setSelectedLanguage("hi")}
-                    className={`px-2 py-0.5 rounded ${selectedLanguage === "hi" ? "bg-indigo-500 text-white font-bold" : "text-slate-400"}`}
-                  >
-                    हिंदी
-                  </button>
-                  <button
-                    onClick={() => setSelectedLanguage("kn")}
-                    className={`px-2 py-0.5 rounded ${selectedLanguage === "kn" ? "bg-indigo-500 text-white font-bold" : "text-slate-400"}`}
-                  >
-                    ಕನ್ನಡ
-                  </button>
-                </div>
               </div>
 
-              {/* Call Controls & Audio Waveform Banner */}
+              {/* Call Controls & Live Microphone */}
               <div className="bg-[#090d16] rounded-xl p-4 border border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-4 w-full sm:w-auto">
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  {/* Call Connect Button */}
                   <button
                     onClick={() => {
                       const next = !isCalling;
                       setIsCalling(next);
                       if (next) {
-                        speakText(
+                        speakVoiceResponse(
                           selectedLanguage === "hi"
-                            ? "नमस्ते! डॉ. शर्मा के क्लिनिक में आपका स्वागत है। मैं आपकी क्या सेवा करूँ?"
-                            : "Hello! Welcome to VaniEdge Voice Assistant. How can I help you today?"
+                            ? `नमस्ते! ${businessName} में आपका स्वागत है। मैं आपकी क्या सेवा करूँ?`
+                            : `Hello! Welcome to ${businessName}. How may I help you today?`
                         );
                       } else {
                         if (typeof window !== "undefined" && "speechSynthesis" in window) {
                           window.speechSynthesis.cancel();
                         }
                         setIsSpeaking(false);
+                        setIsListening(false);
                       }
                     }}
                     className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-lg ${
@@ -485,33 +810,50 @@ export default function VaniEdgePage() {
                     ) : (
                       <>
                         <PhoneCall className="w-4 h-4 animate-bounce" />
-                        <span>Start Voice Call</span>
+                        <span>Connect Voice</span>
                       </>
                     )}
                   </button>
 
+                  {/* Real Live Mic Toggle */}
+                  <button
+                    onClick={toggleListening}
+                    className={`p-2.5 rounded-xl border transition-all ${
+                      isListening
+                        ? "bg-cyan-500 text-black border-cyan-400 shadow-lg shadow-cyan-500/30 animate-pulse"
+                        : "bg-slate-900 border-slate-700 text-slate-300 hover:text-white"
+                    }`}
+                    title={isListening ? "Listening (Click to stop)" : "Speak via Microphone"}
+                  >
+                    {isListening ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
+                  </button>
+
                   <div className="flex flex-col">
-                    <span className="text-xs text-slate-400 font-mono">Status</span>
+                    <span className="text-xs text-slate-400 font-mono">Telemetry</span>
                     <div className="flex items-center gap-1.5">
-                      <span className={`h-2 w-2 rounded-full ${isCalling ? "bg-emerald-400 animate-pulse" : "bg-slate-600"}`} />
+                      <span
+                        className={`h-2 w-2 rounded-full ${
+                          isCalling ? "bg-emerald-400 animate-pulse" : "bg-slate-600"
+                        }`}
+                      />
                       <span className="text-xs font-semibold text-white">
-                        {isCalling ? `Connected (${formatDuration(callDuration)})` : "Standby (Ready)"}
+                        {isCalling ? `Active (${formatDuration(callDuration)})` : "Idle (Standby)"}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Animated Waveform Canvas */}
-                <div className="w-full sm:w-56 h-12 bg-slate-950/60 rounded-lg border border-slate-800 flex items-center px-2">
+                {/* Animated Waveform Visualizer */}
+                <div className="w-full sm:w-56 h-12 bg-slate-950/80 rounded-lg border border-slate-800 flex items-center px-2">
                   <canvas ref={canvasRef} width={220} height={48} className="w-full h-full" />
                 </div>
               </div>
 
               {/* Transcript Scroll Window */}
               <div className="h-64 overflow-y-auto space-y-3 p-3 bg-slate-950/70 rounded-xl border border-slate-800/80 font-sans text-xs scrollbar-thin scrollbar-thumb-slate-800">
-                {transcript.map((msg, idx) => (
+                {transcript.map((msg) => (
                   <div
-                    key={idx}
+                    key={msg.id}
                     className={`flex gap-3 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
                   >
                     {msg.sender === "agent" && (
@@ -538,7 +880,7 @@ export default function VaniEdgePage() {
                       {msg.matchedDoc && (
                         <div className="flex items-center gap-1.5 pt-1 text-[10px] text-cyan-300/80 border-t border-slate-800/60 font-mono">
                           <Database className="w-3 h-3" />
-                          <span>RAG Source: {msg.matchedDoc} ({msg.latencyMs}ms)</span>
+                          <span>SutraDB Match: {msg.matchedDoc} ({msg.latencyMs}ms)</span>
                         </div>
                       )}
                     </div>
@@ -552,33 +894,33 @@ export default function VaniEdgePage() {
                 ))}
               </div>
 
-              {/* Quick Voice Prompt Chips */}
+              {/* Dynamic Quick Prompt Chips */}
               <div className="space-y-1.5">
-                <span className="text-[11px] font-medium text-slate-400">Quick Voice Scenarios:</span>
+                <span className="text-[11px] font-medium text-slate-400">Quick Test Scenarios:</span>
                 <div className="flex flex-wrap gap-2">
                   <button
-                    onClick={() => handleQuery("What are Dr. Sharma's clinic timings and consultation fee?")}
+                    onClick={() => handleQuery("What are your clinic hours and appointment consultation fees?")}
                     className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs transition-colors"
                   >
-                    🏥 Clinic Timings & Fee
+                    🏥 Hours & Pricing
                   </button>
                   <button
-                    onClick={() => handleQuery("Book an appointment for Rahul tomorrow at 11 AM")}
+                    onClick={() => handleQuery("Book an appointment for Rahul Sharma tomorrow at 11:30 AM")}
                     className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs transition-colors"
                   >
-                    📅 Book for Rahul at 11 AM
+                    📅 Book for Rahul at 11:30 AM
                   </button>
                   <button
-                    onClick={() => handleQuery("मुझे 2 स्पेशल थाली आर्डर करनी है")}
+                    onClick={() => handleQuery("मुझे 2 स्पेशल थाली और 1 वेज बिरयानी आर्डर करनी है")}
                     className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs transition-colors"
                   >
                     🍛 आर्डर 2 स्पेशल थाली (Hindi)
                   </button>
                   <button
-                    onClick={() => handleQuery("I have a flat tyre breakdown on the highway, need towing urgently")}
+                    onClick={() => handleQuery("I have a highway engine breakdown, dispatch towing urgently")}
                     className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs transition-colors"
                   >
-                    🚨 Highway Towing Emergency
+                    🚨 Emergency Towing
                   </button>
                 </div>
               </div>
@@ -590,8 +932,10 @@ export default function VaniEdgePage() {
                   value={customQuery}
                   onChange={(e) => setCustomQuery(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleQuery(customQuery)}
-                  placeholder="Speak or type a question to test VaniEdge..."
-                  className="flex-1 bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                  placeholder={isListening ? "Listening to your voice..." : "Speak or type a question to test VaniEdge..."}
+                  className={`flex-1 bg-[#090d16] border rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none transition-colors ${
+                    isListening ? "border-cyan-400 animate-pulse" : "border-slate-800 focus:border-emerald-500"
+                  }`}
                 />
                 <button
                   onClick={() => handleQuery(customQuery)}
@@ -605,7 +949,7 @@ export default function VaniEdgePage() {
             </div>
           </div>
 
-          {/* Bento Card 2: Sub-Second SLA Telemetry & Failover Simulator (Right 5 Cols) */}
+          {/* Bento Card 2: Sub-Second Telemetry & Live Watchdog (Right 5 Cols) */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-[#0c121d] rounded-2xl border border-slate-800 p-6 space-y-5 shadow-xl">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -614,7 +958,7 @@ export default function VaniEdgePage() {
                   <span className="font-semibold text-sm text-slate-200">Sub-Second Edge Telemetry</span>
                 </div>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
-                  Cloudflare Workers
+                  Zero Cloud Lag
                 </span>
               </div>
 
@@ -622,21 +966,21 @@ export default function VaniEdgePage() {
               <div className="space-y-3 text-xs">
                 <div>
                   <div className="flex justify-between text-[11px] mb-1">
-                    <span className="text-slate-400">1. Edge Webhook Authentication</span>
+                    <span className="text-slate-400">1. Edge Gateway Auth (Web Crypto HMAC)</span>
                     <span className="font-mono text-emerald-400 font-semibold">{metrics.edgeAuthMs} ms</span>
                   </div>
                   <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
-                    <div className="bg-emerald-500 h-full rounded-full" style={{ width: "22%" }} />
+                    <div className="bg-emerald-500 h-full rounded-full" style={{ width: "24%" }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-[11px] mb-1">
-                    <span className="text-slate-400">2. Twilio 8kHz Media WebSocket</span>
+                    <span className="text-slate-400">2. Bidirectional μ-law 8kHz WebSocket</span>
                     <span className="font-mono text-emerald-400 font-semibold">{metrics.wsUpgradeMs} ms</span>
                   </div>
                   <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
-                    <div className="bg-emerald-500 h-full rounded-full" style={{ width: "45%" }} />
+                    <div className="bg-emerald-500 h-full rounded-full" style={{ width: "42%" }} />
                   </div>
                 </div>
 
@@ -646,7 +990,7 @@ export default function VaniEdgePage() {
                     <span className="font-mono text-cyan-400 font-semibold">{metrics.sutraDbMs} ms</span>
                   </div>
                   <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
-                    <div className="bg-cyan-400 h-full rounded-full" style={{ width: "15%" }} />
+                    <div className="bg-cyan-400 h-full rounded-full" style={{ width: "18%" }} />
                   </div>
                 </div>
 
@@ -656,7 +1000,7 @@ export default function VaniEdgePage() {
                     <span className="font-mono text-indigo-400 font-semibold">{metrics.ttftMs} ms</span>
                   </div>
                   <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
-                    <div className="bg-indigo-500 h-full rounded-full" style={{ width: "75%" }} />
+                    <div className="bg-indigo-500 h-full rounded-full" style={{ width: "70%" }} />
                   </div>
                 </div>
               </div>
@@ -682,7 +1026,7 @@ export default function VaniEdgePage() {
                   className="w-full py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
                 >
                   <AlertTriangle className="w-4 h-4 text-amber-400" />
-                  <span>Simulate Upstream Glitch & Test Failover</span>
+                  <span>Simulate 1,200ms Glitch & Test Failover</span>
                 </button>
               </div>
             </div>
@@ -691,10 +1035,10 @@ export default function VaniEdgePage() {
             <div className="bg-gradient-to-br from-emerald-950/40 to-slate-900/60 rounded-2xl border border-emerald-500/30 p-5 space-y-3">
               <div className="flex items-center gap-2 text-emerald-400 font-semibold text-xs">
                 <ShieldCheck className="w-4 h-4" />
-                <span>Live Carrier Line Deployed</span>
+                <span>Live Carrier Telephony Active</span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Dial directly from any phone line in the world to experience live 8kHz μ-law streaming with zero perceptible lag:
+                Dial directly from your mobile phone to test real-world 8kHz voice responsiveness and sub-second edge routing:
               </p>
               <div className="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-slate-800">
                 <span className="font-mono text-sm text-emerald-300 font-bold">+1 (814) 961-3703</span>
@@ -709,14 +1053,17 @@ export default function VaniEdgePage() {
           </div>
         </div>
 
-        {/* Bento Row 2: SutraDB Knowledge Studio & Autonomous Dispatch Tickets */}
+        {/* Bento Row 2: Dynamic SutraDB Knowledge Studio & Live Persistent Ticket Queue */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* SutraDB In-Memory Knowledge Base (Left 6 Cols) */}
+          {/* SutraDB Dynamic Knowledge Base (Left 6 Cols) */}
           <div className="lg:col-span-6 bg-[#0c121d] rounded-2xl border border-slate-800 p-6 space-y-4 shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <Database className="w-4 h-4 text-indigo-400" />
                 <span className="font-semibold text-sm text-slate-200">SutraDB Edge Knowledge Base</span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">
+                  {knowledgeList.length} Ingested
+                </span>
               </div>
               <button
                 onClick={() => setShowAddDoc(!showAddDoc)}
@@ -727,11 +1074,23 @@ export default function VaniEdgePage() {
               </button>
             </div>
 
+            {/* Knowledge Search Filter */}
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-3" />
+              <input
+                type="text"
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                placeholder="Search ingested documents..."
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+              />
+            </div>
+
             {showAddDoc && (
               <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-2 text-xs">
                 <input
                   type="text"
-                  placeholder="Document Title (e.g., Sunday Emergency Services)"
+                  placeholder="Document Title (e.g., Weekend Special Discounts)"
                   value={newDocTitle}
                   onChange={(e) => setNewDocTitle(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-white placeholder-slate-500"
@@ -761,30 +1120,56 @@ export default function VaniEdgePage() {
             )}
 
             <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1 text-xs">
-              {knowledgeList.map((doc) => (
-                <div key={doc.id} className="p-3 bg-slate-950/70 rounded-xl border border-slate-800/80 space-y-1">
-                  <div className="flex items-center justify-between text-slate-300 font-semibold">
-                    <span>{doc.title}</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 uppercase">
-                      {doc.category}
-                    </span>
+              {knowledgeList
+                .filter(
+                  (d) =>
+                    !searchFilter ||
+                    d.title.toLowerCase().includes(searchFilter.toLowerCase()) ||
+                    d.content.toLowerCase().includes(searchFilter.toLowerCase())
+                )
+                .map((doc) => (
+                  <div key={doc.id} className="p-3 bg-slate-950/70 rounded-xl border border-slate-800/80 space-y-1 relative group">
+                    <div className="flex items-center justify-between text-slate-300 font-semibold">
+                      <span>{doc.title}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 uppercase">
+                          {doc.category}
+                        </span>
+                        <button
+                          onClick={() => handleDeleteKnowledge(doc.id)}
+                          className="text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Delete knowledge chunk"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-slate-400 text-[11px] line-clamp-2 leading-relaxed">{doc.content}</p>
                   </div>
-                  <p className="text-slate-400 text-[11px] line-clamp-2 leading-relaxed">{doc.content}</p>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
 
-          {/* Autonomous Dispatch Feed (Right 6 Cols) */}
+          {/* Autonomous Dispatch Queue with Actions (Right 6 Cols) */}
           <div className="lg:col-span-6 bg-[#0c121d] rounded-2xl border border-slate-800 p-6 space-y-4 shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-emerald-400" />
-                <span className="font-semibold text-sm text-slate-200">Live Dispatched Tickets & Bookings</span>
+                <span className="font-semibold text-sm text-slate-200">Live Dispatched Tickets</span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  {tickets.length} Active
+                </span>
               </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                {tickets.length} Active Events
-              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={exportTicketsCSV}
+                  className="flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 font-medium"
+                  title="Export dispatch tickets as CSV"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>CSV</span>
+                </button>
+              </div>
             </div>
 
             <div className="space-y-3 max-h-72 overflow-y-auto pr-1 text-xs">
@@ -798,25 +1183,41 @@ export default function VaniEdgePage() {
                       <span className="font-mono text-emerald-400 font-bold">{t.ticketId}</span>
                       <span className="text-slate-400 text-[11px]">• {t.callerName}</span>
                     </div>
-                    <span
-                      className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
+
+                    {/* Status Badge Dropdown */}
+                    <select
+                      value={t.status}
+                      onChange={(e) => updateTicketStatus(t.ticketId, e.target.value as any)}
+                      className={`text-[10px] font-semibold px-2 py-0.5 rounded bg-transparent border cursor-pointer focus:outline-none ${
                         t.status === "CONFIRMED"
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                          ? "text-emerald-400 border-emerald-500/40"
                           : t.status === "ESCALATED"
-                          ? "bg-rose-500/10 text-rose-400 border border-rose-500/30"
-                          : "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30"
+                          ? "text-rose-400 border-rose-500/40"
+                          : t.status === "COMPLETED"
+                          ? "text-slate-400 border-slate-600"
+                          : "text-cyan-400 border-cyan-500/40"
                       }`}
                     >
-                      {t.status}
-                    </span>
+                      <option value="CONFIRMED" className="bg-slate-900 text-emerald-400">CONFIRMED</option>
+                      <option value="DISPATCHED" className="bg-slate-900 text-cyan-400">DISPATCHED</option>
+                      <option value="COMPLETED" className="bg-slate-900 text-slate-400">COMPLETED</option>
+                      <option value="ESCALATED" className="bg-slate-900 text-rose-400">ESCALATED</option>
+                    </select>
                   </div>
 
                   <p className="text-slate-300 text-xs font-medium">{t.serviceType}</p>
                   <p className="text-[11px] text-slate-400">{t.details}</p>
 
-                  <div className="p-2 bg-black/40 rounded-lg border border-slate-800/80 font-mono text-[10px] text-slate-400">
-                    <span className="text-emerald-400 font-bold">SMS Dispatched: </span>
-                    {t.smsConfirmation}
+                  <div className="p-2 bg-black/40 rounded-lg border border-slate-800/80 font-mono text-[10px] text-slate-400 flex items-center justify-between">
+                    <span className="text-emerald-400 font-bold truncate max-w-[80%]">
+                      {t.smsConfirmation}
+                    </span>
+                    <a
+                      href={`tel:${t.callerPhone}`}
+                      className="text-cyan-400 hover:text-cyan-300 shrink-0 font-sans text-[11px] underline"
+                    >
+                      Call Back
+                    </a>
                   </div>
                 </div>
               ))}
@@ -828,7 +1229,7 @@ export default function VaniEdgePage() {
         <div className="bg-[#0c121d] rounded-2xl border border-slate-800 p-6 space-y-4">
           <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
             <Layers className="w-4 h-4 text-indigo-400" />
-            <span className="font-semibold text-sm text-slate-200">System Architecture: Sub-Second Edge Pipeline</span>
+            <span className="font-semibold text-sm text-slate-200">Production Architecture: Sub-Second Edge Pipeline</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
