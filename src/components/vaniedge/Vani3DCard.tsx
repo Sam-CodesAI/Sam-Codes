@@ -5,7 +5,7 @@ import React, { useRef, useState } from "react";
 interface Vani3DCardProps {
   children: React.ReactNode;
   className?: string;
-  glowColor?: "emerald" | "cyan" | "indigo" | "amber" | "rose";
+  glowColor?: "emerald" | "cyan" | "indigo" | "amber" | "rose" | "violet";
 }
 
 export default function Vani3DCard({
@@ -42,11 +42,12 @@ export default function Vani3DCard({
   };
 
   const glowBorder = {
-    emerald: "hover:border-emerald-500/40 hover:shadow-emerald-500/10",
-    cyan: "hover:border-cyan-500/40 hover:shadow-cyan-500/10",
-    indigo: "hover:border-indigo-500/40 hover:shadow-indigo-500/10",
-    amber: "hover:border-amber-500/40 hover:shadow-amber-500/10",
-    rose: "hover:border-rose-500/40 hover:shadow-rose-500/10",
+    emerald: "hover:border-emerald-500/50 hover:shadow-emerald-500/15",
+    cyan: "hover:border-cyan-500/50 hover:shadow-cyan-500/15",
+    indigo: "hover:border-indigo-500/50 hover:shadow-indigo-500/15",
+    amber: "hover:border-amber-500/50 hover:shadow-amber-500/15",
+    rose: "hover:border-rose-500/50 hover:shadow-rose-500/15",
+    violet: "hover:border-purple-500/50 hover:shadow-purple-500/15",
   }[glowColor];
 
   return (
@@ -55,7 +56,7 @@ export default function Vani3DCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`relative rounded-2xl border border-slate-800/80 bg-[#0c121d] transition-all duration-200 ease-out overflow-hidden shadow-xl ${glowBorder} ${className}`}
+      className={`relative rounded-2xl border border-slate-800/80 bg-[#0c121d] transition-all duration-200 ease-out overflow-hidden shadow-xl backdrop-blur-xl ${glowBorder} ${className}`}
       style={{
         transform: isHovered
           ? `perspective(1000px) rotateX(${transform.rotateX}deg) rotateY(${transform.rotateY}deg) scale3d(1.01, 1.01, 1.01)`
@@ -68,7 +69,7 @@ export default function Vani3DCard({
         <div
           className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-300"
           style={{
-            background: `radial-gradient(circle 280px at ${transform.glareX}% ${transform.glareY}%, rgba(255, 255, 255, 0.06), transparent 70%)`,
+            background: `radial-gradient(circle 280px at ${transform.glareX}% ${transform.glareY}%, rgba(255, 255, 255, 0.07), transparent 70%)`,
           }}
         />
       )}

@@ -1,12 +1,15 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { VANI_THEMES, VaniTheme } from "@/lib/vaniedge/theme-config";
 
 interface VaniVoiceOrb3DProps {
   isSpeaking: boolean;
   isListening: boolean;
   isCalling: boolean;
   stateText: string;
+  theme?: VaniTheme;
+  audioSpectrum?: Uint8Array | null;
 }
 
 interface Particle3D {
@@ -26,17 +29,21 @@ export default function VaniVoiceOrb3D({
   isListening,
   isCalling,
   stateText,
+  theme = "emerald",
+  audioSpectrum,
 }: VaniVoiceOrb3DProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
-  // Mouse tilt parallax
+  const activeThemeConfig = VANI_THEMES[theme] || VANI_THEMES.emerald;
+
+  // Mouse / Touch tilt parallax
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 25;
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * -25;
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 28;
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * -28;
     setTilt({ x: y, y: x });
   };
 
@@ -56,9 +63,10 @@ export default function VaniVoiceOrb3D({
     const radius = 105;
     const focalLength = 320;
 
-    // Generate 3D spherical point cloud
+    // Generate 3D spherical point cloud (240 particles with Fibonacci sphere distribution)
     const numParticles = 240;
     const particles: Particle3D[] = [];
+    const colors = activeThemeConfig.particleColors;
 
     for (let i = 0; i < numParticles; i++) {
       const phi = Math.acos(-1 + (2 * i) / numParticles);
@@ -68,12 +76,7 @@ export default function VaniVoiceOrb3D({
       const y = radius * Math.sin(theta) * Math.sin(phi);
       const z = radius * Math.cos(phi);
 
-      const color =
-        i % 3 === 0
-          ? "#10b981" // Emerald
-          : i % 3 === 1
-          ? "#06b6d4" // Cyan
-          : "#6366f1"; // Indigo
+      const color = colors[i % colors.length];
 
       particles.push({
         x,
@@ -95,21 +98,44 @@ export default function VaniVoiceOrb3D({
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
 
+      // Real audio amplitude computation if spectrum is provided
+      let audioAmp = 0;
+      if (audioSpectrum && audioSpectrum.length > 0) {
+        let sum = 0;
+        const len = Math.min(audioSpectrum.length, 64);
+        for (let i = 0; i < len; i++) {
+          sum += audioSpectrum[i];
+        }
+        audioAmp = (sum / len / 255) * 45; // scale to 0-45px expansion
+      }
+
       // Rotation speed based on voice activity
-      const rotSpeed = isSpeaking ? 0.024 : isListening ? 0.018 : isCalling ? 0.01 : 0.005;
+      const baseRot = isSpeaking ? 0.024 : isListening ? 0.018 : isCalling ? 0.01 : 0.005;
+      const rotSpeed = audioAmp > 0 ? baseRot + (audioAmp / 45) * 0.02 : baseRot;
       angleX += rotSpeed;
-      angleY += rotSpeed * 1.3;
+      angleY += rotSpeed * 1.35;
       pulsePhase += isSpeaking ? 0.12 : isListening ? 0.08 : 0.03;
 
-      // Dynamic amplitude expansion
-      const amp = isSpeaking ? Math.sin(pulsePhase) * 22 : isListening ? Math.sin(pulsePhase) * 12 : 2;
+      // Dynamic amplitude: use real audio FFT if present, else smooth mathematical harmonic
+      const syntheticAmp = isSpeaking
+        ? Math.sin(pulsePhase) * 22
+        : isListening
+        ? Math.sin(pulsePhase) * 12
+        : 2;
+      const effectiveAmp = audioAmp > 0 ? audioAmp : syntheticAmp;
 
-      // Draw subtle background radial glow
+      // Draw subtle background radial glow with theme reactive tint
       const glowGrad = ctx.createRadialGradient(centerX, centerY, 10, centerX, centerY, 140);
-      glowGrad.addColorStop(
-        0,
-        isSpeaking ? "rgba(16, 185, 129, 0.25)" : isListening ? "rgba(6, 182, 212, 0.22)" : "rgba(99, 102, 241, 0.12)"
-      );
+      const glowColor =
+        isSpeaking
+          ? activeThemeConfig.primaryHex
+          : isListening
+          ? activeThemeConfig.secondaryHex
+          : isCalling
+          ? activeThemeConfig.particleColors[2]
+          : "rgba(100, 116, 139, 0.15)";
+
+      glowGrad.addColorStop(0, glowColor + "33"); // ~20% alpha
       glowGrad.addColorStop(1, "rgba(7, 11, 18, 0)");
       ctx.fillStyle = glowGrad;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -124,9 +150,15 @@ export default function VaniVoiceOrb3D({
         z: number;
       }> = [];
 
-      for (const p of particles) {
-        // Expand/contract based on amplitude
-        const currentRadius = radius + amp + Math.sin(pulsePhase + p.baseX * 0.05) * 6;
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        // Dynamic frequency modulation per particle
+        const freqMod =
+          audioSpectrum && audioSpectrum.length > 0
+            ? (audioSpectrum[i % audioSpectrum.length] / 255) * 16
+            : 0;
+
+        const currentRadius = radius + effectiveAmp + freqMod + Math.sin(pulsePhase + p.baseX * 0.05) * 5;
         const norm = Math.sqrt(p.baseX * p.baseX + p.baseY * p.baseY + p.baseZ * p.baseZ) || 1;
         const targetX = (p.baseX / norm) * currentRadius;
         const targetY = (p.baseY / norm) * currentRadius;
@@ -153,29 +185,32 @@ export default function VaniVoiceOrb3D({
           px,
           py,
           scale,
-          color: isSpeaking ? "#34d399" : isListening ? "#38bdf8" : p.color,
+          color: isSpeaking
+            ? activeThemeConfig.primaryHex
+            : isListening
+            ? activeThemeConfig.secondaryHex
+            : p.color,
           size: p.size * scale * (isSpeaking ? 1.4 : 1.0),
           z: z2,
         });
       }
 
-      // Sort by Z for true 3D depth rendering
+      // Sort by Z for depth rendering
       projected.sort((a, b) => a.z - b.z);
 
-      // Render outer connective 3D lines between nearest neighbors
-      ctx.lineWidth = 0.6;
+      // Render connective dynamic wireframe lines between nearest neighbors
+      ctx.lineWidth = 0.65;
       for (let i = 0; i < projected.length; i += 4) {
         const p1 = projected[i];
         for (let j = i + 1; j < Math.min(i + 4, projected.length); j++) {
           const p2 = projected[j];
           const dist = Math.hypot(p1.px - p2.px, p1.py - p2.py);
-          if (dist < 42) {
-            const alpha = (1 - dist / 42) * 0.35 * Math.max(0.1, p1.scale);
-            ctx.strokeStyle = isSpeaking
-              ? `rgba(16, 185, 129, ${alpha})`
-              : isListening
-              ? `rgba(6, 182, 212, ${alpha})`
-              : `rgba(99, 102, 241, ${alpha})`;
+          if (dist < 44) {
+            const alpha = (1 - dist / 44) * 0.38 * Math.max(0.1, p1.scale);
+            ctx.strokeStyle =
+              isSpeaking || isListening
+                ? `${activeThemeConfig.primaryHex}${Math.floor(alpha * 255).toString(16).padStart(2, "0")}`
+                : `rgba(148, 163, 184, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(p1.px, p1.py);
             ctx.lineTo(p2.px, p2.py);
@@ -184,9 +219,9 @@ export default function VaniVoiceOrb3D({
         }
       }
 
-      // Render 3D particles with specular highlights
+      // Render 3D particles with specular depth highlights
       for (const p of projected) {
-        const alpha = Math.max(0.2, (p.scale - 0.4) * 1.3);
+        const alpha = Math.max(0.25, (p.scale - 0.4) * 1.35);
         ctx.fillStyle = p.color;
         ctx.globalAlpha = Math.min(1, alpha);
         ctx.beginPath();
@@ -196,14 +231,13 @@ export default function VaniVoiceOrb3D({
       ctx.globalAlpha = 1.0;
 
       // Draw counter-rotating equatorial 3D gyroscope rings
-      ctx.lineWidth = 1.5;
-      const ringRadius = radius * 1.08 + amp * 0.6;
-      ctx.strokeStyle = isSpeaking
-        ? "rgba(16, 185, 129, 0.45)"
-        : isListening
-        ? "rgba(6, 182, 212, 0.4)"
-        : "rgba(99, 102, 241, 0.25)";
+      ctx.lineWidth = 1.6;
+      const ringRadius = radius * 1.1 + effectiveAmp * 0.6;
+      ctx.strokeStyle = isSpeaking || isListening
+        ? `${activeThemeConfig.primaryHex}77`
+        : `${activeThemeConfig.secondaryHex}44`;
 
+      // Ring 1 (Equatorial)
       ctx.beginPath();
       for (let theta = 0; theta <= Math.PI * 2; theta += 0.1) {
         const rx = ringRadius * Math.cos(theta);
@@ -230,12 +264,39 @@ export default function VaniVoiceOrb3D({
       ctx.closePath();
       ctx.stroke();
 
+      // Ring 2 (Polar Orbit)
+      ctx.beginPath();
+      for (let theta = 0; theta <= Math.PI * 2; theta += 0.1) {
+        const rx = 0;
+        const ry = ringRadius * 1.04 * Math.cos(theta);
+        const rz = ringRadius * 1.04 * Math.sin(theta);
+
+        const cosY = Math.cos(angleY * 1.2);
+        const sinY = Math.sin(angleY * 1.2);
+        const rx1 = rx * cosY - rz * sinY;
+        const rz1 = rz * cosY + rx * sinY;
+
+        const cosX = Math.cos(-angleX * 1.1);
+        const sinX = Math.sin(-angleX * 1.1);
+        const ry2 = ry * cosX - rz1 * sinX;
+        const rz2 = rz1 * cosX + ry * sinX;
+
+        const scale = focalLength / (focalLength + rz2);
+        const px = centerX + rx1 * scale;
+        const py = centerY + ry2 * scale;
+
+        if (theta === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
       animId = requestAnimationFrame(render);
     };
 
     render();
     return () => cancelAnimationFrame(animId);
-  }, [isSpeaking, isListening, isCalling]);
+  }, [isSpeaking, isListening, isCalling, activeThemeConfig, audioSpectrum]);
 
   return (
     <div
@@ -259,11 +320,18 @@ export default function VaniVoiceOrb3D({
         <div
           className={`absolute w-64 h-64 rounded-full blur-3xl -z-10 transition-all duration-500 ${
             isSpeaking
-              ? "bg-emerald-500/25 scale-110"
+              ? "scale-110 opacity-70"
               : isListening
-              ? "bg-cyan-500/25 scale-105"
-              : "bg-indigo-500/15 scale-95"
+              ? "scale-105 opacity-60"
+              : "scale-95 opacity-30"
           }`}
+          style={{
+            backgroundColor: isSpeaking
+              ? activeThemeConfig.primaryHex
+              : isListening
+              ? activeThemeConfig.secondaryHex
+              : activeThemeConfig.particleColors[1],
+          }}
         />
 
         {/* 3D Canvas Sphere */}
@@ -276,19 +344,26 @@ export default function VaniVoiceOrb3D({
 
         {/* Center Floating Core Badge */}
         <div
-          className="absolute pointer-events-none px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center gap-1.5 shadow-2xl transition-transform duration-300"
-          style={{ transform: "translateZ(30px)" }}
+          className="absolute pointer-events-none px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-md border border-white/10 flex items-center gap-2 shadow-2xl transition-transform duration-300"
+          style={{ transform: "translateZ(32px)" }}
         >
           <span
-            className={`h-2 w-2 rounded-full ${
+            className={`h-2.5 w-2.5 rounded-full ${
               isSpeaking
-                ? "bg-emerald-400 animate-ping"
+                ? "animate-ping"
                 : isListening
-                ? "bg-cyan-400 animate-pulse"
-                : isCalling
-                ? "bg-indigo-400"
-                : "bg-slate-500"
+                ? "animate-pulse"
+                : ""
             }`}
+            style={{
+              backgroundColor: isSpeaking
+                ? activeThemeConfig.primaryHex
+                : isListening
+                ? activeThemeConfig.secondaryHex
+                : isCalling
+                ? activeThemeConfig.particleColors[2]
+                : "#64748b",
+            }}
           />
           <span className="text-[11px] font-mono uppercase tracking-wider text-slate-200 font-semibold">
             {stateText}

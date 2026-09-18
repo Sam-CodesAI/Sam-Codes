@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Phone,
   PhoneCall,
@@ -19,9 +19,14 @@ import {
   Radio,
   Clock,
   Flame,
+  Plus,
+  X,
+  VolumeX,
 } from "lucide-react";
 import VaniVoiceOrb3D from "./VaniVoiceOrb3D";
 import Vani3DCard from "./Vani3DCard";
+import { VaniTheme, VANI_THEMES } from "@/lib/vaniedge/theme-config";
+import { playBlipSound } from "@/lib/vaniedge/audio-fx";
 
 interface Message {
   id: string;
@@ -47,6 +52,14 @@ interface VoiceOption {
   voiceId: string;
 }
 
+export interface CustomPersona {
+  id: string;
+  name: string;
+  category: "clinic" | "restaurant" | "auto" | "general";
+  businessName: string;
+  greeting: string;
+}
+
 interface VaniStudioViewProps {
   isCalling: boolean;
   isListening: boolean;
@@ -61,8 +74,10 @@ interface VaniStudioViewProps {
   onToggleCall: () => void;
   onToggleMic: () => void;
   onReplayAudio: (text: string) => void;
-  selectedPersona: "clinic" | "restaurant" | "auto";
-  onSelectPersona: (p: "clinic" | "restaurant" | "auto") => void;
+  selectedPersona: string;
+  onSelectPersona: (p: any) => void;
+  customPersonas?: CustomPersona[];
+  onAddCustomPersona?: (p: CustomPersona) => void;
   selectedLanguage: string;
   onSelectLanguage: (l: string) => void;
   languages: LanguageOption[];
@@ -78,6 +93,8 @@ interface VaniStudioViewProps {
   onSelectSpeechPitch: (p: number) => void;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   activeRegion: string;
+  theme?: VaniTheme;
+  audioSpectrum?: Uint8Array | null;
 }
 
 export default function VaniStudioView({
@@ -96,6 +113,8 @@ export default function VaniStudioView({
   onReplayAudio,
   selectedPersona,
   onSelectPersona,
+  customPersonas = [],
+  onAddCustomPersona,
   selectedLanguage,
   onSelectLanguage,
   languages,
@@ -111,7 +130,18 @@ export default function VaniStudioView({
   onSelectSpeechPitch,
   canvasRef,
   activeRegion,
+  theme = "emerald",
+  audioSpectrum,
 }: VaniStudioViewProps) {
+  const [showPersonaModal, setShowPersonaModal] = useState(false);
+  const [newPersonaName, setNewPersonaName] = useState("");
+  const [newBizName, setNewBizName] = useState("");
+  const [newCategory, setNewCategory] = useState<"clinic" | "restaurant" | "auto" | "general">("clinic");
+  const [newGreeting, setNewGreeting] = useState("");
+
+  const activeThemeConfig = VANI_THEMES[theme] || VANI_THEMES.emerald;
+
+  // Dynamic quick queries based on active persona
   const quickQueries = {
     clinic: [
       "What are Dr. Sharma's clinic hours?",
@@ -128,7 +158,29 @@ export default function VaniStudioView({
       "What is the emergency towing rate?",
       "Dispatch roadside rescue team immediately",
     ],
-  }[selectedPersona];
+  }[selectedPersona] || [
+    "What services do you offer?",
+    "Can I schedule a consultation?",
+    "What are your business timings?",
+  ];
+
+  const handleCreatePersonaSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPersonaName.trim() || !newBizName.trim() || !onAddCustomPersona) return;
+    const persona: CustomPersona = {
+      id: `custom-${Date.now()}`,
+      name: newPersonaName.trim(),
+      category: newCategory,
+      businessName: newBizName.trim(),
+      greeting: newGreeting.trim() || `Namaste! Welcome to ${newBizName.trim()}. How can I assist you?`,
+    };
+    onAddCustomPersona(persona);
+    onSelectPersona(persona.id);
+    setNewPersonaName("");
+    setNewBizName("");
+    setNewGreeting("");
+    setShowPersonaModal(false);
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -139,10 +191,10 @@ export default function VaniStudioView({
           <span>Sub-Second Edge Telephony Studio • Hack Devengers 2.0</span>
         </div>
         <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
-          Autonomous <span className="bg-gradient-to-r from-emerald-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent">Voice AI Telephony</span> Studio
+          Autonomous <span className={`bg-gradient-to-r ${activeThemeConfig.bgGradient} bg-clip-text text-transparent`}>Voice AI Telephony</span> Studio
         </h1>
         <p className="text-xs sm:text-sm text-slate-400">
-          Speak via microphone, dial the live US phone line, or switch personas to test instant vernacular dispatching.
+          Speak via microphone, dial the live carrier phone line, or switch personas to test instant vernacular dispatching.
         </p>
       </div>
 
@@ -150,9 +202,12 @@ export default function VaniStudioView({
       <Vani3DCard glowColor="emerald" className="p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-3 mb-3 text-xs">
           {/* Persona Pills */}
-          <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800">
+          <div className="flex flex-wrap items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800">
             <button
-              onClick={() => onSelectPersona("clinic")}
+              onClick={() => {
+                playBlipSound(750);
+                onSelectPersona("clinic");
+              }}
               className={`px-3 py-1.5 rounded-lg transition-all font-medium ${
                 selectedPersona === "clinic"
                   ? "bg-emerald-500 text-black font-semibold shadow-md shadow-emerald-500/20"
@@ -162,7 +217,10 @@ export default function VaniStudioView({
               🏥 Dr. Sharma Clinic
             </button>
             <button
-              onClick={() => onSelectPersona("restaurant")}
+              onClick={() => {
+                playBlipSound(750);
+                onSelectPersona("restaurant");
+              }}
               className={`px-3 py-1.5 rounded-lg transition-all font-medium ${
                 selectedPersona === "restaurant"
                   ? "bg-cyan-500 text-black font-semibold shadow-md shadow-cyan-500/20"
@@ -172,7 +230,10 @@ export default function VaniStudioView({
               🍲 Bhojanalaya Kitchen
             </button>
             <button
-              onClick={() => onSelectPersona("auto")}
+              onClick={() => {
+                playBlipSound(750);
+                onSelectPersona("auto");
+              }}
               className={`px-3 py-1.5 rounded-lg transition-all font-medium ${
                 selectedPersona === "auto"
                   ? "bg-amber-500 text-black font-semibold shadow-md shadow-amber-500/20"
@@ -181,6 +242,38 @@ export default function VaniStudioView({
             >
               🚨 Apex Roadside Rescue
             </button>
+
+            {/* Custom Personas */}
+            {customPersonas.map((cp) => (
+              <button
+                key={cp.id}
+                onClick={() => {
+                  playBlipSound(750);
+                  onSelectPersona(cp.id);
+                }}
+                className={`px-3 py-1.5 rounded-lg transition-all font-medium ${
+                  selectedPersona === cp.id
+                    ? "bg-purple-500 text-white font-semibold shadow-md shadow-purple-500/20"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                ✨ {cp.name}
+              </button>
+            ))}
+
+            {onAddCustomPersona && (
+              <button
+                onClick={() => {
+                  playBlipSound(800);
+                  setShowPersonaModal(true);
+                }}
+                className="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-emerald-400 border border-dashed border-slate-700 hover:border-emerald-500 transition-colors flex items-center gap-1"
+                title="Create custom business persona"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Custom</span>
+              </button>
+            )}
           </div>
 
           <span className="text-[11px] font-mono text-slate-400">
@@ -198,7 +291,10 @@ export default function VaniStudioView({
             </label>
             <select
               value={selectedLanguage}
-              onChange={(e) => onSelectLanguage(e.target.value)}
+              onChange={(e) => {
+                playBlipSound(800);
+                onSelectLanguage(e.target.value);
+              }}
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:outline-none focus:border-emerald-500 transition-colors"
             >
               {languages.map((l) => (
@@ -217,7 +313,10 @@ export default function VaniStudioView({
             </label>
             <select
               value={speechEngine}
-              onChange={(e) => onSelectSpeechEngine(e.target.value as any)}
+              onChange={(e) => {
+                playBlipSound(800);
+                onSelectSpeechEngine(e.target.value as any);
+              }}
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:outline-none focus:border-emerald-500 transition-colors"
             >
               <option value="elevenlabs">ElevenLabs Turbo v2.5 (High-Fidelity Edge)</option>
@@ -233,7 +332,10 @@ export default function VaniStudioView({
             </label>
             <select
               value={selectedVoice}
-              onChange={(e) => onSelectVoice(e.target.value)}
+              onChange={(e) => {
+                playBlipSound(800);
+                onSelectVoice(e.target.value);
+              }}
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:outline-none focus:border-emerald-500 transition-colors"
             >
               {speechEngine === "elevenlabs" ? (
@@ -290,7 +392,7 @@ export default function VaniStudioView({
         <Vani3DCard glowColor="cyan" className="lg:col-span-5 p-6 flex flex-col items-center justify-between text-center min-h-[460px]">
           <div className="w-full flex items-center justify-between text-xs pb-3 border-b border-slate-800/80">
             <span className="font-semibold text-slate-300">3D Holographic Audio Core</span>
-            <span className="font-mono text-emerald-400">
+            <span className="font-mono text-emerald-400 font-bold tabular-nums">
               {isCalling ? formatDuration(callDuration) : "Standby"}
             </span>
           </div>
@@ -300,6 +402,8 @@ export default function VaniStudioView({
             isSpeaking={isSpeaking}
             isListening={isListening}
             isCalling={isCalling}
+            theme={theme}
+            audioSpectrum={audioSpectrum}
             stateText={
               isSpeaking
                 ? "Synthesizing Speech"
@@ -355,7 +459,7 @@ export default function VaniStudioView({
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
               <span className="font-semibold text-slate-200">Real-Time Conversation Stream</span>
             </div>
-            <span className="text-[11px] font-mono text-slate-400">
+            <span className="text-[11px] font-mono text-slate-400 tabular-nums">
               {transcript.length} Events Logged
             </span>
           </div>
@@ -386,7 +490,7 @@ export default function VaniStudioView({
                     </span>
                     <div className="flex items-center gap-2 font-mono">
                       {msg.latencyMs && (
-                        <span className="px-1.5 py-0.5 rounded bg-slate-800 text-emerald-400">
+                        <span className="px-1.5 py-0.5 rounded bg-slate-800 text-emerald-400 tabular-nums">
                           {msg.latencyMs}ms
                         </span>
                       )}
@@ -398,7 +502,10 @@ export default function VaniStudioView({
                   {msg.sender === "agent" && (
                     <div className="pt-1 flex items-center gap-2">
                       <button
-                        onClick={() => onReplayAudio(msg.text)}
+                        onClick={() => {
+                          playBlipSound(800);
+                          onReplayAudio(msg.text);
+                        }}
                         className="text-[10px] text-slate-400 hover:text-emerald-400 flex items-center gap-1 transition-colors"
                         title="Re-play audio synthesis"
                       >
@@ -419,7 +526,10 @@ export default function VaniStudioView({
               {quickQueries.map((q, idx) => (
                 <button
                   key={idx}
-                  onClick={() => onSend(q)}
+                  onClick={() => {
+                    playBlipSound(900);
+                    onSend(q);
+                  }}
                   className="text-[10px] px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-slate-700 transition-colors truncate max-w-[200px]"
                 >
                   {q}
@@ -468,6 +578,95 @@ export default function VaniStudioView({
           </div>
         </Vani3DCard>
       </div>
+
+      {/* Custom Persona Modal */}
+      {showPersonaModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
+          <form
+            onSubmit={handleCreatePersonaSubmit}
+            className="w-full max-w-md p-6 bg-[#0c121d] border border-purple-500/40 rounded-2xl shadow-2xl space-y-4 text-xs"
+          >
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <h3 className="text-sm font-bold text-white">Create Custom Voice Persona</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPersonaModal(false)}
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div>
+              <label className="text-[11px] text-slate-400 block mb-1">Persona Name</label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Priya (Legal Advisory Desk)"
+                value={newPersonaName}
+                onChange={(e) => setNewPersonaName(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] text-slate-400 block mb-1">Business Organization Name</label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Apex Chambers Legal Co."
+                value={newBizName}
+                onChange={(e) => setNewBizName(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] text-slate-400 block mb-1">Category Domain</label>
+              <select
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value as any)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500"
+              >
+                <option value="clinic">Clinic / Healthcare</option>
+                <option value="restaurant">Restaurant / Delivery</option>
+                <option value="auto">Automotive / Rescue</option>
+                <option value="general">General Enterprise Support</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-[11px] text-slate-400 block mb-1">Custom Voice Greeting</label>
+              <textarea
+                placeholder="e.g. Namaste! You have reached Apex Chambers. How may I assist your legal inquiry?"
+                value={newGreeting}
+                onChange={(e) => setNewGreeting(e.target.value)}
+                rows={2}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setShowPersonaModal(false)}
+                className="px-4 py-2 rounded-xl text-slate-400 hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-white font-semibold shadow-lg shadow-purple-500/20"
+              >
+                Deploy Persona
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
