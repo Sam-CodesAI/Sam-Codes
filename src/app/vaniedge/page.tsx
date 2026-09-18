@@ -713,7 +713,7 @@ export default function VaniEdgePage() {
       />
 
       {/* Main Content Area */}
-      <div className="lg:pl-72 flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen w-full">
         {/* Top Sticky Navigation Bar */}
         <header className="border-b border-slate-800/80 bg-[#090e17]/90 backdrop-blur-xl sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
@@ -728,12 +728,12 @@ export default function VaniEdgePage() {
               </button>
 
               <div className="flex items-center gap-2">
-                <div className="h-7 w-7 rounded-lg bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5 shadow-md lg:hidden">
+                <div className="h-7 w-7 rounded-lg bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5 shadow-md">
                   <div className="h-full w-full bg-[#070b12] rounded-[6px] flex items-center justify-center">
                     <Flame className="w-4 h-4 text-emerald-400" />
                   </div>
                 </div>
-                <span className="font-bold text-base sm:text-lg tracking-tight text-white hidden sm:inline">
+                <span className="font-bold text-base sm:text-lg tracking-tight text-white">
                   VaniEdge AI
                 </span>
                 <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
@@ -854,7 +854,7 @@ export default function VaniEdgePage() {
                     {
                       id: `init-${Date.now()}`,
                       sender: "agent",
-                      text: "Namaste! Welcome to Bhojanalaya Kitchen. Are you looking to place an order for delivery or check our thali specials today?",
+                      text: "Namaste! Welcome to Bhojanalaya Kitchen. Are you calling to place a food order or check our daily thali menu?",
                       timestamp: "Just now",
                       latencyMs: 12.8,
                     },
@@ -869,7 +869,7 @@ export default function VaniEdgePage() {
                     {
                       id: `init-${Date.now()}`,
                       sender: "agent",
-                      text: "Namaste! Welcome to Apex Roadside Rescue. Are you experiencing a vehicle breakdown, tyre puncture, or do you need emergency towing?",
+                      text: "Apex Roadside Rescue dispatch. Do you require immediate towing, battery jumpstart, or tyre assistance?",
                       timestamp: "Just now",
                       latencyMs: 11.5,
                     },

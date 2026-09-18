@@ -96,18 +96,18 @@ export default function VaniSidebar({
 
   return (
     <>
-      {/* Mobile Backdrop Overlay */}
+      {/* Backdrop Overlay */}
       {isOpen && (
         <div
           onClick={onToggleOpen}
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 transition-opacity animate-in fade-in duration-200"
         />
       )}
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-[#090e17] border-r border-slate-800/90 flex flex-col justify-between transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-[#090e17] border-r border-slate-800/90 flex flex-col justify-between shadow-2xl transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Top Header & App Brand */}
@@ -131,8 +131,8 @@ export default function VaniSidebar({
 
           <button
             onClick={onToggleOpen}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors lg:hidden"
-            title="Close sidebar"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            title="Close navigation drawer"
           >
             <PanelLeftClose className="w-5 h-5" />
           </button>

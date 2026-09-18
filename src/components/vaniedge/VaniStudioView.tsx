@@ -149,9 +149,9 @@ export default function VaniStudioView({
   ];
 
   return (
-    <div className="space-y-5 animate-in fade-in duration-300">
-      {/* Hero Header - Clean hierarchy with no redundant double badge */}
-      <div className="text-center space-y-1.5 max-w-2xl mx-auto pt-1">
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* Hero Header - Clean centered hierarchy with zero clutter */}
+      <div className="text-center space-y-1.5 max-w-3xl mx-auto pt-1">
         <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
           AI Voice Assistant <span className="bg-gradient-to-r from-emerald-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent">for Local Businesses</span>
         </h1>
@@ -161,122 +161,124 @@ export default function VaniStudioView({
       </div>
 
       {/* USER JOURNEY STEP 1: Pick a Business Type (Full Width Top) */}
-      <Vani3DCard glowColor="emerald" className="p-4 sm:p-5 space-y-3.5">
-        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-          <div className="flex items-center gap-2.5">
-            <span className="flex items-center justify-center h-6 w-6 rounded-full bg-emerald-500 text-black font-extrabold text-xs shadow-md shadow-emerald-500/30">
-              1
-            </span>
+      <div className="w-full max-w-6xl mx-auto">
+        <Vani3DCard glowColor="emerald" className="p-4 sm:p-5 space-y-3.5">
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div className="flex items-center gap-2.5">
+              <span className="flex items-center justify-center h-6 w-6 rounded-full bg-emerald-500 text-black font-extrabold text-xs shadow-md shadow-emerald-500/30">
+                1
+              </span>
+              <div>
+                <span className="font-bold text-sm text-white block">Step 1: Pick a Business Type</span>
+                <span className="text-[11px] text-slate-400">
+                  Preset automatically sets voice persona, pitch, and speed behind the scenes
+                </span>
+              </div>
+            </div>
+
+            {/* Micro-badge feedback when switching presets */}
             <div>
-              <span className="font-bold text-sm text-white block">Step 1: Pick a Business Type</span>
-              <span className="text-[11px] text-slate-400">
-                Preset automatically sets voice persona, pitch, and speed behind the scenes
-              </span>
+              {flashBadge ? (
+                <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/50 shadow-sm shadow-emerald-500/30 animate-pulse flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3 text-emerald-400" />
+                  <span>Persona & Pitch Loaded</span>
+                </span>
+              ) : (
+                <span className="text-[10px] font-mono text-emerald-400/80 hidden sm:inline">
+                  Auto-tuning active
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Micro-badge feedback when switching presets */}
-          <div>
-            {flashBadge ? (
-              <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/50 shadow-sm shadow-emerald-500/30 animate-pulse flex items-center gap-1.5">
-                <Sparkles className="w-3 h-3 text-emerald-400" />
-                <span>Persona & Pitch Loaded</span>
-              </span>
-            ) : (
-              <span className="text-[10px] font-mono text-emerald-400/80 hidden sm:inline">
-                Auto-tuning active
-              </span>
-            )}
+          {/* 3 Interactive Business Presets with clear interactive affordance */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {/* Clinic Preset */}
+            <button
+              type="button"
+              onClick={() => handleSwitchPersona("clinic")}
+              className={`p-3.5 rounded-xl text-left border transition-all cursor-pointer relative ${
+                selectedPersona === "clinic"
+                  ? "bg-emerald-950/40 border-emerald-500 text-white shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500/50"
+                  : "bg-slate-950/60 border-slate-800/80 hover:border-zinc-700 hover:bg-zinc-900/50 text-slate-400 hover:text-white"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xl">🏥</span>
+                {selectedPersona === "clinic" && (
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/40">
+                    Active
+                  </span>
+                )}
+              </div>
+              <div className="font-semibold text-xs text-white mt-2">Dr. Sharma Clinic</div>
+              <div className="text-[11px] text-slate-400 mt-0.5">Healthcare Appointments & Consultation</div>
+              <div className="text-[10px] text-emerald-400 font-mono mt-2 flex items-center gap-1.5">
+                <Volume2 className="w-3 h-3" />
+                <span>Voice: Sarah (Auto-Tuned 1.0x)</span>
+              </div>
+            </button>
+
+            {/* Restaurant Preset */}
+            <button
+              type="button"
+              onClick={() => handleSwitchPersona("restaurant")}
+              className={`p-3.5 rounded-xl text-left border transition-all cursor-pointer relative ${
+                selectedPersona === "restaurant"
+                  ? "bg-cyan-950/40 border-cyan-500 text-white shadow-lg shadow-cyan-500/10 ring-1 ring-cyan-500/50"
+                  : "bg-slate-950/60 border-slate-800/80 hover:border-zinc-700 hover:bg-zinc-900/50 text-slate-400 hover:text-white"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xl">🍲</span>
+                {selectedPersona === "restaurant" && (
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-semibold border border-cyan-500/40">
+                    Active
+                  </span>
+                )}
+              </div>
+              <div className="font-semibold text-xs text-white mt-2">Bhojanalaya Kitchen</div>
+              <div className="text-[11px] text-slate-400 mt-0.5">Food Menu & Home Delivery Orders</div>
+              <div className="text-[10px] text-cyan-400 font-mono mt-2 flex items-center gap-1.5">
+                <Volume2 className="w-3 h-3" />
+                <span>Voice: Bella (Auto-Tuned 1.05x)</span>
+              </div>
+            </button>
+
+            {/* Roadside Rescue Preset */}
+            <button
+              type="button"
+              onClick={() => handleSwitchPersona("auto")}
+              className={`p-3.5 rounded-xl text-left border transition-all cursor-pointer relative ${
+                selectedPersona === "auto"
+                  ? "bg-amber-950/40 border-amber-500 text-white shadow-lg shadow-amber-500/10 ring-1 ring-amber-500/50"
+                  : "bg-slate-950/60 border-slate-800/80 hover:border-zinc-700 hover:bg-zinc-900/50 text-slate-400 hover:text-white"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xl">🚨</span>
+                {selectedPersona === "auto" && (
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/40">
+                    Active
+                  </span>
+                )}
+              </div>
+              <div className="font-semibold text-xs text-white mt-2">Apex Roadside Rescue</div>
+              <div className="text-[11px] text-slate-400 mt-0.5">24/7 Emergency Towing & Tyre Assistance</div>
+              <div className="text-[10px] text-amber-400 font-mono mt-2 flex items-center gap-1.5">
+                <Volume2 className="w-3 h-3" />
+                <span>Voice: Adam (Auto-Tuned 1.1x)</span>
+              </div>
+            </button>
           </div>
-        </div>
+        </Vani3DCard>
+      </div>
 
-        {/* 3 Interactive Business Presets with clear unselected interactive affordance */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {/* Clinic Preset */}
-          <button
-            type="button"
-            onClick={() => handleSwitchPersona("clinic")}
-            className={`p-3.5 rounded-xl text-left border transition-all cursor-pointer relative ${
-              selectedPersona === "clinic"
-                ? "bg-emerald-950/40 border-emerald-500 text-white shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500/50"
-                : "bg-slate-950/60 border-slate-800/80 hover:border-zinc-700 hover:bg-zinc-900/50 text-slate-400 hover:text-white"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xl">🏥</span>
-              {selectedPersona === "clinic" && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/40">
-                  Active
-                </span>
-              )}
-            </div>
-            <div className="font-semibold text-xs text-white mt-2">Dr. Sharma Clinic</div>
-            <div className="text-[11px] text-slate-400 mt-0.5">Healthcare Appointments & Consultation</div>
-            <div className="text-[10px] text-emerald-400 font-mono mt-2 flex items-center gap-1.5">
-              <Volume2 className="w-3 h-3" />
-              <span>Voice: Sarah (Auto-Tuned 1.0x)</span>
-            </div>
-          </button>
-
-          {/* Restaurant Preset */}
-          <button
-            type="button"
-            onClick={() => handleSwitchPersona("restaurant")}
-            className={`p-3.5 rounded-xl text-left border transition-all cursor-pointer relative ${
-              selectedPersona === "restaurant"
-                ? "bg-cyan-950/40 border-cyan-500 text-white shadow-lg shadow-cyan-500/10 ring-1 ring-cyan-500/50"
-                : "bg-slate-950/60 border-slate-800/80 hover:border-zinc-700 hover:bg-zinc-900/50 text-slate-400 hover:text-white"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xl">🍲</span>
-              {selectedPersona === "restaurant" && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-semibold border border-cyan-500/40">
-                  Active
-                </span>
-              )}
-            </div>
-            <div className="font-semibold text-xs text-white mt-2">Bhojanalaya Kitchen</div>
-            <div className="text-[11px] text-slate-400 mt-0.5">Food Menu & Home Delivery Orders</div>
-            <div className="text-[10px] text-cyan-400 font-mono mt-2 flex items-center gap-1.5">
-              <Volume2 className="w-3 h-3" />
-              <span>Voice: Bella (Auto-Tuned 1.05x)</span>
-            </div>
-          </button>
-
-          {/* Roadside Rescue Preset */}
-          <button
-            type="button"
-            onClick={() => handleSwitchPersona("auto")}
-            className={`p-3.5 rounded-xl text-left border transition-all cursor-pointer relative ${
-              selectedPersona === "auto"
-                ? "bg-amber-950/40 border-amber-500 text-white shadow-lg shadow-amber-500/10 ring-1 ring-amber-500/50"
-                : "bg-slate-950/60 border-slate-800/80 hover:border-zinc-700 hover:bg-zinc-900/50 text-slate-400 hover:text-white"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xl">🚨</span>
-              {selectedPersona === "auto" && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/40">
-                  Active
-                </span>
-              )}
-            </div>
-            <div className="font-semibold text-xs text-white mt-2">Apex Roadside Rescue</div>
-            <div className="text-[11px] text-slate-400 mt-0.5">24/7 Emergency Towing & Tyre Assistance</div>
-            <div className="text-[10px] text-amber-400 font-mono mt-2 flex items-center gap-1.5">
-              <Volume2 className="w-3 h-3" />
-              <span>Voice: Adam (Auto-Tuned 1.1x)</span>
-            </div>
-          </button>
-        </div>
-      </Vani3DCard>
-
-      {/* 2-COLUMN SINGLE VIEWPORT GRID: STEP 2 (Left 5 cols) & STEP 3 (Right 7 cols) */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-5 lg:gap-6 items-stretch">
-        {/* Left 5 Cols: STEP 2: Audio Engine */}
-        <div className="md:col-span-5 lg:col-span-5 flex flex-col">
-          <Vani3DCard glowColor="emerald" className="p-4 sm:p-5 flex flex-col justify-between text-center space-y-2.5 h-full">
+      {/* 2-COLUMN SINGLE VIEWPORT GRID: STEP 2 (Left Column) & STEP 3 (Right Column) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full max-w-6xl mx-auto items-stretch">
+        {/* Left Column: Audio Core & Call Action */}
+        <div className="lg:col-span-5 flex flex-col">
+          <Vani3DCard glowColor="emerald" className="p-4 sm:p-5 flex flex-col justify-between text-center space-y-2 h-full">
             <div className="w-full flex items-center justify-between pb-2.5 border-b border-slate-800/80">
               <div className="flex items-center gap-2">
                 <span className="flex items-center justify-center h-6 w-6 rounded-full bg-cyan-400 text-black font-extrabold text-xs shadow-md shadow-cyan-400/30">
@@ -290,7 +292,7 @@ export default function VaniStudioView({
                 {isConnecting ? (
                   <>
                     <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
-                    <span className="font-mono text-amber-300 font-medium">Dialing SIP...</span>
+                    <span className="font-mono text-amber-300 font-medium">Connecting...</span>
                   </>
                 ) : isSpeaking ? (
                   <>
@@ -317,7 +319,7 @@ export default function VaniStudioView({
             </div>
 
             {/* Interactive 3D Voice Orb - Compact and centered with reduced vertical padding */}
-            <div className="flex-1 flex items-center justify-center py-2">
+            <div className="flex items-center justify-center py-1 my-0">
               <VaniVoiceOrb3D
                 isSpeaking={isSpeaking}
                 isListening={isListening}
@@ -325,36 +327,33 @@ export default function VaniStudioView({
               />
             </div>
 
-            {/* Call Actions with Dynamic Feedback & Streamlined Direct Fallback */}
+            {/* Dynamic Call Action Button with explicit 3-state styling */}
             <div className="w-full pt-1 space-y-2">
               <button
                 type="button"
                 onClick={onToggleCall}
                 disabled={isConnecting}
-                className={`w-full py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 cursor-pointer disabled:cursor-wait ${
+                className={`w-full py-3.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 cursor-pointer disabled:cursor-wait ${
                   isConnecting
-                    ? "bg-amber-500 text-black shadow-amber-500/25 animate-pulse"
+                    ? "bg-emerald-500 text-black font-semibold animate-pulse opacity-80"
                     : isCalling
-                    ? "bg-rose-600 hover:bg-rose-700 text-white shadow-rose-500/25"
-                    : "bg-gradient-to-r from-emerald-500 to-teal-400 hover:brightness-110 text-black shadow-emerald-500/20"
+                    ? "bg-rose-600 hover:bg-rose-500 text-white font-semibold shadow-rose-500/25"
+                    : "bg-emerald-500 hover:bg-emerald-400 text-black font-semibold shadow-emerald-500/20"
                 }`}
               >
                 {isConnecting ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Dialing SIP Gateway...</span>
+                    <Loader2 className="w-4 h-4 animate-spin text-black" />
+                    <span>Connecting Audio Stream...</span>
                   </>
                 ) : isCalling ? (
                   <>
+                    <span className="relative flex h-2 w-2 mr-0.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-200 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                    </span>
                     <PhoneOff className="w-4 h-4" />
-                    <span>End Call ({formatDuration(callDuration)})</span>
-                    {/* Animated soundwave mini-bars */}
-                    <div className="flex items-center gap-0.5 ml-1.5">
-                      <span className="w-0.5 h-2.5 bg-white/90 animate-pulse" style={{ animationDuration: "0.6s" }} />
-                      <span className="w-0.5 h-4 bg-white/90 animate-pulse" style={{ animationDuration: "0.8s" }} />
-                      <span className="w-0.5 h-2 bg-white/90 animate-pulse" style={{ animationDuration: "0.5s" }} />
-                      <span className="w-0.5 h-3.5 bg-white/90 animate-pulse" style={{ animationDuration: "0.7s" }} />
-                    </div>
+                    <span>End Active Call ({formatDuration(callDuration)})</span>
                   </>
                 ) : (
                   <>
@@ -380,8 +379,8 @@ export default function VaniStudioView({
           </Vani3DCard>
         </div>
 
-        {/* Right 7 Cols: STEP 3: Live Telephony Feed */}
-        <div className="md:col-span-7 lg:col-span-7 flex flex-col">
+        {/* Right Column: Live Transcript & Interaction */}
+        <div className="lg:col-span-7 flex flex-col">
           <Vani3DCard glowColor="indigo" className="p-4 sm:p-5 flex flex-col justify-between h-full min-h-[440px]">
             <div className="flex items-center justify-between pb-2.5 border-b border-slate-800/80 text-xs">
               <div className="flex items-center gap-2">
@@ -538,7 +537,7 @@ export default function VaniStudioView({
       </div>
 
       {/* Commercial Acquisition & Conversion Banner */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900/80 to-cyan-950/40 border border-emerald-500/30 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div className="w-full max-w-6xl mx-auto p-4 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900/80 to-cyan-950/40 border border-emerald-500/30 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
         <div className="space-y-0.5">
           <div className="text-xs sm:text-sm font-bold text-white flex items-center justify-center sm:justify-start gap-1.5">
             <Sparkles className="w-4 h-4 text-emerald-400" />
@@ -576,7 +575,7 @@ export default function VaniStudioView({
         </button>
 
         {showAdvanced && (
-          <div className="w-full mt-4 p-5 rounded-2xl bg-[#090e17]/90 border border-slate-800 shadow-xl backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200 space-y-4">
+          <div className="w-full max-w-6xl mx-auto mt-4 p-5 rounded-2xl bg-[#090e17]/90 border border-slate-800 shadow-xl backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
               <div className="flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-emerald-400" />
