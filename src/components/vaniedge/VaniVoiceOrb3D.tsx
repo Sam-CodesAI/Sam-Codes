@@ -6,7 +6,6 @@ interface VaniVoiceOrb3DProps {
   isSpeaking: boolean;
   isListening: boolean;
   isCalling: boolean;
-  stateText?: string;
 }
 
 interface Particle3D {
@@ -24,7 +23,6 @@ export default function VaniVoiceOrb3D({
   isSpeaking,
   isListening,
   isCalling,
-  stateText,
 }: VaniVoiceOrb3DProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);

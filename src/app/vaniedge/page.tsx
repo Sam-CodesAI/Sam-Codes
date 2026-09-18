@@ -352,6 +352,7 @@ export default function VaniEdgePage() {
             body: JSON.stringify({
               text,
               voiceId: selectedVoice,
+              languageCode: selectedLanguage,
             }),
           });
 
@@ -396,8 +397,9 @@ export default function VaniEdgePage() {
 
         if (browserVoices.length > 0) {
           const matched =
-            browserVoices.find((v) => v.name.toLowerCase().includes(selectedVoice.toLowerCase())) ||
-            browserVoices.find((v) => v.lang.startsWith(selectedLanguage));
+            browserVoices.find((v) => v.lang.toLowerCase().startsWith(selectedLanguage.toLowerCase())) ||
+            browserVoices.find((v) => v.lang.toLowerCase().replace("_", "-").startsWith(selectedLanguage.toLowerCase())) ||
+            browserVoices.find((v) => v.name.toLowerCase().includes(selectedVoice.toLowerCase()));
           if (matched) utterance.voice = matched;
         }
 
@@ -740,7 +742,25 @@ export default function VaniEdgePage() {
                 <Globe2 className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                 <select
                   value={selectedLanguage}
-                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  onChange={(e) => {
+                    const newLang = e.target.value;
+                    setSelectedLanguage(newLang);
+                    const langMeta = LANGUAGES.find((l) => l.code === newLang);
+                    if (recognitionRef.current && langMeta) {
+                      recognitionRef.current.lang = langMeta.speechLocale;
+                    }
+                    if (isCalling) {
+                      const switchAudio: Record<string, string> = {
+                        hi: "नमस्ते, भाषा बदलकर हिंदी कर दी गई है।",
+                        kn: "ನಮಸ್ಕಾರ, ಭಾಷೆಯನ್ನು ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ.",
+                        mr: "नमस्कार, भाषा मराठीत बदलली आहे.",
+                        ta: "வணக்கம், மொழி தமிழுக்கு மாற்றப்பட்டுள்ளது.",
+                        es: "Hola, idioma cambiado a español.",
+                        en: "Switched to English.",
+                      };
+                      speakVoiceResponse(switchAudio[newLang] || `Language set to ${langMeta?.label || newLang}.`);
+                    }
+                  }}
                   className="bg-transparent text-slate-200 text-xs font-medium focus:outline-none cursor-pointer pr-1"
                   aria-label="Select Spoken Language"
                 >
