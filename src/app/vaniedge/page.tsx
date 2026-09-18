@@ -143,6 +143,7 @@ export default function VaniEdgePage() {
 
   // Telephony & Call State
   const [isCalling, setIsCalling] = useState<boolean>(false);
+  const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [callDuration, setCallDuration] = useState<number>(0);
@@ -587,8 +588,9 @@ export default function VaniEdgePage() {
 
   // Call & Mic Toggles
   const handleToggleCall = () => {
-    if (isCalling) {
+    if (isCalling || isConnecting) {
       setIsCalling(false);
+      setIsConnecting(false);
       setIsSpeaking(false);
       if (typeof window !== "undefined" && window.speechSynthesis) {
         window.speechSynthesis.cancel();
@@ -597,10 +599,14 @@ export default function VaniEdgePage() {
         audioPlayerRef.current.pause();
       }
     } else {
-      setIsCalling(true);
-      speakVoiceResponse(
-        `Connected to ${businessName}. Namaste! How may I direct your call today?`
-      );
+      setIsConnecting(true);
+      setTimeout(() => {
+        setIsConnecting(false);
+        setIsCalling(true);
+        speakVoiceResponse(
+          `Connected to ${businessName}. Namaste! How may I assist your call today?`
+        );
+      }, 700);
     }
   };
 
@@ -807,6 +813,7 @@ export default function VaniEdgePage() {
           {activeTab === "studio" && (
             <VaniStudioView
               isCalling={isCalling}
+              isConnecting={isConnecting}
               isListening={isListening}
               isSpeaking={isSpeaking}
               callDuration={callDuration}
@@ -828,18 +835,45 @@ export default function VaniEdgePage() {
                   setSpeechRate(1.0);
                   setSpeechPitch(1.0);
                   setSpeechEngine("elevenlabs");
+                  setTranscript([
+                    {
+                      id: `init-${Date.now()}`,
+                      sender: "agent",
+                      text: "Namaste! Welcome to Dr. Sharma Healthcare Clinic. How may I assist with your appointment or consultation today?",
+                      timestamp: "Just now",
+                      latencyMs: 14.2,
+                    },
+                  ]);
                 } else if (p === "restaurant") {
                   setBusinessName("Bhojanalaya Cloud Kitchen");
                   setSelectedVoice("bella");
                   setSpeechRate(1.05);
                   setSpeechPitch(1.05);
                   setSpeechEngine("elevenlabs");
+                  setTranscript([
+                    {
+                      id: `init-${Date.now()}`,
+                      sender: "agent",
+                      text: "Namaste! Welcome to Bhojanalaya Kitchen. Are you looking to place an order for delivery or check our thali specials today?",
+                      timestamp: "Just now",
+                      latencyMs: 12.8,
+                    },
+                  ]);
                 } else {
                   setBusinessName("Apex Roadside Assistance");
                   setSelectedVoice("adam");
                   setSpeechRate(1.1);
                   setSpeechPitch(0.95);
                   setSpeechEngine("elevenlabs");
+                  setTranscript([
+                    {
+                      id: `init-${Date.now()}`,
+                      sender: "agent",
+                      text: "Namaste! Welcome to Apex Roadside Rescue. Are you experiencing a vehicle breakdown, tyre puncture, or do you need emergency towing?",
+                      timestamp: "Just now",
+                      latencyMs: 11.5,
+                    },
+                  ]);
                 }
               }}
               selectedLanguage={selectedLanguage}
