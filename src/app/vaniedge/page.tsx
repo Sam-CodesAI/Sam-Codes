@@ -368,18 +368,25 @@ export default function VaniEdgePage() {
               audioPlayerRef.current.onerror = () => {
                 setIsSpeaking(false);
               };
-              await audioPlayerRef.current.play();
-              return;
+              try {
+                await audioPlayerRef.current.play();
+                return;
+              } catch (playErr) {
+                console.warn("Audio play blocked, falling back to speech synthesis:", playErr);
+              }
             }
           }
-        } catch {
-          // fallback to browser speech synthesis
+        } catch (ttsErr) {
+          console.warn("ElevenLabs TTS error, falling back to browser speech:", ttsErr);
         }
       }
 
       // 2. Local Browser SpeechSynthesis Fallback
-      if (window.speechSynthesis) {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = speechRate;
         utterance.pitch = speechPitch;
@@ -399,6 +406,8 @@ export default function VaniEdgePage() {
         utterance.onerror = () => setIsSpeaking(false);
 
         window.speechSynthesis.speak(utterance);
+      } else {
+        setIsSpeaking(false);
       }
     },
     [speechEngine, selectedVoice, selectedLanguage, speechRate, speechPitch, browserVoices]
@@ -720,79 +729,29 @@ export default function VaniEdgePage() {
                   VaniEdge AI
                 </span>
                 <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                  {activeTab === "studio"
-                    ? "Voice Studio"
-                    : activeTab === "dashboard"
-                    ? "Analytics"
-                    : activeTab === "sutradb"
-                    ? "Knowledge Base"
-                    : activeTab === "dispatch"
-                    ? "Bookings & Orders"
-                    : "Phone Setup"}
+                  Voice Studio
                 </span>
               </div>
             </div>
 
-            {/* Quick Top Navigation Pills */}
-            <nav className="hidden md:flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs">
-              <button
-                onClick={() => setActiveTab("studio")}
-                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 cursor-pointer ${
-                  activeTab === "studio"
-                    ? "bg-emerald-500 text-black font-semibold shadow-sm"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                <Mic className="w-3.5 h-3.5" />
-                <span>Studio</span>
-              </button>
-              <button
-                onClick={() => setActiveTab("dashboard")}
-                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 cursor-pointer ${
-                  activeTab === "dashboard"
-                    ? "bg-cyan-500 text-black font-semibold shadow-sm"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                <BarChart3 className="w-3.5 h-3.5" />
-                <span>Analytics</span>
-              </button>
-              <button
-                onClick={() => setActiveTab("sutradb")}
-                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 cursor-pointer ${
-                  activeTab === "sutradb"
-                    ? "bg-indigo-500 text-white font-semibold shadow-sm"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                <Database className="w-3.5 h-3.5" />
-                <span>Knowledge ({knowledgeList.length})</span>
-              </button>
-              <button
-                onClick={() => setActiveTab("dispatch")}
-                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 cursor-pointer ${
-                  activeTab === "dispatch"
-                    ? "bg-amber-500 text-black font-semibold shadow-sm"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                <Calendar className="w-3.5 h-3.5" />
-                <span>Bookings ({tickets.length})</span>
-              </button>
-              <button
-                onClick={() => setActiveTab("telephony")}
-                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 cursor-pointer ${
-                  activeTab === "telephony"
-                    ? "bg-rose-500 text-white font-semibold shadow-sm"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Phone Setup</span>
-              </button>
-            </nav>
-
             <div className="flex items-center gap-2 sm:gap-3">
+              {/* Spoken Language Selector */}
+              <div className="flex items-center gap-1.5 bg-slate-900/90 border border-slate-700/80 px-2 sm:px-2.5 py-1.5 rounded-lg text-xs shadow-sm">
+                <Globe2 className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                <select
+                  value={selectedLanguage}
+                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  className="bg-transparent text-slate-200 text-xs font-medium focus:outline-none cursor-pointer pr-1"
+                  aria-label="Select Spoken Language"
+                >
+                  {LANGUAGES.map((l) => (
+                    <option key={l.code} value={l.code} className="bg-slate-900 text-white">
+                      {l.label} ({l.nativeLabel})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {/* Live PSTN Phone Line Badge */}
               <a
                 href="tel:+18149613703"

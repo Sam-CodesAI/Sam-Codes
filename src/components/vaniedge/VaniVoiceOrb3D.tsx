@@ -6,7 +6,7 @@ interface VaniVoiceOrb3DProps {
   isSpeaking: boolean;
   isListening: boolean;
   isCalling: boolean;
-  stateText: string;
+  stateText?: string;
 }
 
 interface Particle3D {
@@ -277,27 +277,6 @@ export default function VaniVoiceOrb3D({
           height={320}
           className="w-64 h-64 sm:w-72 sm:h-72 cursor-grab active:cursor-grabbing"
         />
-
-        {/* Center Floating Core Badge */}
-        <div
-          className="absolute pointer-events-none px-3 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/10 flex items-center gap-2 shadow-2xl transition-transform duration-300"
-          style={{ transform: "translateZ(30px)" }}
-        >
-          <span
-            className={`h-2 w-2 rounded-full ${
-              isSpeaking
-                ? "bg-emerald-400 animate-ping"
-                : isListening
-                ? "bg-cyan-400 animate-pulse"
-                : isCalling
-                ? "bg-indigo-400"
-                : "bg-slate-500"
-            }`}
-          />
-          <span className="text-[11px] font-mono uppercase tracking-wider text-slate-200 font-semibold">
-            {stateText}
-          </span>
-        </div>
       </div>
     </div>
   );

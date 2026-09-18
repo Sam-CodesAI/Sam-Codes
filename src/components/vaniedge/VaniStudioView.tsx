@@ -8,7 +8,6 @@ import {
   Mic,
   MicOff,
   Volume2,
-  Sparkles,
   Send,
   Bot,
   User,
@@ -17,6 +16,7 @@ import {
   Clock,
   Radio,
   CheckCircle2,
+  Settings,
 } from "lucide-react";
 import VaniVoiceOrb3D from "./VaniVoiceOrb3D";
 import Vani3DCard from "./Vani3DCard";
@@ -74,7 +74,7 @@ interface VaniStudioViewProps {
   onSelectSpeechRate: (r: number) => void;
   speechPitch: number;
   onSelectSpeechPitch: (p: number) => void;
-  canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  canvasRef?: React.RefObject<HTMLCanvasElement | null>;
   activeRegion: string;
 }
 
@@ -137,11 +137,7 @@ export default function VaniStudioView({
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Hero Header */}
-      <div className="text-center space-y-2 max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-medium">
-          <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Live Voice Assistant • 24/7 Answering</span>
-        </div>
+      <div className="text-center space-y-2 max-w-2xl mx-auto pt-1 sm:pt-2">
         <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
           AI Voice Assistant <span className="bg-gradient-to-r from-emerald-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent">for Local Businesses</span>
         </h1>
@@ -152,7 +148,7 @@ export default function VaniStudioView({
 
       {/* USER JOURNEY STEP 1: Pick a Business Type */}
       <Vani3DCard glowColor="emerald" className="p-4 sm:p-5 space-y-3.5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+        <div className="border-b border-slate-800/80 pb-3">
           <div className="flex items-center gap-2.5">
             <span className="flex items-center justify-center h-6 w-6 rounded-full bg-emerald-500 text-black font-extrabold text-xs shadow-md shadow-emerald-500/30">
               1
@@ -161,23 +157,6 @@ export default function VaniStudioView({
               <span className="font-bold text-sm text-white block">Step 1: Pick a Business Type</span>
               <span className="text-[11px] text-slate-400">Preset automatically tunes voice persona, tone, and pacing</span>
             </div>
-          </div>
-
-          {/* Spoken Language Selector */}
-          <div className="flex items-center gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800 shrink-0">
-            <Globe2 className="w-3.5 h-3.5 text-indigo-400 ml-1" />
-            <span className="text-xs text-slate-400">Language:</span>
-            <select
-              value={selectedLanguage}
-              onChange={(e) => onSelectLanguage(e.target.value)}
-              className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-white font-medium focus:outline-none focus:border-emerald-500 cursor-pointer"
-            >
-              {languages.map((l) => (
-                <option key={l.code} value={l.code}>
-                  {l.label} ({l.nativeLabel})
-                </option>
-              ))}
-            </select>
           </div>
         </div>
 
@@ -261,9 +240,9 @@ export default function VaniStudioView({
       </Vani3DCard>
 
       {/* STAGE: STEP 2 (Speak/Call) & STEP 3 (Transcript Stream) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* Left 5 Cols: STEP 2: Click to Speak or Call */}
-        <Vani3DCard glowColor="emerald" className="lg:col-span-5 p-6 flex flex-col items-center justify-between text-center space-y-4">
+        <Vani3DCard glowColor="emerald" className="lg:col-span-5 p-5 sm:p-6 flex flex-col justify-between text-center space-y-4 h-full">
           <div className="w-full flex items-center justify-between pb-3 border-b border-slate-800/80">
             <div className="flex items-center gap-2">
               <span className="flex items-center justify-center h-6 w-6 rounded-full bg-cyan-400 text-black font-extrabold text-xs shadow-md shadow-cyan-400/30">
@@ -272,34 +251,34 @@ export default function VaniStudioView({
               <span className="font-bold text-sm text-white">Step 2: Click to Speak or Call</span>
             </div>
             <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Online</span>
+              <span
+                className={`h-2 w-2 rounded-full ${
+                  isSpeaking
+                    ? "bg-emerald-400 animate-ping"
+                    : isListening
+                    ? "bg-cyan-400 animate-pulse"
+                    : isCalling
+                    ? "bg-indigo-400 animate-pulse"
+                    : "bg-emerald-400"
+                }`}
+              />
+              <span className="font-medium text-slate-300">
+                {isSpeaking ? "Speaking" : isListening ? "Listening" : isCalling ? "Call Active" : "Online"}
+              </span>
             </div>
           </div>
 
-          {/* Interactive 3D Voice Orb */}
-          <VaniVoiceOrb3D
-            isSpeaking={isSpeaking}
-            isListening={isListening}
-            isCalling={isCalling}
-            stateText={
-              isSpeaking
-                ? "Speaking"
-                : isListening
-                ? "Listening (Mic Active)"
-                : isCalling
-                ? "Call Connected"
-                : "Click Below to Connect"
-            }
-          />
-
-          {/* 40-Bar FFT Waveform Canvas */}
-          <div className="w-full bg-slate-950/60 rounded-xl p-2.5 border border-slate-800/80">
-            <canvas ref={canvasRef} width={280} height={36} className="w-full h-9" />
+          {/* Canvas Sphere (Clean 3D orb without text overlay or dashed line) */}
+          <div className="flex-1 flex items-center justify-center py-2 min-h-[260px]">
+            <VaniVoiceOrb3D
+              isSpeaking={isSpeaking}
+              isListening={isListening}
+              isCalling={isCalling}
+            />
           </div>
 
-          {/* Call Controls */}
-          <div className="w-full pt-1 space-y-2.5">
+          {/* Call Controls & Streamlined Fallback */}
+          <div className="w-full pt-1 space-y-2">
             <button
               onClick={onToggleCall}
               className={`w-full py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 cursor-pointer ${
@@ -321,22 +300,22 @@ export default function VaniStudioView({
               )}
             </button>
 
-            {/* Direct PSTN Line */}
-            <div className="flex items-center justify-between text-[11px] bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80">
-              <span className="text-slate-400">Or Call Direct Phone Line:</span>
+            {/* Direct Dial Fallback: Single subtle text link */}
+            <div className="text-center pt-1">
+              <span className="text-xs text-slate-400">Or dial direct: </span>
               <a
                 href="tel:+18149613703"
-                className="font-mono text-emerald-400 font-bold hover:underline flex items-center gap-1"
+                className="text-xs text-emerald-400 font-medium hover:underline hover:text-emerald-300 transition-colors inline-flex items-center gap-1 font-mono"
               >
-                <Phone className="w-3 h-3" />
-                +1 (814) 961-3703
+                <Phone className="w-3 h-3 inline" />
+                <span>+1 (814) 961-3703</span>
               </a>
             </div>
           </div>
         </Vani3DCard>
 
         {/* Right 7 Cols: STEP 3: Inspect Real-Time Transcript */}
-        <Vani3DCard glowColor="indigo" className="lg:col-span-7 p-6 flex flex-col justify-between min-h-[480px]">
+        <Vani3DCard glowColor="indigo" className="lg:col-span-7 p-5 sm:p-6 flex flex-col justify-between h-full min-h-[460px]">
           <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 text-xs">
             <div className="flex items-center gap-2">
               <span className="flex items-center justify-center h-6 w-6 rounded-full bg-indigo-400 text-black font-extrabold text-xs shadow-md shadow-indigo-400/30">
@@ -350,7 +329,7 @@ export default function VaniStudioView({
           </div>
 
           {/* Transcript Scroll Area */}
-          <div className="space-y-3 max-h-72 overflow-y-auto pr-1 my-3 text-xs">
+          <div className="space-y-3 flex-1 min-h-[220px] max-h-[340px] overflow-y-auto pr-1 my-3 text-xs">
             {transcript.map((msg) => (
               <div
                 key={msg.id}
@@ -394,16 +373,47 @@ export default function VaniStudioView({
             ))}
           </div>
 
-          {/* Clickable Prompt Pills & Query Form */}
-          <div className="space-y-2 pt-2 border-t border-slate-800/80">
+          {/* Step 3 Voice vs. Text Intent + Quick Prompt Chips + Query Form */}
+          <div className="space-y-2.5 pt-3 border-t border-slate-800/80">
+            {/* Status indicator clarifying Voice vs. Text intent */}
+            <div className="flex items-center justify-between text-[11px] text-slate-400">
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`h-2 w-2 rounded-full ${
+                    isListening
+                      ? "bg-rose-400 animate-ping"
+                      : isSpeaking
+                      ? "bg-emerald-400 animate-pulse"
+                      : isCalling
+                      ? "bg-indigo-400 animate-pulse"
+                      : "bg-emerald-400"
+                  }`}
+                />
+                <span className="font-medium text-slate-300">
+                  {isListening
+                    ? "Mic active • Listening for speech..."
+                    : isSpeaking
+                    ? "AI Speaking..."
+                    : isCalling
+                    ? "Voice Call active (or test via text simulation)"
+                    : "Mic active (or test via text simulation)"}
+                </span>
+              </div>
+              <span className="text-[10px] text-slate-500 hidden sm:inline font-mono">
+                Click prompt to speak immediately
+              </span>
+            </div>
+
             {/* Clickable Prompt Pills right above text input */}
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-[11px] text-slate-400 mr-1 font-medium">Quick Prompts:</span>
               {samplePrompts.map((p, idx) => (
                 <button
                   key={idx}
+                  type="button"
                   onClick={() => onSend(p.query)}
-                  className="text-xs px-3 py-1 rounded-full bg-slate-900 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-300 border border-slate-800 hover:border-emerald-500/40 transition-all cursor-pointer font-medium active:scale-95"
+                  disabled={isProcessing}
+                  className="text-xs px-3 py-1 rounded-full bg-slate-900 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-300 border border-slate-800 hover:border-emerald-500/40 transition-all cursor-pointer font-medium active:scale-95 disabled:opacity-50"
                 >
                   {p.label}
                 </button>
@@ -416,7 +426,7 @@ export default function VaniStudioView({
                 e.preventDefault();
                 onSend();
               }}
-              className="flex items-center gap-2 pt-1"
+              className="flex items-center gap-2 pt-0.5"
             >
               <button
                 type="button"
@@ -452,15 +462,20 @@ export default function VaniStudioView({
         </Vani3DCard>
       </div>
 
-      {/* Optional Fine-Tuning Disclosure (Hidden by default to eliminate manual dropdown clutter) */}
+      {/* Advanced Voice Tuning Toggle */}
       <div className="pt-2">
         <div className="flex justify-end">
           <button
+            type="button"
             onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
-            className="text-[11px] text-slate-500 hover:text-slate-300 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs font-medium transition-all shadow-sm cursor-pointer active:scale-95 ${
+              showAdvancedSettings
+                ? "bg-slate-800 text-white border-slate-600 shadow-slate-900/50"
+                : "bg-slate-950/80 hover:bg-slate-900 text-slate-300 hover:text-white border-slate-800 hover:border-slate-700"
+            }`}
           >
-            <Sliders className="w-3 h-3" />
-            <span>{showAdvancedSettings ? "Hide Voice Customization" : "Customize Voice Settings (Optional)"}</span>
+            <Settings className={`w-3.5 h-3.5 text-emerald-400 transition-transform duration-200 ${showAdvancedSettings ? "rotate-90 text-emerald-300" : ""}`} />
+            <span>⚙ Advanced Voice Tuning</span>
           </button>
         </div>
 
