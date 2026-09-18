@@ -67,3 +67,17 @@ export const VANI_THEMES: Record<VaniTheme, ThemeColors> = {
     badgeClass: "bg-amber-500/10 text-amber-300 border-amber-500/30",
   },
 };
+
+export function hexToRgba(hex: string, alpha: number): string {
+  if (!hex) return `rgba(16, 185, 129, ${alpha})`;
+  if (hex.startsWith("rgba")) return hex;
+  const cleanHex = hex.replace("#", "");
+  if (cleanHex.length === 6) {
+    const r = parseInt(cleanHex.substring(0, 2), 16);
+    const g = parseInt(cleanHex.substring(2, 4), 16);
+    const b = parseInt(cleanHex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+  return hex;
+}
+

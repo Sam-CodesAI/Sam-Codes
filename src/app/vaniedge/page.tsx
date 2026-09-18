@@ -51,7 +51,7 @@ import VaniStudioView, { CustomPersona } from "@/components/vaniedge/VaniStudioV
 import VaniKnowledgeView from "@/components/vaniedge/VaniKnowledgeView";
 import VaniDispatchView, { DispatchTicket } from "@/components/vaniedge/VaniDispatchView";
 import VaniTelephonyView from "@/components/vaniedge/VaniTelephonyView";
-import { VaniTheme, VANI_THEMES } from "@/lib/vaniedge/theme-config";
+import { VaniTheme, VANI_THEMES, hexToRgba } from "@/lib/vaniedge/theme-config";
 import {
   playBlipSound,
   playConnectChime,
@@ -826,7 +826,7 @@ export default function VaniEdgePage() {
   return (
     <div className="min-h-screen bg-[#070b12] text-slate-100 selection:bg-emerald-500 selection:text-black font-sans antialiased">
       {/* Hidden Audio Player for ElevenLabs Streaming */}
-      <audio ref={audioPlayerRef} className="hidden" crossOrigin="anonymous" />
+      <audio ref={audioPlayerRef} className="hidden" />
 
       {/* ChatGPT / Gemini Style Sidebar Navigation */}
       <VaniSidebar
@@ -888,9 +888,9 @@ export default function VaniEdgePage() {
                 <span
                   className="text-[10px] uppercase font-mono px-2 py-0.5 rounded border"
                   style={{
-                    backgroundColor: `${activeThemeConfig.primaryHex}15`,
+                    backgroundColor: hexToRgba(activeThemeConfig.primaryHex, 0.15),
                     color: activeThemeConfig.primaryHex,
-                    borderColor: `${activeThemeConfig.primaryHex}40`,
+                    borderColor: hexToRgba(activeThemeConfig.primaryHex, 0.4),
                   }}
                 >
                   {activeTab === "studio"
