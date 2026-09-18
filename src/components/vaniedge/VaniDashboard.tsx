@@ -26,6 +26,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { DocumentEntry } from "@/lib/vaniedge/sutradb-engine";
+import Vani3DCard from "./Vani3DCard";
 
 interface VaniDashboardProps {
   metrics: {
@@ -136,7 +137,7 @@ export default function VaniDashboard({
       {/* Hero Pulse KPI Bento Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* KPI 1: Telephony Line */}
-        <div className="bg-[#0c121d] p-5 rounded-2xl border border-slate-800/90 relative overflow-hidden group hover:border-emerald-500/40 transition-colors shadow-lg">
+        <Vani3DCard glowColor="emerald" className="p-5">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-3">
             <span className="font-medium flex items-center gap-1.5">
               <Phone className="w-3.5 h-3.5 text-emerald-400" />
@@ -155,10 +156,10 @@ export default function VaniDashboard({
               Call <ArrowUpRight className="w-3 h-3" />
             </a>
           </div>
-        </div>
+        </Vani3DCard>
 
         {/* KPI 2: Sub-Second TTFT Latency */}
-        <div className="bg-[#0c121d] p-5 rounded-2xl border border-slate-800/90 relative overflow-hidden group hover:border-cyan-500/40 transition-colors shadow-lg">
+        <Vani3DCard glowColor="cyan" className="p-5">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-3">
             <span className="font-medium flex items-center gap-1.5">
               <Zap className="w-3.5 h-3.5 text-cyan-400" />
@@ -175,10 +176,10 @@ export default function VaniDashboard({
             <span>Industry avg: 2,800ms</span>
             <span className="text-cyan-400 font-semibold font-mono">8.2x faster</span>
           </div>
-        </div>
+        </Vani3DCard>
 
         {/* KPI 3: SutraDB Edge Speed */}
-        <div className="bg-[#0c121d] p-5 rounded-2xl border border-slate-800/90 relative overflow-hidden group hover:border-indigo-500/40 transition-colors shadow-lg">
+        <Vani3DCard glowColor="indigo" className="p-5">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-3">
             <span className="font-medium flex items-center gap-1.5">
               <Database className="w-3.5 h-3.5 text-indigo-400" />
@@ -195,10 +196,10 @@ export default function VaniDashboard({
             <span>{knowledgeCount} Documents Cached</span>
             <span className="text-indigo-400 font-semibold font-mono">Zero Cloud Cost</span>
           </div>
-        </div>
+        </Vani3DCard>
 
         {/* KPI 4: Dispatched Bookings */}
-        <div className="bg-[#0c121d] p-5 rounded-2xl border border-slate-800/90 relative overflow-hidden group hover:border-amber-500/40 transition-colors shadow-lg">
+        <Vani3DCard glowColor="amber" className="p-5">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-3">
             <span className="font-medium flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-amber-400" />
@@ -215,13 +216,13 @@ export default function VaniDashboard({
             <span>Resolution Rate: 99.8%</span>
             <span className="text-amber-400 font-semibold font-mono">Crypto-Verified</span>
           </div>
-        </div>
+        </Vani3DCard>
       </div>
 
       {/* Second Row: System Infrastructure Status & Millisecond Latency Waterfall */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* System Infrastructure Matrix (Left 7 cols) */}
-        <div className="lg:col-span-7 bg-[#0c121d] rounded-2xl border border-slate-800 p-6 space-y-5 shadow-xl">
+        <Vani3DCard glowColor="emerald" className="lg:col-span-7 p-6 space-y-5">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <div className="flex items-center gap-2">
               <Server className="w-4 h-4 text-emerald-400" />
@@ -335,10 +336,10 @@ export default function VaniDashboard({
               </div>
             </div>
           </div>
-        </div>
+        </Vani3DCard>
 
         {/* Latency Waterfall Breakdown (Right 5 cols) */}
-        <div className="lg:col-span-5 bg-[#0c121d] rounded-2xl border border-slate-800 p-6 space-y-5 shadow-xl flex flex-col justify-between">
+        <Vani3DCard glowColor="cyan" className="lg:col-span-5 p-6 space-y-5 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
@@ -415,13 +416,13 @@ export default function VaniDashboard({
               <span>{watchdogStatus === "TRIGGERED" ? "Glitch Simulating..." : "Test 1,200ms Glitch Watchdog"}</span>
             </button>
           </div>
-        </div>
+        </Vani3DCard>
       </div>
 
       {/* Third Row: Vernacular Multi-Lingual Traffic & Economic ROI Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Multi-Lingual Traffic (Left 6 cols) */}
-        <div className="lg:col-span-6 bg-[#0c121d] rounded-2xl border border-slate-800 p-6 space-y-4 shadow-xl">
+        <Vani3DCard glowColor="indigo" className="lg:col-span-6 p-6 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <div className="flex items-center gap-2">
               <Globe2 className="w-4 h-4 text-indigo-400" />
@@ -507,10 +508,10 @@ export default function VaniDashboard({
               </div>
             </div>
           </div>
-        </div>
+        </Vani3DCard>
 
         {/* Economic Impact & ROI Metrics (Right 6 cols) */}
-        <div className="lg:col-span-6 bg-[#0c121d] rounded-2xl border border-slate-800 p-6 space-y-4 shadow-xl flex flex-col justify-between">
+        <Vani3DCard glowColor="emerald" className="lg:col-span-6 p-6 space-y-4 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
@@ -564,7 +565,7 @@ export default function VaniDashboard({
               <p className="text-[11px] font-mono text-emerald-400 mt-2 text-center">{benchmarkResult}</p>
             )}
           </div>
-        </div>
+        </Vani3DCard>
       </div>
 
       {/* Fourth Row: Live Quick-Navigation Shortcuts */}
