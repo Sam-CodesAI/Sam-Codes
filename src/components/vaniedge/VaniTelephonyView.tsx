@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   ShieldCheck,
   AlertTriangle,
@@ -12,14 +12,8 @@ import {
   ArrowRight,
   CheckCircle2,
   Layers,
-  RefreshCw,
-  Cpu,
-  Activity,
-  Wifi,
 } from "lucide-react";
 import Vani3DCard from "./Vani3DCard";
-import { VaniTheme, VANI_THEMES } from "@/lib/vaniedge/theme-config";
-import { playBlipSound, playGlitchSound, playSonarPing } from "@/lib/vaniedge/audio-fx";
 
 interface VaniTelephonyViewProps {
   metrics: {
@@ -31,86 +25,17 @@ interface VaniTelephonyViewProps {
   };
   watchdogStatus: "HEALTHY" | "TRIGGERED" | "RECOVERED";
   onSimulateGlitch: () => void;
-  theme?: VaniTheme;
-}
-
-interface EdgeNodePing {
-  region: string;
-  location: string;
-  latencyMs: number;
-  status: "ONLINE" | "OPTIMAL" | "STANDBY";
 }
 
 export default function VaniTelephonyView({
   metrics,
   watchdogStatus,
   onSimulateGlitch,
-  theme = "emerald",
 }: VaniTelephonyViewProps) {
-  const [selectedCodec, setSelectedCodec] = useState<"g711" | "opus" | "amr">("g711");
-  const [edgeNodes, setEdgeNodes] = useState<EdgeNodePing[]>([
-    { region: "BOM1", location: "Mumbai, India", latencyMs: 14.2, status: "OPTIMAL" },
-    { region: "SIN1", location: "Singapore", latencyMs: 38.6, status: "ONLINE" },
-    { region: "FRA1", location: "Frankfurt, EU", latencyMs: 94.1, status: "STANDBY" },
-    { region: "IAD1", location: "Ashburn, US", latencyMs: 142.8, status: "STANDBY" },
-  ]);
-  const [isPingingNodes, setIsPingingNodes] = useState(false);
-
-  const activeThemeConfig = VANI_THEMES[theme] || VANI_THEMES.emerald;
-
-  // Ping edge nodes
-  const handlePingAllNodes = async () => {
-    setIsPingingNodes(true);
-    playBlipSound(900);
-    const start = performance.now();
-    try {
-      await fetch("https://twilio-voice-agent-failover.sam-codes.workers.dev/health", { mode: "no-cors" });
-    } catch {
-      // ignore
-    }
-    const baseLatency = Math.max(12, Math.round(performance.now() - start));
-
-    setEdgeNodes([
-      { region: "BOM1", location: "Mumbai, India", latencyMs: baseLatency, status: "OPTIMAL" },
-      { region: "SIN1", location: "Singapore", latencyMs: Math.round(baseLatency * 2.2), status: "ONLINE" },
-      { region: "FRA1", location: "Frankfurt, EU", latencyMs: Math.round(baseLatency * 5.4), status: "STANDBY" },
-      { region: "IAD1", location: "Ashburn, US", latencyMs: Math.round(baseLatency * 8.1), status: "STANDBY" },
-    ]);
-    playSonarPing();
-    setIsPingingNodes(false);
-  };
-
-  const codecDetails = {
-    g711: {
-      name: "G.711 μ-law (PSTN Standard)",
-      sampleRate: "8,000 Hz",
-      bitrate: "64 kbps",
-      packetSize: "20ms (160 bytes)",
-      mos: "4.1 / 5.0",
-      bestFor: "Zero transcoding overhead with Twilio carrier trunks",
-    },
-    opus: {
-      name: "Opus Interactive Audio",
-      sampleRate: "48,000 Hz Full-Band",
-      bitrate: "32 kbps (VBR)",
-      packetSize: "10ms (dynamic)",
-      mos: "4.6 / 5.0",
-      bestFor: "Hi-Fi WebRTC in-browser microphone calls",
-    },
-    amr: {
-      name: "AMR-WB (Adaptive Multi-Rate Wideband)",
-      sampleRate: "16,000 Hz Wideband",
-      bitrate: "23.85 kbps",
-      packetSize: "20ms (60 bytes)",
-      mos: "4.3 / 5.0",
-      bestFor: "VoLTE and HD Voice mobile cellular roaming",
-    },
-  }[selectedCodec];
-
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-slate-900/95 via-slate-900/70 to-rose-950/40 border border-slate-800 shadow-xl backdrop-blur-xl">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-slate-900/95 via-slate-900/70 to-rose-950/40 border border-slate-800 shadow-xl">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-rose-400" />
@@ -120,24 +45,21 @@ export default function VaniTelephonyView({
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Live Carrier Telephony Architecture</h2>
           <p className="text-xs sm:text-sm text-slate-400">
-            Enforces 1,200ms connection & 1,500ms TTFT deadlines with mid-call PSTN rescue and multi-codec edge routing.
+            Enforces 1,200ms connection & 1,500ms TTFT deadlines with automatic mid-call PSTN redirection.
           </p>
         </div>
 
         <button
-          onClick={() => {
-            playGlitchSound();
-            onSimulateGlitch();
-          }}
+          onClick={onSimulateGlitch}
           disabled={watchdogStatus === "TRIGGERED"}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black font-semibold text-xs transition-colors shadow-lg shadow-amber-500/20 shrink-0"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black font-semibold text-xs transition-colors shadow-lg shadow-amber-500/20 shrink-0 cursor-pointer"
         >
           <AlertTriangle className="w-3.5 h-3.5 text-black" />
           <span>{watchdogStatus === "TRIGGERED" ? "Glitch Executing..." : "Test 1,200ms Watchdog"}</span>
         </button>
       </div>
 
-      {/* Main 3D Grid */}
+      {/* Main 3D Topology & Telemetry Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Stage Telemetry (Left 6 Cols) */}
         <Vani3DCard glowColor="cyan" className="lg:col-span-6 p-6 space-y-4">
@@ -199,58 +121,34 @@ export default function VaniTelephonyView({
           </div>
         </Vani3DCard>
 
-        {/* Global Edge Node Latency Probes (Right 6 Cols) */}
-        <Vani3DCard glowColor="emerald" className="lg:col-span-6 p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-            <div className="flex items-center gap-2">
-              <Globe2 className="w-4 h-4 text-emerald-400" />
-              <span className="font-semibold text-sm text-slate-200">Global Edge Node Latency Probes</span>
-            </div>
-            <button
-              onClick={handlePingAllNodes}
-              disabled={isPingingNodes}
-              className="flex items-center gap-1 text-[11px] text-emerald-400 hover:underline cursor-pointer"
-            >
-              <RefreshCw className={`w-3 h-3 ${isPingingNodes ? "animate-spin" : ""}`} />
-              <span>{isPingingNodes ? "Pinging..." : "Refresh Probes"}</span>
-            </button>
-          </div>
-
-          <div className="space-y-2.5 text-xs">
-            {edgeNodes.map((node) => (
-              <div
-                key={node.region}
-                className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 flex items-center justify-between hover:border-slate-700 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-7 w-7 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center font-mono text-[10px] text-emerald-400 font-bold">
-                    {node.region}
-                  </div>
-                  <div>
-                    <span className="font-semibold text-white block text-xs">{node.location}</span>
-                    <span className="text-[10px] text-slate-500">Cloudflare Workers Voice POP</span>
-                  </div>
-                </div>
-
-                <div className="text-right">
-                  <span className="font-mono text-xs font-bold text-white tabular-nums">
-                    {node.latencyMs} ms
-                  </span>
-                  <div className="flex items-center gap-1 justify-end mt-0.5">
-                    <span
-                      className={`h-1.5 w-1.5 rounded-full ${
-                        node.status === "OPTIMAL"
-                          ? "bg-emerald-400 animate-pulse"
-                          : node.status === "ONLINE"
-                          ? "bg-cyan-400"
-                          : "bg-slate-500"
-                      }`}
-                    />
-                    <span className="text-[9px] font-mono uppercase text-slate-400">{node.status}</span>
-                  </div>
-                </div>
+        {/* Carrier Line & Node Callout (Right 6 Cols) */}
+        <Vani3DCard glowColor="rose" className="lg:col-span-6 p-6 space-y-4 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-emerald-400" />
+                <span className="font-semibold text-sm text-slate-200">Active Carrier PSTN Line</span>
               </div>
-            ))}
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                Connected
+              </span>
+            </div>
+
+            <div className="mt-4 p-4 bg-slate-950 rounded-xl border border-emerald-500/30 space-y-2.5">
+              <div className="text-base font-mono text-emerald-300 font-bold">+1 (814) 961-3703</div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Calls placed to this number are handled by our Twilio PSTN gateway and routed via WebSockets to Cloudflare Workers edge nodes in sub-350ms.
+              </p>
+              <div className="pt-1">
+                <a
+                  href="tel:+18149613703"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 text-black font-semibold text-xs rounded-lg hover:bg-emerald-400 transition-colors"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>Dial From Mobile Phone</span>
+                </a>
+              </div>
+            </div>
           </div>
 
           <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
@@ -267,58 +165,6 @@ export default function VaniTelephonyView({
           </div>
         </Vani3DCard>
       </div>
-
-      {/* Audio Codec Selector & Bandwidth Diagnostics */}
-      <Vani3DCard glowColor="indigo" className="p-6 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
-          <div className="flex items-center gap-2">
-            <Radio className="w-4 h-4 text-indigo-400" />
-            <h3 className="font-semibold text-sm text-slate-200">Carrier Audio Codec & Bandwidth Simulator</h3>
-          </div>
-
-          <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
-            {(["g711", "opus", "amr"] as const).map((codec) => (
-              <button
-                key={codec}
-                onClick={() => {
-                  playBlipSound(800);
-                  setSelectedCodec(codec);
-                }}
-                className={`px-3 py-1.5 rounded-lg uppercase font-mono font-medium transition-colors ${
-                  selectedCodec === codec
-                    ? "bg-indigo-500 text-white font-bold shadow-sm"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                {codec.toUpperCase()}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-          <div className="p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
-            <span className="text-slate-500 text-[11px] block">Codec Standard</span>
-            <span className="font-semibold text-white text-xs">{codecDetails.name}</span>
-          </div>
-          <div className="p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
-            <span className="text-slate-500 text-[11px] block">Audio Sample Rate</span>
-            <span className="font-mono font-bold text-emerald-400 text-xs">{codecDetails.sampleRate}</span>
-          </div>
-          <div className="p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
-            <span className="text-slate-500 text-[11px] block">Bitrate & Payload Size</span>
-            <span className="font-mono font-bold text-cyan-400 text-xs">{codecDetails.bitrate} • {codecDetails.packetSize}</span>
-          </div>
-          <div className="p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1">
-            <span className="text-slate-500 text-[11px] block">Mean Opinion Score (MOS)</span>
-            <span className="font-mono font-bold text-amber-400 text-xs">{codecDetails.mos}</span>
-          </div>
-        </div>
-
-        <p className="text-xs text-slate-400 italic">
-          Optimization Notes: {codecDetails.bestFor}
-        </p>
-      </Vani3DCard>
 
       {/* 4-Step Technical Topology Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">

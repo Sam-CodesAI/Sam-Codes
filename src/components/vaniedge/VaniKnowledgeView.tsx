@@ -6,25 +6,19 @@ import {
   Plus,
   Search,
   Trash2,
-  Sparkles,
   Cpu,
   Layers,
   CheckCircle2,
-  Sliders,
-  Edit3,
   Download,
   Upload,
-  FileText,
   X,
 } from "lucide-react";
 import { DocumentEntry, SutraEdgeIndex, SearchResult } from "@/lib/vaniedge/sutradb-engine";
 import Vani3DCard from "./Vani3DCard";
-import { playBlipSound, playSuccessChime } from "@/lib/vaniedge/audio-fx";
 
 interface VaniKnowledgeViewProps {
   knowledgeList: DocumentEntry[];
   onAddDocument: (title: string, content: string, category?: string) => void;
-  onUpdateDocument?: (id: string, title: string, content: string, category: string) => void;
   onDeleteDocument: (id: string) => void;
   onImportDocuments?: (docs: DocumentEntry[]) => void;
   averageLatencyMs: number;
@@ -33,7 +27,6 @@ interface VaniKnowledgeViewProps {
 export default function VaniKnowledgeView({
   knowledgeList,
   onAddDocument,
-  onUpdateDocument,
   onDeleteDocument,
   onImportDocuments,
   averageLatencyMs,
@@ -41,7 +34,6 @@ export default function VaniKnowledgeView({
   const [searchFilter, setSearchFilter] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [showAddModal, setShowAddModal] = useState(false);
-  const [editingDoc, setEditingDoc] = useState<DocumentEntry | null>(null);
 
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
@@ -51,7 +43,7 @@ export default function VaniKnowledgeView({
   const [testResults, setTestResults] = useState<SearchResult[]>([]);
   const [queryLatency, setQueryLatency] = useState<number | null>(null);
 
-  // Maintain live in-memory SutraEdgeIndex
+  // Maintain in-memory SutraEdgeIndex
   const index = useMemo(() => {
     return new SutraEdgeIndex(knowledgeList);
   }, [knowledgeList]);
@@ -59,36 +51,22 @@ export default function VaniKnowledgeView({
   // Real in-memory hybrid search
   const handleTestSearch = () => {
     if (!testQuery.trim() || knowledgeList.length === 0) return;
-    playBlipSound(1100);
     const start = performance.now();
     const results = index.search(testQuery.trim(), 4);
     const elapsed = parseFloat((performance.now() - start).toFixed(2));
     setTestResults(results);
     setQueryLatency(elapsed);
-    if (results.length > 0) {
-      playSuccessChime();
-    }
   };
 
   const handleCreate = () => {
     if (!newTitle.trim() || !newContent.trim()) return;
-    playBlipSound(900);
     onAddDocument(newTitle.trim(), newContent.trim(), newCategory);
     setNewTitle("");
     setNewContent("");
     setShowAddModal(false);
   };
 
-  const handleSaveEdit = () => {
-    if (!editingDoc || !onUpdateDocument) return;
-    playBlipSound(900);
-    onUpdateDocument(editingDoc.id, editingDoc.title, editingDoc.content, editingDoc.category);
-    setEditingDoc(null);
-  };
-
-  // Export knowledge base as JSON
   const handleExportJSON = () => {
-    playBlipSound(700);
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(knowledgeList, null, 2));
     const dlAnchorElem = document.createElement("a");
     dlAnchorElem.setAttribute("href", dataStr);
@@ -96,20 +74,17 @@ export default function VaniKnowledgeView({
     dlAnchorElem.click();
   };
 
-  // Import JSON file
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    playBlipSound(800);
     const reader = new FileReader();
     reader.onload = (evt) => {
       try {
         const parsed = JSON.parse(evt.target?.result as string);
         if (Array.isArray(parsed) && onImportDocuments) {
           onImportDocuments(parsed);
-          playSuccessChime();
         }
-      } catch (err) {
+      } catch {
         alert("Invalid JSON document file format.");
       }
     };
@@ -128,7 +103,7 @@ export default function VaniKnowledgeView({
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-slate-900/95 via-slate-900/70 to-indigo-950/40 border border-slate-800 shadow-xl backdrop-blur-xl">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-slate-900/95 via-slate-900/70 to-indigo-950/40 border border-slate-800 shadow-xl">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Database className="w-4 h-4 text-indigo-400" />
@@ -145,7 +120,7 @@ export default function VaniKnowledgeView({
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={handleExportJSON}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white font-medium text-xs transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white font-medium text-xs transition-colors cursor-pointer"
             title="Export full knowledge base as JSON"
           >
             <Download className="w-3.5 h-3.5" />
@@ -159,11 +134,8 @@ export default function VaniKnowledgeView({
           </label>
 
           <button
-            onClick={() => {
-              playBlipSound(800);
-              setShowAddModal(true);
-            }}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold text-xs transition-colors shadow-lg shadow-indigo-500/20"
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold text-xs transition-colors shadow-lg shadow-indigo-500/20 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Ingest Document</span>
@@ -203,7 +175,7 @@ export default function VaniKnowledgeView({
               />
               <button
                 onClick={handleTestSearch}
-                className="px-3.5 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold text-xs transition-colors shrink-0"
+                className="px-3.5 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold text-xs transition-colors shrink-0 cursor-pointer"
               >
                 Search
               </button>
@@ -281,11 +253,8 @@ export default function VaniKnowledgeView({
               {["all", "clinic", "restaurant", "auto", "general"].map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => {
-                    playBlipSound(750);
-                    setSelectedCategory(cat);
-                  }}
-                  className={`px-2.5 py-1 rounded-lg capitalize transition-colors ${
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-2.5 py-1 rounded-lg capitalize transition-colors cursor-pointer ${
                     selectedCategory === cat
                       ? "bg-indigo-500 text-white font-semibold"
                       : "text-slate-400 hover:text-white"
@@ -322,24 +291,9 @@ export default function VaniKnowledgeView({
                     <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400 uppercase">
                       {doc.category}
                     </span>
-                    {onUpdateDocument && (
-                      <button
-                        onClick={() => {
-                          playBlipSound(800);
-                          setEditingDoc(doc);
-                        }}
-                        className="text-slate-400 hover:text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                        title="Edit document"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
                     <button
-                      onClick={() => {
-                        playBlipSound(600);
-                        onDeleteDocument(doc.id);
-                      }}
-                      className="text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => onDeleteDocument(doc.id)}
+                      className="text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                       title="Delete document"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -364,7 +318,7 @@ export default function VaniKnowledgeView({
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-white cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -411,87 +365,16 @@ export default function VaniKnowledgeView({
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-colors font-medium"
+                className="px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-colors font-medium cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreate}
                 disabled={!newTitle.trim() || !newContent.trim()}
-                className="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 text-white font-semibold shadow-lg shadow-indigo-500/20 transition-colors"
+                className="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 text-white font-semibold shadow-lg shadow-indigo-500/20 transition-colors cursor-pointer"
               >
                 Index into Memory
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Document Modal */}
-      {editingDoc && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-lg p-6 bg-[#0c121d] border border-cyan-500/40 rounded-2xl shadow-2xl space-y-4 text-xs">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <Edit3 className="w-4 h-4 text-cyan-400" />
-                <h3 className="text-sm font-bold text-white">Edit Knowledge Document</h3>
-              </div>
-              <button
-                onClick={() => setEditingDoc(null)}
-                className="text-slate-400 hover:text-white"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <label className="text-[11px] text-slate-400 block mb-1">Document Title</label>
-                <input
-                  type="text"
-                  value={editingDoc.title}
-                  onChange={(e) => setEditingDoc({ ...editingDoc, title: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-[11px] text-slate-400 block mb-1">Category</label>
-                <select
-                  value={editingDoc.category}
-                  onChange={(e) => setEditingDoc({ ...editingDoc, category: e.target.value as any })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
-                >
-                  <option value="clinic">Clinic</option>
-                  <option value="restaurant">Restaurant</option>
-                  <option value="auto">Auto</option>
-                  <option value="general">General</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-[11px] text-slate-400 block mb-1">Content</label>
-                <textarea
-                  value={editingDoc.content}
-                  onChange={(e) => setEditingDoc({ ...editingDoc, content: e.target.value })}
-                  rows={5}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-500"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
-              <button
-                onClick={() => setEditingDoc(null)}
-                className="px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-colors font-medium"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveEdit}
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-semibold shadow-lg shadow-cyan-500/20 transition-colors"
-              >
-                Save Updates
               </button>
             </div>
           </div>

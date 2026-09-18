@@ -9,7 +9,6 @@ import {
   Mic,
   MicOff,
   Volume2,
-  VolumeX,
   Sparkles,
   ShieldCheck,
   Activity,
@@ -42,25 +41,14 @@ import {
   PanelLeft,
   BarChart3,
   Server,
-  Palette,
 } from "lucide-react";
 import { DEFAULT_KNOWLEDGE_PRESETS, DocumentEntry } from "@/lib/vaniedge/sutradb-engine";
 import VaniSidebar, { NavTab } from "@/components/vaniedge/VaniSidebar";
 import VaniDashboard from "@/components/vaniedge/VaniDashboard";
-import VaniStudioView, { CustomPersona } from "@/components/vaniedge/VaniStudioView";
+import VaniStudioView from "@/components/vaniedge/VaniStudioView";
 import VaniKnowledgeView from "@/components/vaniedge/VaniKnowledgeView";
 import VaniDispatchView, { DispatchTicket } from "@/components/vaniedge/VaniDispatchView";
 import VaniTelephonyView from "@/components/vaniedge/VaniTelephonyView";
-import { VaniTheme, VANI_THEMES, hexToRgba } from "@/lib/vaniedge/theme-config";
-import {
-  playBlipSound,
-  playConnectChime,
-  playEndChime,
-  playDispatchChime,
-  playGlitchSound,
-  setSoundMuted,
-  getSoundMuted,
-} from "@/lib/vaniedge/audio-fx";
 
 interface Message {
   id: string;
@@ -107,12 +95,6 @@ export default function VaniEdgePage() {
   // Navigation State
   const [activeTab, setActiveTab] = useState<NavTab>("studio");
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-
-  // Theme & Audio Feedback State
-  const [theme, setTheme] = useState<VaniTheme>("emerald");
-  const [isMuted, setIsMuted] = useState<boolean>(false);
-
-  // Session History State
   const [sessionHistory, setSessionHistory] = useState<StoredSession[]>([
     {
       id: "sess-default-1",
@@ -164,8 +146,6 @@ export default function VaniEdgePage() {
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [callDuration, setCallDuration] = useState<number>(0);
-  const [callCount, setCallCount] = useState<number>(2);
-
   const [transcript, setTranscript] = useState<Message[]>([
     {
       id: "initial-msg",
@@ -187,10 +167,9 @@ export default function VaniEdgePage() {
   const [speechPitch, setSpeechPitch] = useState<number>(1.0);
   const [browserVoices, setBrowserVoices] = useState<SpeechSynthesisVoice[]>([]);
 
-  // Business Context & Personas
+  // Business Context & Persona
   const [businessName, setBusinessName] = useState<string>("Dr. Sharma Healthcare Clinic");
-  const [selectedPersona, setSelectedPersona] = useState<string>("clinic");
-  const [customPersonas, setCustomPersonas] = useState<CustomPersona[]>([]);
+  const [selectedPersona, setSelectedPersona] = useState<"clinic" | "restaurant" | "auto">("clinic");
 
   // Telemetry Metrics
   const [metrics, setMetrics] = useState({
@@ -207,34 +186,18 @@ export default function VaniEdgePage() {
   // Persistent Dispatch Tickets Feed
   const [tickets, setTickets] = useState<DispatchTicket[]>([]);
 
-  // Audio Spectrum & Waveform Refs
-  const [audioSpectrum, setAudioSpectrum] = useState<Uint8Array | null>(null);
+  // Audio Waveform & Mic Refs
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
   const recognitionRef = useRef<any>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const mediaSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
 
-  const activeThemeConfig = VANI_THEMES[theme] || VANI_THEMES.emerald;
-
-  // Initialize client state from localStorage
+  // Load saved tickets & browser voices on client mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Theme
-      const savedTheme = localStorage.getItem("vaniedge_theme") as VaniTheme;
-      if (savedTheme && VANI_THEMES[savedTheme]) {
-        setTheme(savedTheme);
-      }
-
-      // Audio mute
-      setIsMuted(getSoundMuted());
-
-      // Tickets
-      const savedTickets = localStorage.getItem("vaniedge_tickets");
-      if (savedTickets) {
+      const saved = localStorage.getItem("vaniedge_tickets");
+      if (saved) {
         try {
-          setTickets(JSON.parse(savedTickets));
+          setTickets(JSON.parse(saved));
         } catch {
           // fallback
         }
@@ -267,16 +230,6 @@ export default function VaniEdgePage() {
         ];
         setTickets(initialTickets);
         localStorage.setItem("vaniedge_tickets", JSON.stringify(initialTickets));
-      }
-
-      // Custom Personas
-      const savedPersonas = localStorage.getItem("vaniedge_personas");
-      if (savedPersonas) {
-        try {
-          setCustomPersonas(JSON.parse(savedPersonas));
-        } catch {
-          // fallback
-        }
       }
 
       // Populate Browser Voices
@@ -317,32 +270,12 @@ export default function VaniEdgePage() {
     }
   }, []);
 
-  // Save tickets & custom personas on change
+  // Save tickets on change
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (tickets.length > 0) {
-        localStorage.setItem("vaniedge_tickets", JSON.stringify(tickets));
-      }
-      if (customPersonas.length > 0) {
-        localStorage.setItem("vaniedge_personas", JSON.stringify(customPersonas));
-      }
+    if (typeof window !== "undefined" && tickets.length > 0) {
+      localStorage.setItem("vaniedge_tickets", JSON.stringify(tickets));
     }
-  }, [tickets, customPersonas]);
-
-  // Handle Theme Change
-  const handleSelectTheme = (t: VaniTheme) => {
-    setTheme(t);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("vaniedge_theme", t);
-    }
-  };
-
-  // Handle Sound Mute Toggle
-  const handleToggleAudioMute = () => {
-    const nextMuted = !isMuted;
-    setIsMuted(nextMuted);
-    setSoundMuted(nextMuted);
-  };
+  }, [tickets]);
 
   // Call duration counter
   useEffect(() => {
@@ -357,30 +290,7 @@ export default function VaniEdgePage() {
     return () => clearInterval(timer);
   }, [isCalling]);
 
-  // Audio Analyzer Hook up with ElevenLabs audio element
-  const initAudioAnalyser = useCallback(() => {
-    if (typeof window === "undefined" || !audioPlayerRef.current || analyserRef.current) return;
-    try {
-      const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtxClass) return;
-
-      const actx = new AudioCtxClass();
-      const analyser = actx.createAnalyser();
-      analyser.fftSize = 64;
-
-      const source = actx.createMediaElementSource(audioPlayerRef.current);
-      source.connect(analyser);
-      analyser.connect(actx.destination);
-
-      audioContextRef.current = actx;
-      analyserRef.current = analyser;
-      mediaSourceRef.current = source;
-    } catch {
-      // Audio element source already bound or CORS limitation
-    }
-  }, []);
-
-  // Audio Waveform Canvas & Spectrum Loop
+  // Audio Waveform Canvas Loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -389,7 +299,6 @@ export default function VaniEdgePage() {
 
     let animId: number;
     let phase = 0;
-    const freqData = new Uint8Array(32);
 
     const render = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -397,22 +306,13 @@ export default function VaniEdgePage() {
       const height = canvas.height;
       const centerY = height / 2;
 
-      // Read real FFT data if available
-      let hasRealAudio = false;
-      if (analyserRef.current && isSpeaking) {
-        analyserRef.current.getByteFrequencyData(freqData);
-        setAudioSpectrum(freqData);
-        hasRealAudio = true;
-      }
-
       ctx.lineWidth = 2.5;
-      const themeHex = activeThemeConfig.primaryHex;
       ctx.strokeStyle = isSpeaking
-        ? themeHex
+        ? "#10b981"
         : isListening
-        ? activeThemeConfig.secondaryHex
+        ? "#06b6d4"
         : isCalling
-        ? activeThemeConfig.particleColors[2]
+        ? "#6366f1"
         : "#334155";
       ctx.beginPath();
 
@@ -421,16 +321,9 @@ export default function VaniEdgePage() {
 
       for (let i = 0; i < bars; i++) {
         const x = i * barWidth;
-        let barHeight = 4;
-
-        if (hasRealAudio && isSpeaking) {
-          const byteVal = freqData[i % freqData.length] || 0;
-          barHeight = Math.max(4, (byteVal / 255) * (height * 0.9));
-        } else {
-          const multiplier = isSpeaking ? 1.5 : isListening ? 1.2 : isCalling ? 0.4 : 0.1;
-          const wave = Math.sin(i * 0.3 + phase) * Math.cos(i * 0.2 + phase);
-          barHeight = Math.max(4, Math.abs(wave) * (height / 2.2) * multiplier);
-        }
+        const multiplier = isSpeaking ? 1.5 : isListening ? 1.2 : isCalling ? 0.4 : 0.1;
+        const wave = Math.sin(i * 0.3 + phase) * Math.cos(i * 0.2 + phase);
+        const barHeight = Math.max(4, Math.abs(wave) * (height / 2.2) * multiplier);
 
         ctx.fillStyle = ctx.strokeStyle;
         ctx.fillRect(x + 1, centerY - barHeight / 2, barWidth - 2, barHeight);
@@ -442,17 +335,12 @@ export default function VaniEdgePage() {
 
     render();
     return () => cancelAnimationFrame(animId);
-  }, [isCalling, isSpeaking, isListening, activeThemeConfig]);
+  }, [isCalling, isSpeaking, isListening]);
 
   // Speak text via ElevenLabs or Browser
   const speakVoiceResponse = useCallback(
     async (text: string) => {
       if (typeof window === "undefined") return;
-
-      initAudioAnalyser();
-      if (audioContextRef.current && audioContextRef.current.state === "suspended") {
-        audioContextRef.current.resume();
-      }
 
       // 1. Try ElevenLabs Edge Streaming if selected
       if (speechEngine === "elevenlabs") {
@@ -475,12 +363,10 @@ export default function VaniEdgePage() {
               audioPlayerRef.current.playbackRate = speechRate;
               audioPlayerRef.current.onended = () => {
                 setIsSpeaking(false);
-                setAudioSpectrum(null);
                 URL.revokeObjectURL(audioUrl);
               };
               audioPlayerRef.current.onerror = () => {
                 setIsSpeaking(false);
-                setAudioSpectrum(null);
               };
               await audioPlayerRef.current.play();
               return;
@@ -509,19 +395,13 @@ export default function VaniEdgePage() {
         }
 
         utterance.onstart = () => setIsSpeaking(true);
-        utterance.onend = () => {
-          setIsSpeaking(false);
-          setAudioSpectrum(null);
-        };
-        utterance.onerror = () => {
-          setIsSpeaking(false);
-          setAudioSpectrum(null);
-        };
+        utterance.onend = () => setIsSpeaking(false);
+        utterance.onerror = () => setIsSpeaking(false);
 
         window.speechSynthesis.speak(utterance);
       }
     },
-    [speechEngine, selectedVoice, selectedLanguage, speechRate, speechPitch, browserVoices, initAudioAnalyser]
+    [speechEngine, selectedVoice, selectedLanguage, speechRate, speechPitch, browserVoices]
   );
 
   // Send message
@@ -529,7 +409,6 @@ export default function VaniEdgePage() {
     const textToSend = overrideText || customQuery;
     if (!textToSend.trim() || isProcessing) return;
 
-    playBlipSound(1000);
     const userMsg: Message = {
       id: `msg-${Date.now()}`,
       sender: "user",
@@ -625,23 +504,10 @@ export default function VaniEdgePage() {
       const data = await res.json();
       if (data.success && data.ticket) {
         setTickets((prev) => [data.ticket, ...prev]);
-        playDispatchChime();
       }
     } catch (err) {
       console.error("Dispatch error:", err);
     }
-  };
-
-  // Manual Ticket Creation from Dispatch view
-  const handleManualCreateTicket = (ticket: Omit<DispatchTicket, "ticketId" | "timestamp" | "smsConfirmation">) => {
-    const newId = `VANI-${ticket.category.slice(0, 3).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const fullTicket: DispatchTicket = {
-      ...ticket,
-      ticketId: newId,
-      timestamp: "Just now",
-      smsConfirmation: `[VaniEdge AI] ${ticket.serviceType} confirmed for ${ticket.callerName}. Ticket: ${newId}.`,
-    };
-    setTickets((prev) => [fullTicket, ...prev]);
   };
 
   const handleDeleteTicket = (ticketId: string) => {
@@ -651,10 +517,8 @@ export default function VaniEdgePage() {
   // Trigger Simulated Watchdog Glitch
   const triggerSimulatedGlitch = () => {
     setWatchdogStatus("TRIGGERED");
-    playGlitchSound();
     setTimeout(() => {
       setWatchdogStatus("RECOVERED");
-      playConnectChime();
       const alertMsg: Message = {
         id: `glitch-${Date.now()}`,
         sender: "agent",
@@ -676,12 +540,6 @@ export default function VaniEdgePage() {
       category: (cat as any) || (selectedPersona as any) || "clinic",
     };
     setKnowledgeList((prev) => [newDoc, ...prev]);
-  };
-
-  const handleUpdateKnowledge = (id: string, title: string, content: string, cat: string) => {
-    setKnowledgeList((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, title, content, category: cat as any } : d))
-    );
   };
 
   const handleDeleteKnowledge = (id: string) => {
@@ -720,10 +578,8 @@ export default function VaniEdgePage() {
   // Call & Mic Toggles
   const handleToggleCall = () => {
     if (isCalling) {
-      playEndChime();
       setIsCalling(false);
       setIsSpeaking(false);
-      setAudioSpectrum(null);
       if (typeof window !== "undefined" && window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
@@ -731,9 +587,7 @@ export default function VaniEdgePage() {
         audioPlayerRef.current.pause();
       }
     } else {
-      playConnectChime();
       setIsCalling(true);
-      setCallCount((prev) => prev + 1);
       speakVoiceResponse(
         `Connected to ${businessName}. Namaste! How may I direct your call today?`
       );
@@ -746,11 +600,9 @@ export default function VaniEdgePage() {
       return;
     }
     if (isListening) {
-      playBlipSound(600);
       recognitionRef.current.stop();
       setIsListening(false);
     } else {
-      playBlipSound(1000);
       try {
         const langMeta = LANGUAGES.find((l) => l.code === selectedLanguage);
         if (langMeta) recognitionRef.current.lang = langMeta.speechLocale;
@@ -796,7 +648,6 @@ export default function VaniEdgePage() {
     setIsCalling(false);
     setIsListening(false);
     setIsSpeaking(false);
-    setAudioSpectrum(null);
     setActiveTab("studio");
   };
 
@@ -814,13 +665,6 @@ export default function VaniEdgePage() {
     if (activeSessionId === id) {
       handleNewSession();
     }
-  };
-
-  // Add custom persona
-  const handleAddCustomPersona = (p: CustomPersona) => {
-    setCustomPersonas((prev) => [...prev, p]);
-    setSelectedPersona(p.id);
-    setBusinessName(p.businessName);
   };
 
   return (
@@ -850,10 +694,6 @@ export default function VaniEdgePage() {
         onDeleteSession={handleDeleteSession}
         ticketsCount={tickets.length}
         knowledgeCount={knowledgeList.length}
-        theme={theme}
-        onSelectTheme={handleSelectTheme}
-        isAudioMuted={isMuted}
-        onToggleAudioMute={handleToggleAudioMute}
       />
 
       {/* Main Content Area */}
@@ -864,35 +704,23 @@ export default function VaniEdgePage() {
             <div className="flex items-center gap-3">
               {/* Sidebar Toggle Button */}
               <button
-                onClick={() => {
-                  playBlipSound(700);
-                  setIsSidebarOpen(!isSidebarOpen);
-                }}
-                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
                 title="Toggle Sidebar Navigation"
               >
                 <PanelLeft className="w-5 h-5" />
               </button>
 
               <div className="flex items-center gap-2">
-                <div
-                  className={`h-7 w-7 rounded-lg bg-gradient-to-tr ${activeThemeConfig.bgGradient} p-0.5 shadow-md lg:hidden`}
-                >
+                <div className="h-7 w-7 rounded-lg bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5 shadow-md lg:hidden">
                   <div className="h-full w-full bg-[#070b12] rounded-[6px] flex items-center justify-center">
-                    <Flame className="w-4 h-4" style={{ color: activeThemeConfig.primaryHex }} />
+                    <Flame className="w-4 h-4 text-emerald-400" />
                   </div>
                 </div>
                 <span className="font-bold text-base sm:text-lg tracking-tight text-white hidden sm:inline">
                   VaniEdge AI
                 </span>
-                <span
-                  className="text-[10px] uppercase font-mono px-2 py-0.5 rounded border"
-                  style={{
-                    backgroundColor: hexToRgba(activeThemeConfig.primaryHex, 0.15),
-                    color: activeThemeConfig.primaryHex,
-                    borderColor: hexToRgba(activeThemeConfig.primaryHex, 0.4),
-                  }}
-                >
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
                   {activeTab === "studio"
                     ? "Voice Studio"
                     : activeTab === "dashboard"
@@ -909,28 +737,19 @@ export default function VaniEdgePage() {
             {/* Quick Top Navigation Pills */}
             <nav className="hidden md:flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs">
               <button
-                onClick={() => {
-                  playBlipSound(800);
-                  setActiveTab("studio");
-                }}
-                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 ${
+                onClick={() => setActiveTab("studio")}
+                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 cursor-pointer ${
                   activeTab === "studio"
-                    ? "text-black font-semibold shadow-sm"
+                    ? "bg-emerald-500 text-black font-semibold shadow-sm"
                     : "text-slate-400 hover:text-white"
                 }`}
-                style={{
-                  backgroundColor: activeTab === "studio" ? activeThemeConfig.primaryHex : undefined,
-                }}
               >
                 <Mic className="w-3.5 h-3.5" />
                 <span>Studio</span>
               </button>
               <button
-                onClick={() => {
-                  playBlipSound(800);
-                  setActiveTab("dashboard");
-                }}
-                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 ${
+                onClick={() => setActiveTab("dashboard")}
+                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 cursor-pointer ${
                   activeTab === "dashboard"
                     ? "bg-cyan-500 text-black font-semibold shadow-sm"
                     : "text-slate-400 hover:text-white"
@@ -940,11 +759,8 @@ export default function VaniEdgePage() {
                 <span>Dashboard</span>
               </button>
               <button
-                onClick={() => {
-                  playBlipSound(800);
-                  setActiveTab("sutradb");
-                }}
-                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 ${
+                onClick={() => setActiveTab("sutradb")}
+                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 cursor-pointer ${
                   activeTab === "sutradb"
                     ? "bg-indigo-500 text-white font-semibold shadow-sm"
                     : "text-slate-400 hover:text-white"
@@ -954,11 +770,8 @@ export default function VaniEdgePage() {
                 <span>SutraDB ({knowledgeList.length})</span>
               </button>
               <button
-                onClick={() => {
-                  playBlipSound(800);
-                  setActiveTab("dispatch");
-                }}
-                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 ${
+                onClick={() => setActiveTab("dispatch")}
+                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 cursor-pointer ${
                   activeTab === "dispatch"
                     ? "bg-amber-500 text-black font-semibold shadow-sm"
                     : "text-slate-400 hover:text-white"
@@ -968,11 +781,8 @@ export default function VaniEdgePage() {
                 <span>Dispatch ({tickets.length})</span>
               </button>
               <button
-                onClick={() => {
-                  playBlipSound(800);
-                  setActiveTab("telephony");
-                }}
-                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 ${
+                onClick={() => setActiveTab("telephony")}
+                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 cursor-pointer ${
                   activeTab === "telephony"
                     ? "bg-rose-500 text-white font-semibold shadow-sm"
                     : "text-slate-400 hover:text-white"
@@ -984,37 +794,10 @@ export default function VaniEdgePage() {
             </nav>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* Theme Quick Toggle */}
-              <div className="hidden sm:flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
-                {(["emerald", "cyan", "violet", "amber"] as VaniTheme[]).map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => {
-                      playBlipSound(800);
-                      handleSelectTheme(t);
-                    }}
-                    className={`h-5 w-5 rounded-md transition-all ${
-                      theme === t ? "ring-2 ring-white scale-110" : "opacity-50 hover:opacity-100"
-                    }`}
-                    style={{ backgroundColor: VANI_THEMES[t].primaryHex }}
-                    title={`Switch to ${VANI_THEMES[t].name}`}
-                  />
-                ))}
-              </div>
-
-              {/* Sound FX Toggle */}
-              <button
-                onClick={handleToggleAudioMute}
-                className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-colors"
-                title={isMuted ? "Unmute Audio Feedback" : "Mute Audio Feedback"}
-              >
-                {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
-              </button>
-
               {/* Live PSTN Phone Line Badge */}
               <a
                 href="tel:+18149613703"
-                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs font-mono hover:bg-emerald-900/60 transition-colors shadow-sm"
+                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs font-mono hover:bg-emerald-900/60 transition-colors shadow-sm cursor-pointer"
                 title="Click to dial live production telephony line"
               >
                 <span className="relative flex h-2 w-2">
@@ -1030,7 +813,7 @@ export default function VaniEdgePage() {
                 href="https://github.com/Sam-CodesAI/VaniEdge-AI"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 text-xs font-medium hover:text-white hover:border-slate-500 transition-colors"
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 text-xs font-medium hover:text-white hover:border-slate-500 transition-colors cursor-pointer"
               >
                 <Code2 className="w-3.5 h-3.5" />
                 <span className="hidden md:inline">GitHub</span>
@@ -1061,21 +844,14 @@ export default function VaniEdgePage() {
               selectedPersona={selectedPersona}
               onSelectPersona={(p) => {
                 setSelectedPersona(p);
-                const foundCustom = customPersonas.find((cp) => cp.id === p);
-                if (foundCustom) {
-                  setBusinessName(foundCustom.businessName);
-                } else {
-                  setBusinessName(
-                    p === "clinic"
-                      ? "Dr. Sharma Healthcare Clinic"
-                      : p === "restaurant"
-                      ? "Bhojanalaya Cloud Kitchen"
-                      : "Apex Roadside Assistance"
-                  );
-                }
+                setBusinessName(
+                  p === "clinic"
+                    ? "Dr. Sharma Healthcare Clinic"
+                    : p === "restaurant"
+                    ? "Bhojanalaya Cloud Kitchen"
+                    : "Apex Roadside Assistance"
+                );
               }}
-              customPersonas={customPersonas}
-              onAddCustomPersona={handleAddCustomPersona}
               selectedLanguage={selectedLanguage}
               onSelectLanguage={setSelectedLanguage}
               languages={LANGUAGES}
@@ -1091,8 +867,6 @@ export default function VaniEdgePage() {
               onSelectSpeechPitch={setSpeechPitch}
               canvasRef={canvasRef}
               activeRegion={metrics.activeRegion}
-              theme={theme}
-              audioSpectrum={audioSpectrum}
             />
           )}
 
@@ -1104,13 +878,7 @@ export default function VaniEdgePage() {
               knowledgeList={knowledgeList}
               watchdogStatus={watchdogStatus}
               onSimulateGlitch={triggerSimulatedGlitch}
-              onNavigateTo={(tab) => {
-                playBlipSound(800);
-                setActiveTab(tab);
-              }}
-              theme={theme}
-              activeLanguage={selectedLanguage}
-              callCount={callCount}
+              onNavigateTo={(tab) => setActiveTab(tab)}
             />
           )}
 
@@ -1119,7 +887,6 @@ export default function VaniEdgePage() {
             <VaniKnowledgeView
               knowledgeList={knowledgeList}
               onAddDocument={handleAddKnowledge}
-              onUpdateDocument={handleUpdateKnowledge}
               onDeleteDocument={handleDeleteKnowledge}
               onImportDocuments={handleImportKnowledge}
               averageLatencyMs={metrics.sutraDbMs}
@@ -1132,7 +899,6 @@ export default function VaniEdgePage() {
               tickets={tickets}
               onUpdateStatus={updateTicketStatus}
               onDeleteTicket={handleDeleteTicket}
-              onCreateTicket={handleManualCreateTicket}
               onExportCSV={exportTicketsCSV}
             />
           )}
@@ -1143,7 +909,6 @@ export default function VaniEdgePage() {
               metrics={metrics}
               watchdogStatus={watchdogStatus}
               onSimulateGlitch={triggerSimulatedGlitch}
-              theme={theme}
             />
           )}
         </main>
