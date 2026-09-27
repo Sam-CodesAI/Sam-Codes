@@ -24,27 +24,27 @@ export const profileData: ProfileData = {
   preferredName: "Sam",
   fullName: "Samarth Nimangre",
   age: 17,
-  title: "Systems & Automation Operator • Infrastructure Engineer • AI Developer",
+  title: "Full-Stack Developer & Cloud Automation Engineer",
   location: "Karnataka, India",
   identityTags: [
-    "Systems & Automation",
-    "Infrastructure & DB",
-    "AI Systems & Agents",
+    "Full-Stack Systems",
     "Next.js 16 & React 19",
-    "Rapid Prototypes",
+    "Supabase & PostgreSQL",
+    "Cloud Automation Pipelines",
+    "TypeScript & Python",
   ],
-  heroHeadline: "Building thoughtful digital experiences that actually work.",
+  heroHeadline: "Full-Stack Developer & Cloud Automation Engineer",
   heroSubheadline:
-    "I'm Sam — a systems builder from Karnataka, India creating resilient automations, AI agents, cloud architectures, and web software that solve real operational problems.",
+    "I build production-grade web applications with Next.js, architect relational databases with Supabase, and build asynchronous automation pipelines for real-world workflows.",
   statementHeadline: "Why collaborate with Sam?",
   statementDescription:
     "Focused engineering with direct communication. No agency overhead, no inflated retainers, and no layers of middle management — just clean craft and honest progress.",
   aboutStory: [
-    "I'm Sam — a student and builder based in Karnataka, India. I'm deeply curious about what becomes possible when human creativity, AI, automation, and software engineering intersect.",
-    "Rather than treating AI as a buzzword or building for unnecessary complexity, I focus on understanding the core problem first. I use modern AI tools as a genuine force multiplier to compress build cycles, test ideas quickly, and ship clean, dependable software.",
-    "From automated workflows that eliminate repetitive busywork to custom AI assistants and responsive web applications, I care about honest craftsmanship, fast feedback loops, and building systems that are practical and intuitive.",
+    "I'm Samarth Nimangre (Sam) — a Full-Stack Developer and Cloud Automation Engineer based in Karnataka, India.",
+    "I focus on understanding the core business problem first, building robust Next.js architectures, relational PostgreSQL databases with Supabase, and asynchronous automation pipelines that eliminate operational friction.",
+    "From high-throughput event processing and hybrid vector databases to production web systems, I care about honest craftsmanship, sub-second latencies, and building reliable systems.",
   ],
-  availabilityStatus: "Open for interesting builds & collaborations",
+  availabilityStatus: "Available for production builds & automation pipelines",
   whyWorkWithMe: [
     {
       title: "AI as a Force Multiplier",

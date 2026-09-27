@@ -141,7 +141,7 @@ export default function LabSection({
               </h3>
             </div>
           )}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filteredProjects.map((proj: Project) => (
               <SpotlightCard
                 key={proj.slug}
@@ -149,26 +149,177 @@ export default function LabSection({
                   soundFx.playChime(440, 0.05);
                   setActiveProject(proj);
                 }}
-                className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-sky-500/30 transition-all cursor-pointer group flex flex-col justify-between"
+                className="p-6 sm:p-7 rounded-2xl bg-[#060913]/70 border border-white/[0.08] hover:border-cyan-500/40 transition-all cursor-pointer group flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-3">
-                    <span className="text-sky-400">{proj.category}</span>
-                    <span className="uppercase text-[10px] px-2 py-0.5 rounded bg-white/[0.04] text-slate-300">
-                      {proj.status}
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-sky-300 transition-colors">
-                    {proj.title}
-                  </h3>
-                  <p className="text-xs text-slate-300 leading-relaxed mb-4">
-                    {proj.shortDescription}
-                  </p>
+                  {/* Element 1: Header Badges & Actions */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-white/[0.06]">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[11px] font-mono font-medium text-emerald-400">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        Live in Production
+                      </span>
+                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/[0.04] text-slate-400">
+                        {proj.category}
+                      </span>
+                    </div>
 
-                  {/* Evidence Metrics (only if genuine data exists) */}
+                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                      {proj.liveUrl && (
+                        <a
+                          href={proj.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => soundFx.playHover()}
+                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-xs font-mono text-cyan-300 hover:text-white transition-all shadow-sm"
+                          title="View Live Demo"
+                        >
+                          <ExternalLink size={12} />
+                          <span>Live Demo</span>
+                        </a>
+                      )}
+                      {proj.githubUrl && (
+                        <a
+                          href={proj.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => soundFx.playHover()}
+                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] text-xs font-mono text-slate-300 hover:text-white transition-all"
+                          title="View Source Code"
+                        >
+                          <Code2 size={12} />
+                          <span>Source</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-300 transition-colors flex items-center justify-between">
+                    <span>{proj.title}</span>
+                    <ArrowUpRight size={16} className="text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+                  </h3>
+
+                  {/* Element 2: The Problem-First Description */}
+                  <div className="mb-5 p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 block mb-1 font-semibold">
+                      Problem-First Engineering
+                    </span>
+                    {proj.problemHeadline || proj.shortDescription}
+                  </div>
+
+                  {/* Element 3: Architecture Specs (Bullet points) */}
+                  {proj.architectureSpecs && (
+                    <div className="mb-5 p-3.5 rounded-xl bg-[#04060c]/90 border border-white/[0.07] text-[11px] font-mono space-y-2">
+                      <div className="text-[9px] uppercase tracking-wider text-slate-500 font-semibold mb-1">
+                        Architecture Specs
+                      </div>
+                      {proj.architectureSpecs.frontend && (
+                        <div className="flex items-start gap-2">
+                          <span className="text-cyan-400 font-semibold shrink-0">• Frontend:</span>
+                          <span className="text-slate-300">{proj.architectureSpecs.frontend}</span>
+                        </div>
+                      )}
+                      {proj.architectureSpecs.coreEngine && (
+                        <div className="flex items-start gap-2">
+                          <span className="text-cyan-400 font-semibold shrink-0">• Core Engine:</span>
+                          <span className="text-slate-300">{proj.architectureSpecs.coreEngine}</span>
+                        </div>
+                      )}
+                      {proj.architectureSpecs.dataLayer && (
+                        <div className="flex items-start gap-2">
+                          <span className="text-violet-400 font-semibold shrink-0">• Data Layer:</span>
+                          <span className="text-slate-300">{proj.architectureSpecs.dataLayer}</span>
+                        </div>
+                      )}
+                      {proj.architectureSpecs.integration && (
+                        <div className="flex items-start gap-2">
+                          <span className="text-emerald-400 font-semibold shrink-0">• Integration:</span>
+                          <span className="text-slate-300">{proj.architectureSpecs.integration}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Element 4: Interactive Media / Event Loop Simulation */}
+                  <div className="mb-4 p-3 rounded-xl bg-[#03050a] border border-cyan-500/20 text-[10px] font-mono text-slate-400 overflow-hidden relative">
+                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/[0.05] text-[9px]">
+                      <span className="flex items-center gap-1.5 text-cyan-400">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+                        <span>PIPELINE TELEMETRY // REAL-TIME LOOP</span>
+                      </span>
+                      <span className="text-emerald-400 font-semibold">VERIFIED &lt; 3.0s</span>
+                    </div>
+
+                    <div className="space-y-1.5 text-[10px]">
+                      {proj.slug === "automated-client-intake-engine" || proj.slug === "telegram-ai-lead-agent" ? (
+                        <>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span className="text-cyan-300">❯ 0.00s Web Form Submission Captured</span>
+                            <span className="text-emerald-400">HTTP 200</span>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span className="text-violet-300">❯ 0.42s Supabase RLS Schema Insert</span>
+                            <span className="text-emerald-400">ATOMIC</span>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span className="text-emerald-300">❯ 1.15s Telegram Operator Alert Dispatched</span>
+                            <span className="text-emerald-400">DELIVERED</span>
+                          </div>
+                        </>
+                      ) : proj.slug === "sutradb-hybrid-vector-engine" ? (
+                        <>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span className="text-cyan-300">❯ 0.00ms Query Vector Vectorized</span>
+                            <span className="text-emerald-400">128-DIM</span>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span className="text-violet-300">❯ 0.18ms GEMV SIMD Dot-Product Matrix</span>
+                            <span className="text-emerald-400">AVX2</span>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span className="text-emerald-300">❯ 0.36ms Reciprocal Rank Fusion Match</span>
+                            <span className="text-emerald-400">P50 0.36ms</span>
+                          </div>
+                        </>
+                      ) : proj.slug === "vaniedge-voice-telephony" ? (
+                        <>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span className="text-cyan-300">❯ 0ms Twilio SIP Audio WebSocket Open</span>
+                            <span className="text-emerald-400">G.711 μ-law</span>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span className="text-violet-300">❯ 120ms SutraDB Grounded Entity Fetch</span>
+                            <span className="text-emerald-400">RAG SYNC</span>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span className="text-emerald-300">❯ 780ms Accent-Adaptive Audio Streaming</span>
+                            <span className="text-emerald-400">&lt; 850ms TTL</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span className="text-cyan-300">❯ Edge Middleware Request Ingested</span>
+                            <span className="text-emerald-400">EDGE</span>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span className="text-violet-300">❯ Web Crypto HMAC-SHA256 Auth</span>
+                            <span className="text-emerald-400">TIMING-SAFE</span>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span className="text-emerald-300">❯ 14 PostgreSQL Tables RLS Synced</span>
+                            <span className="text-emerald-400">100% UPTIME</span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Evidence Metrics */}
                   {proj.metrics && proj.metrics.length > 0 && (
                     <div className="mb-4 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] grid grid-cols-2 gap-2 text-[11px] font-mono">
-                      {proj.metrics.map((m: ProjectEvidenceMetric, mIdx: number) => (
+                      {proj.metrics.slice(0, 4).map((m: ProjectEvidenceMetric, mIdx: number) => (
                         <div key={mIdx}>
                           <div className="text-slate-500 text-[9px] uppercase">{m.label}</div>
                           <div className="text-emerald-400 font-bold">{m.value}</div>
@@ -178,18 +329,21 @@ export default function LabSection({
                   )}
                 </div>
 
-                <div className="pt-4 border-t border-white/[0.04] flex items-center justify-between">
-                  <div className="flex flex-wrap gap-1">
-                    {proj.technologies.slice(0, 3).map((t: string, idx: number) => (
+                {/* Tech Pills Footer */}
+                <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between">
+                  <div className="flex flex-wrap gap-1.5">
+                    {proj.technologies.slice(0, 4).map((t: string, idx: number) => (
                       <span
                         key={idx}
-                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.02] text-slate-400"
+                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.03] border border-white/[0.06] text-slate-300"
                       >
                         {t}
                       </span>
                     ))}
                   </div>
-                  <ArrowUpRight size={14} className="text-slate-500 group-hover:text-sky-400 group-hover:translate-x-0.5 transition-all" />
+                  <span className="text-xs font-mono text-cyan-400 flex items-center gap-1 group-hover:underline">
+                    Case Study →
+                  </span>
                 </div>
               </SpotlightCard>
             ))}

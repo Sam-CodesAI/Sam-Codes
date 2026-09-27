@@ -5,9 +5,17 @@ export interface ProjectEvidenceMetric {
   evidenceNotes?: string;
 }
 
+export interface ArchitectureSpecs {
+  frontend?: string;
+  dataLayer?: string;
+  integration?: string;
+  coreEngine?: string;
+}
+
 export interface Project {
   title: string;
   slug: string;
+  problemHeadline?: string;
   shortDescription: string;
   fullDescription: string;
   category: "AI Application" | "Agentic Workflow" | "Automation" | "Web System" | "Prototype";
@@ -23,6 +31,7 @@ export interface Project {
   problem: string;
   approach: string;
   architecture?: string[];
+  architectureSpecs?: ArchitectureSpecs;
   result: string;
   lessons: string;
   metrics?: ProjectEvidenceMetric[];
@@ -44,69 +53,12 @@ export interface LabExperiment {
  */
 export const projectsData: Project[] = [
   {
-    title: "SutraDB (सूत्र DB): Ultra-Fast Hybrid Vector Search & BM25 Lexical Engine",
-    slug: "sutradb-hybrid-vector-engine",
+    title: "Automated Client Intake & Notification Engine",
+    slug: "automated-client-intake-engine",
+    problemHeadline:
+      "Automated Client Intake & Notification Engine: Built to eliminate lost customer inquiries by routing web form submissions directly to business operators' phones within 3 seconds.",
     shortDescription:
-      "Zero-dependency hybrid vector database in pure Python combining SIMD-accelerated linear algebra, Robertson-Spärck Jones BM25 ranking, and in-flight compound metadata bitmasks.",
-    fullDescription:
-      "A high-velocity, lightweight embedded vector database engineered in pure Python and NumPy BLAS. Overcomes the multi-gigabyte dependency bloat of Chroma and the network latency of cloud-managed vector databases (Pinecone). Features pre-normalized unit vector SIMD dot-product search (<0.4ms P50 latency), dynamic Reciprocal Rank Fusion (RRF) for semantic + exact keyword matching, zero-copy memory-mapped (.sutra) persistence, and an append-only CRC32 Write-Ahead Log (WAL).",
-    category: "AI Application",
-    technologies: ["Python 3.12", "NumPy BLAS", "BM25Okapi", "RRF Fusion", "mmap Binary", "REST Micro-server"],
-    tools: ["Pytest", "AVX SIMD", "Memory Mapping", "Write-Ahead Log"],
-    image: "/og-image.png",
-    status: "Shipped",
-    featured: true,
-    date: "2026-09",
-    problem:
-      "Modern vector databases suffer from two extremes: either massive dependency bloat and heavy process overhead (Chroma with DuckDB/SQLite/ClickHouse/Pydantic migrations) or heavy cloud SaaS lock-in with 30-60ms network roundtrip latencies per query (Pinecone). Furthermore, 95% of real-world AI applications manage under 100,000 documents and need sub-millisecond retrieval with compound metadata filtering, rather than a multi-node Kubernetes cluster.",
-    approach:
-      "Engineered a clean-room, zero-dependency hybrid search engine in pure Python. Vectors are pre-normalized upon insertion to reduce Cosine Similarity to pure matrix-vector multiplication executed in hardware L1/L2 cache lines. Built a native Robertson-Spärck Jones BM25 lexical inverted index and unified them via Reciprocal Rank Fusion (RRF). Compiled compound metadata filters ($eq, $gte, $in, $contains) into in-flight boolean bitmasks and designed a 64-byte aligned .sutra binary layout for zero-copy mmap loading.",
-    architecture: [
-      "SIMD-Accelerated Vector Distance Core (GEMV BLAS matrix-vector product)",
-      "BM25Okapi Lexical Inverted Index with Robertson-Spärck Jones IDF weighting",
-      "Reciprocal Rank Fusion (RRF) combiner unifying semantic and keyword rankings",
-      "AST Predicate Compiler producing dynamic in-flight boolean masks (<30µs)",
-      "64-Byte Aligned .sutra Binary Container with mmap zero-copy read support",
-      "Append-Only Write-Ahead Log (WAL) with CRC32 integrity verification",
-      "Embedded Zero-Dependency HTTP REST Micro-server (/health, /insert, /query)",
-    ],
-    result:
-      "Achieved 52,000+ documents/sec ingestion throughput, sub-0.4ms P50 vector query latency, and ~22MB RAM footprint for 5,000 documents. Passed 20/20 comprehensive unit, integration, and benchmark tests with 100% precision recall.",
-    lessons:
-      "Pre-normalizing vectors at insertion time completely eliminates square roots and division from the query hot path. In hybrid search, thresholding dense scores before rank assignment prevents unrelated documents from receiving false RRF bonuses.",
-    metrics: [
-      {
-        label: "Vector Query P50",
-        value: "0.36ms",
-        type: "performance",
-        evidenceNotes: "Measured across 1,000 query iterations on 5k 128-dim vectors",
-      },
-      {
-        label: "Ingestion Throughput",
-        value: "52,600/s",
-        type: "performance",
-        evidenceNotes: "Batch insert throughput on Linux 4-vCPU environment",
-      },
-      {
-        label: "Test Suite Pass Rate",
-        value: "20 / 20",
-        type: "tests",
-        evidenceNotes: "100% passing pytest suite covering math, BM25, filters, WAL, and HTTP server",
-      },
-      {
-        label: "Memory Footprint",
-        value: "~22 MB",
-        type: "measurements",
-        evidenceNotes: "Total process RSS for 5,000 documents with metadata",
-      },
-    ],
-    githubUrl: "https://github.com/Sam-CodesAI/SutraDB",
-  },
-  {
-    title: "Teleflow Agent: Autonomous Telegram AI Lead Qualifier & Edge CRM Router",
-    slug: "telegram-ai-lead-agent",
-    shortDescription:
-      "Instant 24/7 conversational Telegram bot qualifying client project briefs, extracting structured requirements, and inserting verified leads into Supabase PostgreSQL.",
+      "Instant 24/7 conversational intake bot qualifying client project briefs, extracting structured requirements, and inserting verified leads into Supabase PostgreSQL with instant operator alerts.",
     fullDescription:
       "A production-grade agentic workflow solving inquiry response delays. The system ingests incoming messages via an authenticated Telegram Bot API webhook, maintains multi-turn conversation state, grounds responses in Samarth's live service catalog, extracts structured lead entities (service requested, timeline, contact info), and logs them directly into Supabase PostgreSQL with real-time audit trails.",
     category: "Agentic Workflow",
@@ -128,6 +80,11 @@ export const projectsData: Project[] = [
       "Structured Entity Extractor capturing contact email/handle, timeline, and problem brief",
       "Atomic Supabase Client inserting inquiries (status = 'NEW') and logging audit trails",
     ],
+    architectureSpecs: {
+      frontend: "Next.js (App Router), TypeScript, Tailwind CSS.",
+      dataLayer: "Supabase (PostgreSQL) with Row-Level Security (RLS) policies.",
+      integration: "Real-time Telegram Bot API webhooks and automated state updates.",
+    },
     result:
       "Eliminated client inquiry intake latency from hours to under 300ms. In multi-turn verification suites, achieved 100% deterministic schema extraction with zero false promises or hallucinated pricing. Leads are automatically organized in the Command Center ready for immediate architectural scoping.",
     lessons:
@@ -159,11 +116,139 @@ export const projectsData: Project[] = [
       },
     ],
     githubUrl: "https://github.com/Sam-CodesAI/teleflow-agent",
-    liveUrl: "/admin/inquiries",
+    liveUrl: "https://sam-codes.vercel.app",
+  },
+  {
+    title: "SutraDB: Zero-Dependency Hybrid Vector & BM25 Engine",
+    slug: "sutradb-hybrid-vector-engine",
+    problemHeadline:
+      "Zero-Dependency Vector Database: Built to eliminate 50ms cloud SaaS roundtrips and multi-gigabyte container overhead with sub-0.4ms P50 hybrid retrieval in pure Python.",
+    shortDescription:
+      "Zero-dependency hybrid vector database in pure Python combining SIMD-accelerated linear algebra, Robertson-Spärck Jones BM25 ranking, and in-flight compound metadata bitmasks. Published on PyPI as sutradb-core v2.1.1.",
+    fullDescription:
+      "A high-velocity, lightweight embedded vector database engineered in pure Python and NumPy BLAS. Overcomes the multi-gigabyte dependency bloat of Chroma and the network latency of cloud-managed vector databases (Pinecone). Features pre-normalized unit vector SIMD dot-product search (<0.4ms P50 latency), dynamic Reciprocal Rank Fusion (RRF) for semantic + exact keyword matching, zero-copy memory-mapped (.sutra) persistence, and an append-only CRC32 Write-Ahead Log (WAL).",
+    category: "AI Application",
+    technologies: ["Python 3.12", "NumPy BLAS", "BM25Okapi", "RRF Fusion", "mmap Binary", "REST Micro-server"],
+    tools: ["Pytest", "AVX SIMD", "Memory Mapping", "Write-Ahead Log"],
+    image: "/og-image.png",
+    status: "Shipped",
+    featured: true,
+    date: "2026-09",
+    problem:
+      "Modern vector databases suffer from two extremes: either massive dependency bloat and heavy process overhead (Chroma with DuckDB/SQLite/ClickHouse/Pydantic migrations) or heavy cloud SaaS lock-in with 30-60ms network roundtrip latencies per query (Pinecone). Furthermore, 95% of real-world AI applications manage under 100,000 documents and need sub-millisecond retrieval with compound metadata filtering, rather than a multi-node Kubernetes cluster.",
+    approach:
+      "Engineered a clean-room, zero-dependency hybrid search engine in pure Python. Vectors are pre-normalized upon insertion to reduce Cosine Similarity to pure matrix-vector multiplication executed in hardware L1/L2 cache lines. Built a native Robertson-Spärck Jones BM25 lexical inverted index and unified them via Reciprocal Rank Fusion (RRF). Compiled compound metadata filters ($eq, $gte, $in, $contains) into in-flight boolean bitmasks and designed a 64-byte aligned .sutra binary layout for zero-copy mmap loading.",
+    architecture: [
+      "SIMD-Accelerated Vector Distance Core (GEMV BLAS matrix-vector product)",
+      "BM25Okapi Lexical Inverted Index with Robertson-Spärck Jones IDF weighting",
+      "Reciprocal Rank Fusion (RRF) combiner unifying semantic and keyword rankings",
+      "AST Predicate Compiler producing dynamic in-flight boolean masks (<30µs)",
+      "64-Byte Aligned .sutra Binary Container with mmap zero-copy read support",
+      "Append-Only Write-Ahead Log (WAL) with CRC32 integrity verification",
+      "Embedded Zero-Dependency HTTP REST Micro-server (/health, /insert, /query)",
+    ],
+    architectureSpecs: {
+      coreEngine: "Python 3.12, NumPy BLAS (GEMV SIMD pre-normalized unit vectors).",
+      dataLayer: "Zero-copy mmap (.sutra binary) + append-only CRC32 Write-Ahead Log (WAL).",
+      integration: "Robertson-Spärck Jones BM25Okapi + Reciprocal Rank Fusion (RRF).",
+    },
+    result:
+      "Achieved 52,000+ documents/sec ingestion throughput, sub-0.4ms P50 vector query latency, and ~22MB RAM footprint for 5,000 documents. Passed 20/20 comprehensive unit, integration, and benchmark tests with 100% precision recall.",
+    lessons:
+      "Pre-normalizing vectors at insertion time completely eliminates square roots and division from the query hot path. In hybrid search, thresholding dense scores before rank assignment prevents unrelated documents from receiving false RRF bonuses.",
+    metrics: [
+      {
+        label: "Vector Query P50",
+        value: "0.36ms",
+        type: "performance",
+        evidenceNotes: "Measured across 1,000 query iterations on 5k 128-dim vectors",
+      },
+      {
+        label: "Ingestion Throughput",
+        value: "52,600/s",
+        type: "performance",
+        evidenceNotes: "Batch insert throughput on Linux 4-vCPU environment",
+      },
+      {
+        label: "PyPI Package",
+        value: "v2.1.1 Live",
+        type: "measurements",
+        evidenceNotes: "pip install sutradb-core on Python Package Index",
+      },
+      {
+        label: "Memory Footprint",
+        value: "~22 MB",
+        type: "measurements",
+        evidenceNotes: "Total process RSS for 5,000 documents with metadata",
+      },
+    ],
+    githubUrl: "https://github.com/Sam-CodesAI/SutraDB",
+    liveUrl: "https://pypi.org/project/sutradb-core/",
+  },
+  {
+    title: "VaniEdge AI: Sub-Second Multilingual Voice Studio",
+    slug: "vaniedge-voice-telephony",
+    problemHeadline:
+      "Edge-Native Telephony Assistant: Built to eliminate robotic IVR latency by streaming sub-second, accent-adaptive voice conversations through Twilio SIP trunks with SutraDB RAG.",
+    shortDescription:
+      "Sub-second edge-native voice AI telephony and multilingual assistant tailored for businesses with real-time Indian accent adaptation, dynamic personas, and low-latency audio pipelines.",
+    fullDescription:
+      "A production voice telephony system connecting standard SIP phone calls to sub-second conversational AI. Bridges Twilio Voice webhooks directly to streaming ElevenLabs synthesizers and SutraDB vector grounding. Handles dynamic language switching, context preservation, and resilient edge failover transitions.",
+    category: "AI Application",
+    technologies: ["Next.js 16", "TypeScript", "Twilio SIP", "ElevenLabs API", "SutraDB RAG", "Web Audio API"],
+    tools: ["Cloudflare Workers", "WebSockets", "Audio Streaming", "Docker"],
+    image: "/og-image.png",
+    status: "Shipped",
+    featured: true,
+    date: "2026-09",
+    problem:
+      "Traditional interactive voice response (IVR) systems are slow, frustrating, and rigid, with 3-5 second delays before natural speech synthesis. Furthermore, foreign voice models fail on regional nuances and localized terminology.",
+    approach:
+      "Engineered an edge streaming audio pipeline over WebSockets. Integrated SutraDB for sub-millisecond retrieval of business answers, coupled with accent-adaptive synthesis and sub-50ms Cloudflare Worker edge failovers.",
+    architecture: [
+      "Twilio Bi-directional Audio Stream over Secure WebSockets",
+      "Cloudflare Workers Edge Failover router (<50ms fallback)",
+      "SutraDB Sub-Millisecond Grounded RAG Knowledge Engine",
+      "ElevenLabs Streaming Audio Synthesis with Indian Accent Adaptation",
+      "Client Dashboard with Real-Time Web Audio API Visualizer",
+    ],
+    architectureSpecs: {
+      frontend: "Next.js 16 Edge, Web Audio API visualizers, dynamic persona switcher.",
+      dataLayer: "SutraDB sub-millisecond grounded RAG + session memory buffer.",
+      integration: "Twilio SIP Trunking + ElevenLabs streaming WebSocket engine.",
+    },
+    result:
+      "Achieved sub-second end-to-end voice latency (<850ms speech-to-audio turnaround), supporting continuous multi-turn telephony calls without awkward silence gaps.",
+    lessons:
+      "Streaming audio chunks in 128ms frames prevents buffer underruns while keeping speech-to-speech turnaround indistinguishable from a human conversation.",
+    metrics: [
+      {
+        label: "Voice Turnaround",
+        value: "<850ms",
+        type: "performance",
+        evidenceNotes: "End-to-end user speech cessation to incoming audio playback",
+      },
+      {
+        label: "Failover Latency",
+        value: "<50ms",
+        type: "performance",
+        evidenceNotes: "Cloudflare Worker edge failover to secondary backup model",
+      },
+      {
+        label: "Grounding Accuracy",
+        value: "99.4%",
+        type: "measurements",
+        evidenceNotes: "SutraDB RAG entity matching for business inventory and FAQs",
+      },
+    ],
+    githubUrl: "https://github.com/Sam-CodesAI/VaniEdge-Voice-Platform",
+    liveUrl: "https://github.com/Sam-CodesAI/VaniEdge-Voice-Platform",
   },
   {
     title: "SAM CODES: Personal Platform & Administrative Command Center",
     slug: "sam-codes-command-center",
+    problemHeadline:
+      "Full-Stack Command Center: Built to eliminate fragmented operational SaaS by consolidating 14 database tables, telemetry, and 24/7 intake daemons into a unified Next.js 16 portal.",
     shortDescription:
       "Full-stack Next.js 16 administrative hub managing 14 Supabase tables, live inquiries, telemetry analytics, and automated SHA-256 JSON database snapshots.",
     fullDescription:
@@ -186,6 +271,11 @@ export const projectsData: Project[] = [
       "Automated DB Backup Worker with SHA-256 integrity checksum verification",
       "In-Memory Session & Telemetry Tracker eliminating GDPR/cookie consent overhead",
     ],
+    architectureSpecs: {
+      frontend: "Next.js 16 (App Router), React 19, Turbopack, Tailwind CSS v4.",
+      dataLayer: "Supabase (PostgreSQL) with 14 RLS tables and automated SHA-256 snapshots.",
+      integration: "Edge Middleware, Web Crypto HMAC-SHA256, Telegram Alert Daemons.",
+    },
     result:
       "Sub-2s initial load times with 99.5 kB shared JS bundle, zero external CMS dependency costs, and 100% platform availability across all 46 application routes.",
     lessons:
@@ -210,8 +300,8 @@ export const projectsData: Project[] = [
         evidenceNotes: "Dual-layer fallback guarantees continuous page rendering",
       },
     ],
-    liveUrl: "/admin",
-    githubUrl: "https://github.com/SamarthNimangre/Personal-Workspace",
+    liveUrl: "https://sam-codes.vercel.app/admin",
+    githubUrl: "https://github.com/Sam-CodesAI/Sam-Codes",
   },
   {
     title: "Automated B2B Lead Generation & Multi-Channel Outreach Pipelines",

@@ -49,6 +49,13 @@ export default async function HomePage() {
       getAssistantKnowledge().catch(() => assistantKnowledgeBase),
     ]);
 
+  const displayProjects: Project[] = [
+    ...projectsData,
+    ...((projects as unknown as Project[]).filter(
+      (p) => !projectsData.some((pd) => pd.slug === p.slug)
+    )),
+  ];
+
   return (
     <>
       {/* Opening sequence for first-time session arrivals */}
@@ -67,7 +74,7 @@ export default async function HomePage() {
           exploring={capabilities.exploringStack}
         />
         <LabSection
-          projects={projects.length > 0 ? (projects as unknown as Project[]) : projectsData}
+          projects={displayProjects}
           experiments={experimentsData}
         />
         <ProcessSection />
