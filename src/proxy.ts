@@ -9,6 +9,7 @@ export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const isLoginPage = pathname === "/admin/login";
   const isLoginApi = pathname === "/api/admin/login";
+  const isProtectedApi = pathname.startsWith("/api/admin") || pathname === "/api/telegram/send";
 
   const sessionCookie = req.cookies.get(ADMIN_SESSION_COOKIE)?.value;
   const authResult = sessionCookie
@@ -32,9 +33,9 @@ export async function proxy(req: NextRequest) {
     return addSecurityHeaders(NextResponse.next());
   }
 
-  if (pathname.startsWith("/api/admin")) {
-    // Check Origin for every state-changing admin API request, including login.
-    // Browser requests without Origin are rejected rather than silently skipping CSRF checks.
+  if (isProtectedApi) {
+    // Check Origin for every state-changing protected API request, including login.
+    // Reject missing Origin rather than silently skipping CSRF checks.
     if (MUTATING_METHODS.has(req.method.toUpperCase())) {
       const originHeader = req.headers.get("origin");
       const hostHeader = req.headers.get("host");
@@ -135,5 +136,5 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*", "/api/telegram/send"],
 };
