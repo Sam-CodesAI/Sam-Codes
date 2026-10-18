@@ -3,12 +3,21 @@ import { exchangeLinkedInCode } from "@/lib/linkedin/client";
 
 export const runtime = "nodejs";
 
-function redirectWithError(origin: string, message: string): NextResponse {
-  const response = NextResponse.redirect(
-    `${origin}/admin/socials?linkedin_error=${encodeURIComponent(message)}`
-  );
-  response.cookies.delete("linkedin_oauth_state");
+function clearStateCookie(response: NextResponse): NextResponse {
+  response.cookies.set("linkedin_oauth_state", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 0,
+    path: "/api/admin/linkedin/callback",
+  });
   return response;
+}
+
+function redirectWithError(origin: string, message: string): NextResponse {
+  return clearStateCookie(NextResponse.redirect(
+    `${origin}/admin/socials?linkedin_error=${encodeURIComponent(message)}`
+  ));
 }
 
 /**
@@ -39,8 +48,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     }
 
     const response = NextResponse.redirect(`${origin}/admin/socials?linkedin_auth=success`);
-    response.cookies.delete("linkedin_oauth_state");
-    return response;
+    return clearStateCookie(response);
   } catch {
     return redirectWithError(origin, "Unexpected callback error.");
   }
