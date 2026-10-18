@@ -4,13 +4,23 @@ import { exchangeOAuth2Code, getPendingPKCE } from "@/lib/twitter/client";
 export const runtime = "nodejs";
 const BASE_URL = "https://sam-codes.vercel.app";
 
-function redirectError(message: string): NextResponse {
-  const response = NextResponse.redirect(
-    `${BASE_URL}/admin/socials?twitter_error=${encodeURIComponent(message)}`
-  );
-  response.cookies.delete("x_pkce_verifier");
-  response.cookies.delete("x_oauth_state");
+function clearOAuthCookies(response: NextResponse): NextResponse {
+  for (const name of ["x_pkce_verifier", "x_oauth_state"]) {
+    response.cookies.set(name, "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 0,
+      path: "/api/admin/twitter/callback",
+    });
+  }
   return response;
+}
+
+function redirectError(message: string): NextResponse {
+  return clearOAuthCookies(NextResponse.redirect(
+    `${BASE_URL}/admin/socials?twitter_error=${encodeURIComponent(message)}`
+  ));
 }
 
 /**
@@ -56,9 +66,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     }
 
     const response = NextResponse.redirect(`${BASE_URL}/admin/socials?twitter_auth=success`);
-    response.cookies.delete("x_pkce_verifier");
-    response.cookies.delete("x_oauth_state");
-    return response;
+    return clearOAuthCookies(response);
   } catch {
     return redirectError("Unexpected X callback error.");
   }
