@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminSession } from "@/lib/auth-service";
 import {
@@ -23,9 +24,13 @@ export async function GET(): Promise<NextResponse> {
   try {
     const account = await getRedditAccountStatus();
     const recentPosts = account ? await getRedditRecentPosts(5, account.username) : [];
-    const authUrl = getRedditAuthUrl();
+    const oauthState = randomBytes(32).toString("base64url");
+    const authUrl = getRedditAuthUrl(
+      "https://sam-codes.vercel.app/api/admin/reddit/callback",
+      oauthState
+    );
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       connected: !!account?.connected,
       account,
@@ -33,6 +38,14 @@ export async function GET(): Promise<NextResponse> {
       recentPosts,
       templates: PRESET_REDDIT_POSTS,
     });
+    response.cookies.set("reddit_oauth_state", oauthState, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 10 * 60,
+      path: "/api/admin/reddit/callback",
+    });
+    return response;
   } catch (err) {
     console.error("[Admin Reddit GET Error]:", err);
     return NextResponse.json(
