@@ -2,10 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { exchangeOAuth2Code, getPendingPKCE } from "@/lib/twitter/client";
 
 export const runtime = "nodejs";
+const BASE_URL = "https://sam-codes.vercel.app";
+
+function redirectError(message: string): NextResponse {
+  const response = NextResponse.redirect(
+    `${BASE_URL}/admin/socials?twitter_error=${encodeURIComponent(message)}`
+  );
+  response.cookies.delete("x_pkce_verifier");
+  response.cookies.delete("x_oauth_state");
+  return response;
+}
 
 /**
- * GET: OAuth 2.0 PKCE Callback Endpoint for X (Twitter)
- * Receives authorization code from X and exchanges it for access + refresh tokens.
+ * X OAuth 2.0 PKCE callback. The authorization state must resolve to a pending
+ * verifier or match the short-lived HttpOnly state cookie before token exchange.
  */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(req.url);
@@ -14,52 +24,42 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const error = searchParams.get("error");
   const errorDescription = searchParams.get("error_description");
 
-  const baseUrl = "https://sam-codes.vercel.app";
-
-  if (error) {
-    console.error("[Twitter OAuth Callback Error]:", error, errorDescription);
-    return NextResponse.redirect(
-      `${baseUrl}/admin/socials?twitter_error=${encodeURIComponent(
-        errorDescription || error
-      )}`
-    );
+  if (!state) {
+    return redirectError("OAuth state is missing. Restart the X connection flow.");
   }
 
-  if (!code) {
-    return NextResponse.redirect(
-      `${baseUrl}/admin/socials?twitter_error=${encodeURIComponent(
-        "No authorization code received from X"
-      )}`
-    );
+  // A pending server-side verifier binds the state to an authorization initiated
+  // by this app. The cookie fallback supports deployments where local storage is
+  // available but the server-side pending store is not.
+  let verifier = await getPendingPKCE(state);
+  if (!verifier && req.cookies.get("x_oauth_state")?.value === state) {
+    verifier = req.cookies.get("x_pkce_verifier")?.value || null;
   }
-
-  // Retrieve stored PKCE code_verifier from cookie or pending Supabase state
-  let verifier = req.cookies.get("x_pkce_verifier")?.value;
-  if (!verifier && state) {
-    verifier = (await getPendingPKCE(state)) || undefined;
-  }
-
-  const redirectUri = `${baseUrl}/api/admin/twitter/callback`;
 
   if (!verifier) {
-    // If verifier is missing (e.g. cross-domain without state match), redirect with code so user can complete exchange in dashboard
-    return NextResponse.redirect(
-      `${baseUrl}/admin/socials?twitter_code=${encodeURIComponent(code)}`
-    );
+    return redirectError("OAuth state validation failed. Restart the X connection flow.");
   }
 
-  const exchangeResult = await exchangeOAuth2Code(code, verifier, redirectUri);
-
-  if (exchangeResult.success) {
-    const res = NextResponse.redirect(`${baseUrl}/admin/socials?twitter_auth=success`);
-    res.cookies.delete("x_pkce_verifier");
-    res.cookies.delete("x_oauth_state");
-    return res;
+  if (error) {
+    return redirectError(errorDescription || "X authorization was cancelled or failed.");
+  }
+  if (!code) {
+    return redirectError("No authorization code received from X.");
   }
 
-  return NextResponse.redirect(
-    `${baseUrl}/admin/socials?twitter_error=${encodeURIComponent(
-      exchangeResult.error || "Token exchange failed"
-    )}`
-  );
+  try {
+    const redirectUri = `${BASE_URL}/api/admin/twitter/callback`;
+    const exchangeResult = await exchangeOAuth2Code(code, verifier, redirectUri);
+
+    if (!exchangeResult.success) {
+      return redirectError(exchangeResult.error || "Token exchange failed.");
+    }
+
+    const response = NextResponse.redirect(`${BASE_URL}/admin/socials?twitter_auth=success`);
+    response.cookies.delete("x_pkce_verifier");
+    response.cookies.delete("x_oauth_state");
+    return response;
+  } catch {
+    return redirectError("Unexpected X callback error.");
+  }
 }
