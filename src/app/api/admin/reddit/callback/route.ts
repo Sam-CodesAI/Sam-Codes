@@ -4,12 +4,21 @@ import { exchangeRedditAuthCode } from "@/lib/reddit/client";
 export const runtime = "nodejs";
 const BASE_URL = "https://sam-codes.vercel.app";
 
-function redirectError(message: string): NextResponse {
-  const response = NextResponse.redirect(
-    `${BASE_URL}/admin/socials?reddit_error=${encodeURIComponent(message)}`
-  );
-  response.cookies.delete("reddit_oauth_state");
+function clearStateCookie(response: NextResponse): NextResponse {
+  response.cookies.set("reddit_oauth_state", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 0,
+    path: "/api/admin/reddit/callback",
+  });
   return response;
+}
+
+function redirectError(message: string): NextResponse {
+  return clearStateCookie(NextResponse.redirect(
+    `${BASE_URL}/admin/socials?reddit_error=${encodeURIComponent(message)}`
+  ));
 }
 
 /**
@@ -43,8 +52,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     }
 
     const response = NextResponse.redirect(`${BASE_URL}/admin/socials?reddit_auth=success`);
-    response.cookies.delete("reddit_oauth_state");
-    return response;
+    return clearStateCookie(response);
   } catch {
     return redirectError("Unexpected Reddit callback error.");
   }
