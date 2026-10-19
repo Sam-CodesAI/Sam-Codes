@@ -39,7 +39,7 @@ function toBase64Url(input: Uint8Array | string): string {
 /**
  * Decode Base64URL only when the input has the expected alphabet.
  */
-function fromBase64Url(value: string): Uint8Array {
+function fromBase64Url(value: string): Uint8Array<ArrayBuffer> {
   if (!value || !/^[A-Za-z0-9_-]+$/.test(value)) {
     throw new Error("Invalid Base64URL component");
   }
