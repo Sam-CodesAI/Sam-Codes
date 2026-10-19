@@ -1,3 +1,7 @@
 [submodule "SutraDB"]
 	path = SutraDB
 	url = https://github.com/Sam-CodesAI/SutraDB.git
+
+[submodule "projects-sutradb"]
+	path = projects/sutradb
+	url = https://github.com/Sam-CodesAI/SutraDB.git
