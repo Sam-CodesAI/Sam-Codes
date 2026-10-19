@@ -20,7 +20,6 @@ export const ADMIN_SESSION_COOKIE = "sam_codes_cmd_session";
 export function getAuthorizedAdminEmails(): Set<string> {
   const emails = new Set<string>([
     DEFAULT_ADMIN_EMAIL.toLowerCase(),
-    "admin@samcodes.dev",
   ]);
 
   if (process.env.ADMIN_EMAILS) {

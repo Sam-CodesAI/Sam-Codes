@@ -3,92 +3,115 @@ import type { NextRequest } from "next/server";
 import { ADMIN_SESSION_COOKIE } from "@/lib/auth-service";
 import { verifySessionToken } from "@/lib/auth-token";
 
+const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
-
-  // Allow login endpoint and public routes
   const isLoginPage = pathname === "/admin/login";
   const isLoginApi = pathname === "/api/admin/login";
+  const isProtectedApi = pathname.startsWith("/api/admin") || pathname === "/api/telegram/send";
 
-  // Check admin session cookie
   const sessionCookie = req.cookies.get(ADMIN_SESSION_COOKIE)?.value;
-  const authResult = sessionCookie ? await verifySessionToken(sessionCookie) : { valid: false };
+  const authResult = sessionCookie
+    ? await verifySessionToken(sessionCookie)
+    : { valid: false };
   const isAuthenticated = authResult.valid;
 
-  // 1. If visiting /admin/login while already authenticated -> redirect to /admin
   if (isLoginPage) {
     if (isAuthenticated) {
-      return NextResponse.redirect(new URL("/admin", req.url));
+      return addSecurityHeaders(NextResponse.redirect(new URL("/admin", req.url)));
     }
-    return NextResponse.next();
+    return addSecurityHeaders(NextResponse.next());
   }
 
-  // 2. Protect Admin UI Routes (/admin/*)
   if (pathname.startsWith("/admin")) {
     if (!isAuthenticated) {
       const loginUrl = new URL("/admin/login", req.url);
       loginUrl.searchParams.set("next", pathname);
-      return NextResponse.redirect(loginUrl);
+      return addSecurityHeaders(NextResponse.redirect(loginUrl));
     }
-    return NextResponse.next();
+    return addSecurityHeaders(NextResponse.next());
   }
 
-  // 3. Protect Admin API Routes (/api/admin/*)
-  if (pathname.startsWith("/api/admin")) {
-    if (isLoginApi) {
-      return NextResponse.next();
-    }
+  if (isProtectedApi) {
+    // Check Origin for every state-changing protected API request, including login.
+    // Reject missing Origin rather than silently skipping CSRF checks.
+    if (MUTATING_METHODS.has(req.method.toUpperCase())) {
+      const originHeader = req.headers.get("origin");
+      const hostHeader = req.headers.get("host");
 
-    if (!isAuthenticated) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            message: "Unauthorized. Valid administrative session required.",
-            code: "UNAUTHORIZED",
-            requestId: `req_${Date.now().toString(36)}`,
-          },
-        },
-        { status: 401 }
-      );
-    }
+      if (!originHeader || !hostHeader || originHeader === "null") {
+        return addSecurityHeaders(
+          NextResponse.json(
+            {
+              success: false,
+              error: {
+                message: "Origin and Host headers are required for this request.",
+                code: "CSRF_ERROR",
+                requestId: crypto.randomUUID(),
+              },
+            },
+            { status: 403 }
+          )
+        );
+      }
 
-    // CSRF Protection on Mutating Admin Requests
-    const method = req.method.toUpperCase();
-    if (["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
-      const origin = req.headers.get("origin");
-      const host = req.headers.get("host");
-
-      if (origin && host) {
-        try {
-          const originHost = new URL(origin).host;
-          if (originHost !== host) {
-            return NextResponse.json(
+      try {
+        const originUrl = new URL(originHeader);
+        const expectedOrigin = req.nextUrl.origin;
+        if (
+          (originUrl.protocol !== "https:" && originUrl.protocol !== "http:") ||
+          originUrl.origin.toLowerCase() !== expectedOrigin.toLowerCase() ||
+          originUrl.host.toLowerCase() !== hostHeader.toLowerCase()
+        ) {
+          return addSecurityHeaders(
+            NextResponse.json(
               {
                 success: false,
                 error: {
-                  message: "CSRF cross-origin validation failed.",
+                  message: "CSRF same-origin validation failed.",
                   code: "CSRF_ERROR",
-                  requestId: `req_${Date.now().toString(36)}`,
+                  requestId: crypto.randomUUID(),
                 },
               },
               { status: 403 }
-            );
-          }
-        } catch {
-          return NextResponse.json(
+            )
+          );
+        }
+      } catch {
+        return addSecurityHeaders(
+          NextResponse.json(
             {
               success: false,
               error: {
                 message: "Invalid Origin header.",
                 code: "CSRF_ERROR",
-                requestId: `req_${Date.now().toString(36)}`,
+                requestId: crypto.randomUUID(),
               },
             },
             { status: 403 }
-          );
-        }
+          )
+        );
       }
+    }
+
+    // Login is intentionally unauthenticated, but it is still subject to Origin validation.
+    if (isLoginApi) return addSecurityHeaders(NextResponse.next());
+
+    if (!isAuthenticated) {
+      return addSecurityHeaders(
+        NextResponse.json(
+          {
+            success: false,
+            error: {
+              message: "Unauthorized. Valid administrative session required.",
+              code: "UNAUTHORIZED",
+              requestId: crypto.randomUUID(),
+            },
+          },
+          { status: 401 }
+        )
+      );
     }
 
     return addSecurityHeaders(NextResponse.next());
@@ -98,7 +121,7 @@ export async function proxy(req: NextRequest) {
 }
 
 /**
- * Attach hardening security headers to every response passing through the proxy.
+ * Attach hardening security headers to every response matched by this proxy.
  */
 function addSecurityHeaders(response: NextResponse): NextResponse {
   response.headers.set("X-Content-Type-Options", "nosniff");
@@ -113,8 +136,5 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
 }
 
 export const config = {
-  matcher: [
-    "/admin/:path*",
-    "/api/admin/:path*",
-  ],
+  matcher: ["/admin/:path*", "/api/admin/:path*", "/api/telegram/send"],
 };
