@@ -43,7 +43,14 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         maxAge: 3600,
-        path: "/",
+        path: "/api/admin/twitter/callback",
+      });
+      redirectRes.cookies.set("x_oauth_state", authData.state, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 3600,
+        path: "/api/admin/twitter/callback",
       });
       return redirectRes;
     }
@@ -68,7 +75,14 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 3600,
-      path: "/",
+      path: "/api/admin/twitter/callback",
+    });
+    response.cookies.set("x_oauth_state", authData.state, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 3600,
+      path: "/api/admin/twitter/callback",
     });
 
     return response;
