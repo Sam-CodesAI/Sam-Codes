@@ -56,7 +56,7 @@ export default function AskSamAssistant({
     }
   }, [messages, isOpen]);
 
-  const handleSend = (textToSend?: string) => {
+  const handleSend = async (textToSend?: string) => {
     const query = textToSend || inputValue;
     if (!query.trim()) return;
 
@@ -73,18 +73,45 @@ export default function AskSamAssistant({
     setInputValue("");
     setIsTyping(true);
 
-    setTimeout(() => {
-      const answer = queryDeterministicAssistant(query, knowledge);
+    try {
+      const res = await fetch("/api/assistant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+      });
+
+      let answerText = "";
+      if (res.ok) {
+        const data = (await res.json()) as { answer?: string };
+        if (data.answer) {
+          answerText = data.answer;
+        }
+      }
+
+      if (!answerText) {
+        answerText = queryDeterministicAssistant(query, knowledge);
+      }
+
       const assistantMsg: ChatMessage = {
         id: `assistant-${Date.now()}`,
         sender: "assistant",
-        text: answer,
+        text: answerText,
         timestamp: "Just now",
       };
       setMessages((prev) => [...prev, assistantMsg]);
+    } catch {
+      const fallbackAnswer = queryDeterministicAssistant(query, knowledge);
+      const assistantMsg: ChatMessage = {
+        id: `assistant-${Date.now()}`,
+        sender: "assistant",
+        text: fallbackAnswer,
+        timestamp: "Just now",
+      };
+      setMessages((prev) => [...prev, assistantMsg]);
+    } finally {
       setIsTyping(false);
       soundFx.playChime(560, 0.08);
-    }, 450);
+    }
   };
 
   const handleResetChat = () => {
