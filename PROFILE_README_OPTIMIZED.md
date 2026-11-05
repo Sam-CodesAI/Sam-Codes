@@ -19,7 +19,7 @@
     <img src="https://img.shields.io/badge/⚡_AVAILABILITY-OPEN_FOR_BUILDS-06080f?style=for-the-badge&logo=codeforces&logoColor=34d399&labelColor=0f172a" alt="Status" />
   </a>
   <a href="https://pypi.org/project/sutradb-core/" target="_blank">
-    <img src="https://img.shields.io/badge/📦_PyPI-sutradb--core_v2.1.1-06080f?style=for-the-badge&logo=pypi&logoColor=38bdf8&labelColor=1e293b" alt="PyPI Package" />
+    <img src="https://img.shields.io/badge/📦_PyPI-sutradb--core_v2.2.0-06080f?style=for-the-badge&logo=pypi&logoColor=38bdf8&labelColor=1e293b" alt="PyPI Package" />
   </a>
 
   <a href="https://komarev.com/ghpvc/?username=Sam-CodesAI&color=38bdf8&style=for-the-badge&label=PROFILE+VIEWS">
