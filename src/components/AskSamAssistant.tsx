@@ -128,19 +128,19 @@ export default function AskSamAssistant({
 
   return (
     <>
-      {/* Floating Trigger Button (Bottom Right) */}
+      {/* Floating Trigger Button (Desktop Only, subtle glass button so it never obstructs content) */}
       <button
         type="button"
         onClick={() => {
           soundFx.playChime(600, 0.08);
           setIsOpen(!isOpen);
         }}
-        aria-label="Toggle Ask Sam interactive assistant"
-        className="fixed bottom-6 right-6 z-40 px-4 py-3 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-mono text-xs shadow-2xl shadow-blue-600/30 flex items-center gap-2 border border-blue-400/30 transition-all hover:scale-105 cursor-pointer backdrop-blur-md"
+        aria-label="Toggle Ask Sam assistant"
+        title="Ask Sam AI Assistant"
+        className="hidden md:flex fixed bottom-6 right-6 z-40 p-3 rounded-full bg-[#080d1a]/85 hover:bg-blue-600 border border-white/10 hover:border-blue-400/50 text-slate-300 hover:text-white shadow-2xl shadow-black/80 transition-all duration-300 hover:scale-110 cursor-pointer backdrop-blur-xl group items-center justify-center min-h-[44px] min-w-[44px]"
       >
-        <Sparkles size={16} className="text-[#ccff00]" />
-        <span className="font-bold">Ask Sam</span>
-        <span className="w-2 h-2 rounded-full bg-[#ccff00] shadow-[0_0_8px_#ccff00] animate-pulse" />
+        <Sparkles size={17} className="text-[#ccff00] group-hover:text-white transition-colors" />
+        <span className="sr-only">Ask Sam</span>
       </button>
 
       {/* Assistant Modal / Drawer */}

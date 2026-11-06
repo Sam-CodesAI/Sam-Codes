@@ -127,7 +127,9 @@ export default function LabSection({
             {/* Archival Folder Tab (Sticking out above the main folder) */}
             <div className="inline-flex items-center gap-2 px-4 py-1.5 self-start rounded-t-xl bg-[#0c1424] border-t border-x border-white/[0.08] group-hover:border-blue-500/40 group-hover:bg-[#101b33] transition-all text-[11px] font-mono text-slate-400 group-hover:text-blue-300">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:bg-[#ccff00] transition-colors" />
-              <span>{proj.cartridgeCode || `0${idx + 1} // ${proj.slug.toUpperCase()}`}</span>
+              <span className="tracking-wider">
+                {`0${idx + 1} // ${proj.slug.toUpperCase()}`}
+              </span>
             </div>
 
             {/* Folder Body Container */}

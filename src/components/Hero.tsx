@@ -62,26 +62,25 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="mb-6 w-full"
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tight text-white leading-[1.08]">
-              Hi, I am Samarth.
-              <br />
-              <span className="text-slate-400 font-semibold text-3xl sm:text-4xl md:text-5xl xl:text-6xl">
-                I am a{" "}
-              </span>
-              <span className="inline-block relative min-h-[1.25em] overflow-hidden align-bottom">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={roleIndex}
-                    initial={{ y: 35, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -35, opacity: 0 }}
-                    transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                    className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-300 font-extrabold drop-shadow-[0_0_24px_rgba(37,99,235,0.4)]"
-                  >
-                    {ROLES[roleIndex]}
-                  </motion.span>
-                </AnimatePresence>
-              </span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tight text-white leading-tight">
+              <span>Hi, I am Samarth.</span>
+              <div className="text-slate-400 font-medium text-2xl sm:text-4xl md:text-5xl xl:text-6xl mt-2 flex flex-wrap items-center gap-x-3">
+                <span className="text-slate-400">I am a</span>
+                <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-white font-extrabold min-h-[1.2em]">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={roleIndex}
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -20, opacity: 0 }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      className="inline-block"
+                    >
+                      {ROLES[roleIndex]}
+                    </motion.span>
+                  </AnimatePresence>
+                </span>
+              </div>
             </h1>
           </motion.div>
 
@@ -148,7 +147,7 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.0, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="relative z-10 w-full max-w-[340px] sm:max-w-[400px] aspect-[4/5] flex items-center justify-center"
+            className="relative z-10 w-full max-w-[280px] sm:max-w-[340px] lg:max-w-[390px] aspect-[4/5] flex items-center justify-center"
           >
             {/* The Image with natural gradient dissolve into canvas */}
             <div
