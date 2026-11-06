@@ -53,7 +53,7 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-6 w-full"
+            className="mb-8 sm:mb-10 w-full"
           >
             <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tight text-white leading-tight">
               <span className="block">Hi, I am Samarth.</span>
@@ -77,21 +77,11 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
             </h1>
           </motion.div>
 
-          {/* Subheadline description: Clean, breathable, single thought */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="text-base sm:text-lg text-slate-300 max-w-xl font-normal leading-relaxed mb-10"
-          >
-            Engineering clean-room vector retrieval engines, real-time edge telephony pipelines, and modern web applications from first principles.
-          </motion.p>
-
           {/* Minimalist Action Controls */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto"
           >
             <MagneticButton pullFactor={0.15}>
@@ -157,13 +147,13 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-              className="absolute -bottom-3 sm:-bottom-4 left-auto right-auto px-4 py-2 rounded-full bg-[#080d1a]/85 backdrop-blur-xl border border-white/10 shadow-2xl z-20 flex items-center gap-2.5 max-w-[90%] min-w-0"
+              className="absolute -bottom-3 sm:-bottom-4 left-auto right-auto px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#080d1a]/85 backdrop-blur-xl border border-white/10 shadow-2xl z-20 flex items-center gap-2 max-w-[95%] min-w-0"
             >
               <span className="relative flex h-2 w-2 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ccff00] opacity-80" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ccff00] shadow-[0_0_8px_#ccff00]" />
               </span>
-              <span className="text-xs font-mono font-medium text-slate-200 tracking-wide truncate break-all">
+              <span className="text-[11px] sm:text-xs font-mono font-medium text-slate-200 tracking-tight sm:tracking-wide whitespace-nowrap">
                 Available for builds &amp; systems
               </span>
             </motion.div>

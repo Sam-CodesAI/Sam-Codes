@@ -38,21 +38,8 @@ export default function TechEcosystem() {
   return (
     <section
       aria-label="Core Technology Wave"
-      className="relative py-10 px-0 w-full max-w-full overflow-hidden border-y border-white/[0.06]"
+      className="relative py-6 sm:py-8 px-0 w-full max-w-full overflow-hidden border-y border-white/[0.06]"
     >
-      {/* Top Header Label */}
-      <div className="flex items-center justify-between px-4 sm:px-6 mb-6 max-w-7xl mx-auto">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#ccff00]" />
-          <span className="text-[11px] font-mono tracking-widest text-slate-400 uppercase">
-            CORE STACK // DYNAMIC WAVE STREAM
-          </span>
-        </div>
-        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider hidden sm:inline">
-          Right → Left Continuous Flow
-        </span>
-      </div>
-
       {/* Infinite Wave Marquee Track with Edge Dissolve Masks */}
       <div
         className="relative w-full max-w-full overflow-hidden py-4"
