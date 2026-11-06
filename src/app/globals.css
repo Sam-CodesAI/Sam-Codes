@@ -2,36 +2,41 @@
 
 @layer base {
   :root {
-    --background: #06080f;
+    --background: #030509;
+    --background-alt: #06080f;
     --foreground: #f1f5f9;
-    --accent-cyan: #38bdf8;
-    --accent-purple: #818cf8;
-    --accent-emerald: #34d399;
-    --glass-bg: rgba(12, 16, 29, 0.65);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --surface-obsidian: #080d1a;
+    --surface-obsidian-2: #0f172a;
+    --border-subtle: #1e293b;
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --accent-cobalt: #2563eb;
+    --accent-cobalt-glow: #3b82f6;
+    --accent-lime: #ccff00;
+    --accent-lime-muted: #a3e635;
+    --glass-bg: rgba(8, 13, 26, 0.72);
   }
 
   * {
-    border-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(30, 41, 59, 0.8);
   }
 
   html {
     color-scheme: dark;
     scroll-behavior: smooth;
-    background-color: #06080f;
+    background-color: #030509;
     color: #f1f5f9;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   body {
-    background-color: #06080f;
+    background-color: #030509;
     color: #f1f5f9;
     overflow-x: hidden;
     min-height: 100vh;
   }
 
   ::selection {
-    background: rgba(56, 189, 248, 0.3);
+    background: rgba(37, 99, 235, 0.45);
     color: #ffffff;
   }
 }
@@ -42,74 +47,106 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #06080f;
+  background: #030509;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(59, 130, 246, 0.25);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(56, 189, 248, 0.4);
-}
-
-/* Custom Animations and Utilities */
-@keyframes pulseSlow {
-  0%, 100% {
-    opacity: 0.35;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.05);
-  }
-}
-
-@keyframes floatSlow {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-
-
-.animate-pulse-slow {
-  animation: pulseSlow 8s ease-in-out infinite;
-}
-
-.animate-float-slow {
-  animation: floatSlow 6s ease-in-out infinite;
+  background: rgba(59, 130, 246, 0.6);
 }
 
 /* Glassmorphic cards */
-.glass-panel {
-  background: rgba(13, 18, 33, 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.glass-obsidian {
+  background: rgba(8, 13, 26, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid #1e293b;
 }
 
-.glass-panel-hover {
+.glass-obsidian-hover {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glass-panel-hover:hover {
-  border-color: rgba(56, 189, 248, 0.35);
-  background: rgba(18, 26, 48, 0.75);
-  box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.15);
+.glass-obsidian-hover:hover {
+  border-color: rgba(59, 130, 246, 0.45);
+  background: rgba(15, 23, 42, 0.85);
+  box-shadow: 0 12px 36px -8px rgba(37, 99, 235, 0.25);
 }
 
 /* Ambient glow orbs */
-.glow-orb-cyan {
-  background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(56, 189, 248, 0) 70%);
+.glow-orb-cobalt {
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.22) 0%, rgba(37, 99, 235, 0) 70%);
 }
 
-.glow-orb-purple {
-  background: radial-gradient(circle, rgba(129, 140, 248, 0.15) 0%, rgba(129, 140, 248, 0) 70%);
+.glow-orb-lime {
+  background: radial-gradient(circle, rgba(204, 255, 0, 0.12) 0%, rgba(204, 255, 0, 0) 70%);
 }
 
-.glow-orb-emerald {
-  background: radial-gradient(circle, rgba(52, 211, 153, 0.12) 0%, rgba(52, 211, 153, 0) 70%);
+.glow-orb-indigo {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(99, 102, 241, 0) 70%);
+}
+
+/* Anime chamfered tech corners */
+.chamfer-45 {
+  clip-path: polygon(
+    0 12px,
+    12px 0,
+    calc(100% - 12px) 0,
+    100% 12px,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    12px 100%,
+    0 calc(100% - 12px)
+  );
+}
+
+.chamfer-tab {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 16px) 0,
+    100% 16px,
+    100% 100%,
+    0 100%
+  );
+}
+
+.chamfer-tag {
+  clip-path: polygon(
+    0 6px,
+    6px 0,
+    100% 0,
+    100% calc(100% - 6px),
+    calc(100% - 6px) 100%,
+    0 100%
+  );
+}
+
+/* High-voltage pulse */
+@keyframes limePulse {
+  0%, 100% {
+    box-shadow: 0 0 6px rgba(204, 255, 0, 0.7), 0 0 14px rgba(204, 255, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 2px rgba(204, 255, 0, 0.3), 0 0 6px rgba(204, 255, 0, 0.15);
+  }
+}
+
+.animate-lime-pulse {
+  animation: limePulse 2s ease-in-out infinite;
+}
+
+/* Volumetric Cobalt glow pulse */
+@keyframes cobaltGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px -4px rgba(37, 99, 235, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 35px 2px rgba(59, 130, 246, 0.65);
+  }
+}
+
+.animate-cobalt-glow {
+  animation: cobaltGlow 3.5s ease-in-out infinite;
 }

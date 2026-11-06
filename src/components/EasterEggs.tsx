@@ -59,10 +59,10 @@ export default function EasterEggs() {
     <div
       role="dialog"
       aria-label="Developer Telemetry Console"
-      className="fixed inset-x-4 bottom-4 sm:bottom-6 sm:right-6 sm:left-auto sm:w-96 z-50 rounded-2xl bg-[#090d1c]/95 border border-sky-500/40 p-5 shadow-2xl backdrop-blur-xl font-mono text-xs text-slate-300 animate-fade-in"
+      className="fixed inset-x-4 bottom-4 sm:bottom-6 sm:right-6 sm:left-auto sm:w-96 z-50 rounded-2xl bg-[#080d1a]/95 border border-blue-500/40 p-5 shadow-2xl backdrop-blur-xl font-mono text-xs text-slate-300 animate-fade-in"
     >
-      <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.08]">
-        <div className="flex items-center gap-2 text-sky-400">
+      <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#1e293b]">
+        <div className="flex items-center gap-2 text-blue-400">
           <Terminal size={14} />
           <span className="font-bold">DEV_TELEMETRY // CONSOLE</span>
         </div>
@@ -109,7 +109,7 @@ export default function EasterEggs() {
 
       <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[10px] text-slate-500">
         <span className="flex items-center gap-1">
-          <Activity size={12} className="text-emerald-400 animate-pulse" />
+          <Activity size={12} className="text-[#ccff00] animate-pulse" />
           SYSTEM_ONLINE
         </span>
         <span>Press Shift+D to toggle</span>

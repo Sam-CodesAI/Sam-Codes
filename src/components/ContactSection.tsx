@@ -213,32 +213,40 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
     <section
       id="contact"
       aria-label="Contact Sam"
-      className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.06]"
+      className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-6xl mx-auto border-t border-[#1e293b]"
     >
       <MotionReveal className="flex flex-col items-center text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-sky-400 mb-4 uppercase tracking-wider">
-          <MessageSquare size={13} className="text-sky-400" />
-          Start a Conversation
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#080d1a] border border-[#1e293b] text-xs font-mono text-blue-400 mb-4 uppercase tracking-wider">
+          <MessageSquare size={13} className="text-[#ccff00]" />
+          <span>Start a Conversation</span>
         </div>
 
         <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
           Have Something Worth Building?
         </h2>
 
-        <p className="text-base sm:text-lg text-slate-300 max-w-2xl font-normal leading-relaxed">
-          The fastest way to reach me is via our 24/7 Telegram AI Qualifier (@samarth_master_bot) or direct message on Instagram and LinkedIn. For project briefs or scopes, feel free to send an email.
+        <p className="text-base sm:text-lg text-slate-300 max-w-2xl font-normal leading-relaxed mb-6">
+          The fastest way to reach me is directly on Telegram (@Samarth1306) or via our 3D WebGL transmission portal. For project specifications or formal briefs, send an inquiry below.
         </p>
+
+        <a
+          href="/contact"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-600/20 hover:bg-blue-600 border border-blue-500/40 text-blue-300 hover:text-white font-mono text-xs transition-all shadow-lg shadow-blue-900/20"
+        >
+          <Sparkles size={14} className="text-[#ccff00]" />
+          <span>Launch 3D Cyber Highway Contact Portal ↗</span>
+        </a>
       </MotionReveal>
 
       {/* Primary Social Pathways Grid */}
       <div className="mb-14">
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
-            Preferred Channels (Direct Messaging &amp; AI Bot)
+            Preferred Channels (Direct Messaging &amp; Telegram)
           </span>
-          <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1.5">
+          <span className="text-[11px] font-mono text-[#ccff00] flex items-center gap-1.5 font-bold">
             <Clock size={12} />
-            <span>24/7 Live AI Bot on Telegram · Fast DMs on Instagram</span>
+            <span>Fast DMs on Telegram (@Samarth1306) · Direct Email</span>
           </span>
         </div>
 

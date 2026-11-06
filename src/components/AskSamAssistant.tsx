@@ -136,11 +136,11 @@ export default function AskSamAssistant({
           setIsOpen(!isOpen);
         }}
         aria-label="Toggle Ask Sam interactive assistant"
-        className="fixed bottom-6 right-6 z-40 px-4 py-3 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-mono text-xs shadow-2xl shadow-sky-500/30 flex items-center gap-2 border border-sky-300/30 transition-all hover:scale-105 cursor-pointer backdrop-blur-md"
+        className="fixed bottom-6 right-6 z-40 px-4 py-3 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-mono text-xs shadow-2xl shadow-blue-600/30 flex items-center gap-2 border border-blue-400/30 transition-all hover:scale-105 cursor-pointer backdrop-blur-md"
       >
-        <Sparkles size={16} className="text-yellow-300 animate-spin-slow" />
+        <Sparkles size={16} className="text-[#ccff00]" />
         <span className="font-bold">Ask Sam</span>
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        <span className="w-2 h-2 rounded-full bg-[#ccff00] shadow-[0_0_8px_#ccff00] animate-pulse" />
       </button>
 
       {/* Assistant Modal / Drawer */}
@@ -149,19 +149,19 @@ export default function AskSamAssistant({
           role="dialog"
           aria-modal="true"
           aria-label="Ask Sam Assistant"
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-sm animate-fade-in"
         >
-          <div className="relative w-full sm:max-w-lg h-[80vh] sm:h-[650px] rounded-t-3xl sm:rounded-3xl bg-[#090e1d] border border-white/[0.12] flex flex-col shadow-2xl overflow-hidden">
+          <div className="relative w-full sm:max-w-lg h-[80vh] sm:h-[650px] rounded-t-3xl sm:rounded-3xl bg-[#080d1a] border border-[#1e293b] flex flex-col shadow-2xl overflow-hidden">
             {/* Modal Header */}
-            <div className="p-4 sm:p-5 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.02]">
+            <div className="p-4 sm:p-5 border-b border-[#1e293b] flex items-center justify-between bg-[#0f172a]/80">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+                <div className="w-9 h-9 rounded-xl bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400">
                   <Bot size={18} />
                 </div>
                 <div>
                   <div className="text-sm font-bold text-white flex items-center gap-2">
                     <span>Ask Sam</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#ccff00]/10 text-[#ccff00] border border-[#ccff00]/30 font-semibold">
                       Zero Hallucination
                     </span>
                   </div>
@@ -202,7 +202,7 @@ export default function AskSamAssistant({
                   }`}
                 >
                   {m.sender === "assistant" && (
-                    <div className="w-7 h-7 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0 mt-0.5">
+                    <div className="w-7 h-7 rounded-lg bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0 mt-0.5">
                       <Bot size={14} />
                     </div>
                   )}
@@ -210,15 +210,15 @@ export default function AskSamAssistant({
                   <div
                     className={`max-w-[82%] p-3.5 rounded-2xl leading-relaxed ${
                       m.sender === "user"
-                        ? "bg-sky-600 text-white rounded-tr-none font-sans text-xs sm:text-sm"
-                        : "bg-white/[0.04] border border-white/[0.08] text-slate-200 rounded-tl-none font-sans text-xs sm:text-sm"
+                        ? "bg-blue-600 text-white rounded-tr-none font-sans text-xs sm:text-sm shadow-md shadow-blue-600/20"
+                        : "bg-[#0f172a] border border-[#1e293b] text-slate-200 rounded-tl-none font-sans text-xs sm:text-sm"
                     }`}
                   >
                     {m.text}
                   </div>
 
                   {m.sender === "user" && (
-                    <div className="w-7 h-7 rounded-lg bg-white/[0.08] border border-white/[0.1] flex items-center justify-center text-white shrink-0 mt-0.5">
+                    <div className="w-7 h-7 rounded-lg bg-[#0f172a] border border-[#1e293b] flex items-center justify-center text-blue-300 shrink-0 mt-0.5">
                       <User size={14} />
                     </div>
                   )}
@@ -227,7 +227,7 @@ export default function AskSamAssistant({
 
               {isTyping && (
                 <div className="flex gap-3 items-center text-slate-500 font-mono text-xs">
-                  <div className="w-7 h-7 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0">
+                  <div className="w-7 h-7 rounded-lg bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0">
                     <Bot size={14} />
                   </div>
                   <span className="animate-pulse">Retrieving grounded facts...</span>
@@ -238,13 +238,13 @@ export default function AskSamAssistant({
             </div>
 
             {/* Quick Prompt Chips */}
-            <div className="px-4 py-2 border-t border-white/[0.04] bg-white/[0.01] overflow-x-auto flex gap-1.5 no-scrollbar">
+            <div className="px-4 py-2 border-t border-[#1e293b] bg-[#030509]/60 overflow-x-auto flex gap-1.5 no-scrollbar">
               {DEFAULT_CHIPS.map((chip, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => handleSend(chip)}
-                  className="px-2.5 py-1 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.06] text-[11px] text-slate-300 hover:text-sky-300 transition-colors whitespace-nowrap cursor-pointer shrink-0"
+                  className="px-2.5 py-1 rounded-full bg-[#080d1a] hover:bg-[#0f172a] border border-[#1e293b] hover:border-blue-500/40 text-[11px] text-slate-300 hover:text-white transition-colors whitespace-nowrap cursor-pointer shrink-0"
                 >
                   {chip}
                 </button>
@@ -257,21 +257,21 @@ export default function AskSamAssistant({
                 e.preventDefault();
                 handleSend();
               }}
-              className="p-3 sm:p-4 border-t border-white/[0.08] bg-[#090d1a] flex items-center gap-2"
+              className="p-3 sm:p-4 border-t border-[#1e293b] bg-[#080d1a] flex items-center gap-2"
             >
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Ask about turnaround, scoping, or how Sam builds..."
-                className="flex-1 px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors min-h-[44px]"
+                className="flex-1 px-4 py-3 rounded-xl bg-[#030509] border border-[#1e293b] text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:border-blue-400 transition-colors min-h-[44px]"
               />
 
               <button
                 type="submit"
                 disabled={!inputValue.trim()}
                 aria-label="Send question"
-                className="p-3 rounded-xl bg-sky-500 hover:bg-sky-400 disabled:opacity-40 disabled:pointer-events-none text-slate-950 font-bold transition-all cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
+                className="p-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:pointer-events-none text-white font-bold transition-all cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center shadow-md shadow-blue-600/30"
               >
                 <Send size={16} />
               </button>

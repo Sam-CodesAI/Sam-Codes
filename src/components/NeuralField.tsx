@@ -90,9 +90,9 @@ export default function NeuralField() {
         height * 0.5,
         width * 0.8
       );
-      gradient.addColorStop(0, "rgba(56, 189, 248, 0.04)");
-      gradient.addColorStop(0.5, "rgba(139, 92, 246, 0.02)");
-      gradient.addColorStop(1, "rgba(7, 10, 18, 0)");
+      gradient.addColorStop(0, "rgba(37, 99, 235, 0.05)");
+      gradient.addColorStop(0.5, "rgba(204, 255, 0, 0.015)");
+      gradient.addColorStop(1, "rgba(3, 5, 9, 0)");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, width, height);
 
@@ -136,20 +136,20 @@ export default function NeuralField() {
             ctx.moveTo(nodeA.x, nodeA.y);
             ctx.lineTo(nodeB.x, nodeB.y);
 
-            // Subtle luminous pulse along lines
+            // Subtle luminous pulse along lines (Electric Cobalt)
             const pulse = (Math.sin(frame * 0.03 + i + j) + 1) * 0.5;
-            ctx.strokeStyle = `rgba(147, 197, 253, ${alpha * (0.7 + pulse * 0.3)})`;
+            ctx.strokeStyle = `rgba(59, 130, 246, ${alpha * (0.7 + pulse * 0.3)})`;
             ctx.lineWidth = 0.8;
             ctx.stroke();
 
-            // Occasional light traveling packet
+            // Occasional light traveling packet (Acid Lime)
             if (i % 4 === 0 && !prefersReducedMotion) {
               const packetPos = (frame * 0.015 + (i * 0.1)) % 1;
               const px = nodeA.x + dx * packetPos;
               const py = nodeA.y + dy * packetPos;
               ctx.beginPath();
               ctx.arc(px, py, 1.2, 0, Math.PI * 2);
-              ctx.fillStyle = `rgba(167, 139, 250, ${alpha * 1.4})`;
+              ctx.fillStyle = `rgba(204, 255, 0, ${alpha * 1.5})`;
               ctx.fill();
             }
           }

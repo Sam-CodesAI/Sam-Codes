@@ -47,22 +47,22 @@ export default function Navbar() {
         aria-label="Main Navigation"
         className={`w-full max-w-6xl flex items-center justify-between px-4 sm:px-6 py-2.5 rounded-full transition-all duration-300 ${
           scrolled
-            ? "bg-[#0a0e1c]/80 backdrop-blur-xl border border-white/[0.1] shadow-2xl shadow-black/40"
-            : "bg-white/[0.02] backdrop-blur-md border border-white/[0.06]"
+            ? "bg-[#080d1a]/90 backdrop-blur-xl border border-[#1e293b] shadow-2xl shadow-black/60"
+            : "bg-[#080d1a]/50 backdrop-blur-md border border-[#1e293b]/60"
         }`}
       >
         {/* Brand Name */}
         <a
           href="#"
           onClick={() => soundFx.playChime(440, 0.05)}
-          className="flex items-center gap-2 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 rounded-md"
+          className="flex items-center gap-2.5 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded-md"
         >
-          <span className="w-2 h-2 rounded-full bg-sky-400 shadow-[0_0_8px_#38bdf8] group-hover:scale-125 transition-transform" />
-          <span className="font-mono font-bold tracking-wider text-sm sm:text-base text-white group-hover:text-sky-300 transition-colors">
+          <span className="w-2 h-2 rounded-full bg-[#ccff00] shadow-[0_0_8px_#ccff00] group-hover:scale-125 transition-transform" />
+          <span className="font-mono font-black tracking-wider text-sm sm:text-base text-white group-hover:text-blue-300 transition-colors">
             SAM CODES
           </span>
-          <span className="hidden md:inline text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-sky-500/10 border border-sky-500/20 text-sky-400">
-            AI Native
+          <span className="hidden md:inline text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-blue-600/15 border border-blue-500/30 text-blue-400 font-bold">
+            v2.0
           </span>
         </a>
 
@@ -90,7 +90,7 @@ export default function Navbar() {
             title={soundEnabled ? "Audio FX Active (Click to mute)" : "Enable subtle Audio FX"}
             className={`p-2 rounded-full border transition-all text-xs flex items-center justify-center cursor-pointer min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] ${
               soundEnabled
-                ? "bg-sky-500/10 border-sky-500/30 text-sky-400 shadow-[0_0_12px_rgba(56,189,248,0.2)]"
+                ? "bg-blue-600/15 border-blue-500/40 text-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.3)]"
                 : "bg-white/[0.03] border-white/[0.08] text-slate-400 hover:text-slate-200"
             }`}
           >
@@ -102,17 +102,17 @@ export default function Navbar() {
             type="button"
             onClick={openAskSam}
             aria-label="Open Ask Sam interactive assistant"
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-gradient-to-r from-sky-500/15 to-indigo-500/15 border border-sky-400/25 text-sky-300 hover:text-white hover:border-sky-400/50 hover:from-sky-500/25 hover:to-indigo-500/25 transition-all text-xs font-mono cursor-pointer shadow-sm min-h-[40px] sm:min-h-[44px]"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-blue-600/15 border border-blue-500/30 text-blue-300 hover:text-white hover:border-blue-400 hover:bg-blue-600/25 transition-all text-xs font-mono cursor-pointer shadow-sm min-h-[40px] sm:min-h-[44px]"
           >
-            <Sparkles size={13} className="text-sky-400 animate-pulse" />
+            <Sparkles size={13} className="text-[#ccff00] animate-pulse" />
             <span>Ask Sam</span>
           </button>
 
           {/* Work With Me CTA */}
           <a
-            href="#contact"
+            href="/contact"
             onClick={() => soundFx.playChime(520, 0.08)}
-            className="hidden sm:inline-flex items-center justify-center px-5 py-2 rounded-full bg-white text-slate-950 hover:bg-sky-300 transition-all text-xs font-medium tracking-wide shadow-md hover:shadow-sky-500/25 cursor-pointer min-h-[44px]"
+            className="hidden sm:inline-flex items-center justify-center px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-500 text-white transition-all text-xs font-semibold tracking-wide shadow-md shadow-blue-600/25 cursor-pointer min-h-[44px]"
           >
             Work with me
           </a>
@@ -134,14 +134,14 @@ export default function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-x-4 top-20 bg-[#0a0e1c]/95 backdrop-blur-2xl border border-white/[0.1] rounded-2xl p-6 shadow-2xl flex flex-col gap-4 animate-in fade-in slide-in-from-top-4 duration-200 z-50">
+        <div className="lg:hidden fixed inset-x-4 top-20 bg-[#080d1a]/98 backdrop-blur-2xl border border-[#1e293b] rounded-2xl p-6 shadow-2xl flex flex-col gap-4 animate-in fade-in slide-in-from-top-4 duration-200 z-50">
           <div className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={handleLinkClick}
-                className="text-sm font-mono tracking-wider text-slate-300 hover:text-sky-400 py-3 border-b border-white/[0.04] transition-colors min-h-[44px] flex items-center"
+                className="text-sm font-mono tracking-wider text-slate-300 hover:text-blue-400 py-3 border-b border-white/[0.04] transition-colors min-h-[44px] flex items-center"
               >
                 {link.label}
               </a>
@@ -154,15 +154,15 @@ export default function Navbar() {
                 setMobileMenuOpen(false);
                 openAskSam();
               }}
-              className="w-full py-3.5 px-4 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 font-mono text-xs flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
+              className="w-full py-3.5 px-4 rounded-xl bg-blue-600/15 border border-blue-500/30 text-blue-300 font-mono text-xs flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
             >
-              <Sparkles size={15} />
-              Ask Sam Grounded Assistant
+              <Sparkles size={15} className="text-[#ccff00]" />
+              <span>Ask Sam Grounded Assistant</span>
             </button>
             <a
-              href="#contact"
+              href="/contact"
               onClick={handleLinkClick}
-              className="w-full py-3.5 px-4 rounded-xl bg-white text-slate-950 font-medium text-xs text-center cursor-pointer hover:bg-sky-300 transition-colors min-h-[48px] flex items-center justify-center"
+              className="w-full py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs text-center cursor-pointer transition-colors min-h-[48px] flex items-center justify-center shadow-lg shadow-blue-600/25"
             >
               Work with me directly
             </a>

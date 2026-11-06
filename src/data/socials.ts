@@ -59,13 +59,13 @@ export const CONTACT_CONFIG = {
 export const socialsData: SocialLink[] = [
   {
     platform: "Telegram",
-    url: CONTACT_CONFIG.TELEGRAM_BOT_URL,
-    handleOrLabel: CONTACT_CONFIG.TELEGRAM_BOT_HANDLE,
-    ariaLabel: "Chat with Sam's AI Qualifier bot on Telegram",
+    url: CONTACT_CONFIG.TELEGRAM_PERSONAL_URL,
+    handleOrLabel: CONTACT_CONFIG.TELEGRAM_PERSONAL_HANDLE,
+    ariaLabel: "Message Sam directly on Telegram",
     iconName: "Telegram",
-    directActionLabel: "Chat with AI Bot",
-    priorityBadge: "24/7 Live Bot",
-    description: "Instant requirement qualification, scope assessment, and real-time message routing",
+    directActionLabel: "Chat on Telegram",
+    priorityBadge: "Direct & Instant",
+    description: "Fastest response for project scopes, architecture discussion, and builds",
   },
   {
     platform: "Instagram",

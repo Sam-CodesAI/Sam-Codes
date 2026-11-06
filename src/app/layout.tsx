@@ -60,7 +60,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#06080f",
+  themeColor: "#030509",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -81,7 +81,7 @@ const jsonLd = {
         "name": "SAM CODES",
       },
       "sameAs": [
-        "https://t.me/samarth_master_bot",
+        "https://t.me/Samarth1306",
         "https://www.instagram.com/samarth.buildss/",
         "https://www.linkedin.com/in/sam-codesai",
         "https://x.com/Sam_CodeAI",
@@ -91,7 +91,7 @@ const jsonLd = {
       "knowsAbout": [
         "Artificial Intelligence",
         "AI Agents",
-        "Workflow Automation",
+        "Vector Databases",
         "Next.js",
         "React",
         "TypeScript",
@@ -104,7 +104,7 @@ const jsonLd = {
       "@id": "https://sam-codes.vercel.app/#service",
       "name": "SAM CODES",
       "url": "https://sam-codes.vercel.app",
-      "description": "High-velocity AI chatbots, workflow automations, and modern web applications engineered with zero fabrication.",
+      "description": "High-velocity AI systems, vector engines, and edge telephony engineered with zero fabrication.",
       "provider": {
         "@id": "https://sam-codes.vercel.app/#samarth",
       },
@@ -139,21 +139,21 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="relative bg-[#06080f] text-slate-100 antialiased selection:bg-sky-500/20 selection:text-white min-h-screen">
+      <body className="relative bg-[#030509] text-slate-100 antialiased selection:bg-blue-600/35 selection:text-white min-h-screen">
         {/* Background Neural Canvas */}
         <NeuralField />
 
         {/* Global Privacy Telemetry */}
         <AnalyticsTracker />
 
-        {/* Ambient Top Glow Orbs */}
+        {/* Ambient Top Glow Orbs - Electric Cobalt & Acid Lime */}
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed top-[-15vw] left-[15vw] w-[50vw] h-[40vw] rounded-full glow-orb-cyan blur-[120px] opacity-40 z-0"
+          className="pointer-events-none fixed top-[-15vw] left-[10vw] w-[55vw] h-[45vw] rounded-full glow-orb-cobalt blur-[130px] opacity-40 z-0"
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed top-[30vh] right-[-10vw] w-[45vw] h-[45vw] rounded-full glow-orb-purple blur-[140px] opacity-35 z-0"
+          className="pointer-events-none fixed top-[45vh] right-[-15vw] w-[40vw] h-[40vw] rounded-full glow-orb-lime blur-[150px] opacity-20 z-0"
         />
 
         {/* Main Content Hierarchy */}
