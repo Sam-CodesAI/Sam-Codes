@@ -14,8 +14,8 @@ export interface ArchitectureNode {
 export interface Project {
   title: string;
   slug: string;
-  cartridgeCode: string;
-  punchyOutcome: string;
+  cartridgeCode?: string;
+  punchyOutcome?: string;
   shortDescription: string;
   fullDescription: string;
   category: "AI Application" | "Agentic Workflow" | "Automation" | "Web System" | "Prototype";

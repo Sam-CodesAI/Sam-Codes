@@ -141,7 +141,7 @@ export default function LabSection({
                   <div className="flex items-center gap-2">
                     <FolderGit2 size={15} className="text-blue-400 group-hover:text-[#ccff00] transition-colors" />
                     <span className="text-[11px] font-mono font-bold tracking-wider text-blue-400">
-                      {proj.cartridgeCode}
+                      {proj.cartridgeCode || `DIR://0${idx + 1}_${proj.slug.toUpperCase()}`}
                     </span>
                   </div>
 
@@ -158,7 +158,7 @@ export default function LabSection({
 
                 {/* Punchy 1-line outcome story (Zero numerical spreadsheet report clutter) */}
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal mb-6 line-clamp-3">
-                  {proj.punchyOutcome}
+                  {proj.punchyOutcome || proj.shortDescription}
                 </p>
               </div>
 
