@@ -64,22 +64,22 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
           >
             <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tight text-white leading-tight">
               <span>Hi, I am Samarth.</span>
-              <div className="text-slate-400 font-medium text-2xl sm:text-4xl md:text-5xl xl:text-6xl mt-2 flex flex-wrap items-center gap-x-3">
-                <span className="text-slate-400">I am a</span>
-                <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-white font-extrabold min-h-[1.2em]">
-                  <AnimatePresence mode="wait">
+              <div className="text-slate-400 font-medium text-2xl sm:text-4xl md:text-5xl xl:text-6xl mt-2 flex flex-wrap items-baseline gap-x-3">
+                <span className="text-slate-400 shrink-0">I am a</span>
+                <div className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-white font-extrabold min-h-[1.25em]">
+                  <AnimatePresence mode="popLayout" initial={false}>
                     <motion.span
                       key={roleIndex}
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -20, opacity: 0 }}
-                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                      className="inline-block"
+                      initial={{ y: "80%", opacity: 0 }}
+                      animate={{ y: "0%", opacity: 1 }}
+                      exit={{ y: "-80%", opacity: 0 }}
+                      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                      className="inline-block whitespace-nowrap"
                     >
                       {ROLES[roleIndex]}
                     </motion.span>
                   </AnimatePresence>
-                </span>
+                </div>
               </div>
             </h1>
           </motion.div>
