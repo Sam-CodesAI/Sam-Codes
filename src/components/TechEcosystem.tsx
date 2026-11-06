@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { soundFx } from "@/utils/sound";
+import { motion } from "motion/react";
 import {
   NextjsIcon,
   ReactIcon,
@@ -28,42 +29,84 @@ const STACK = [
   { name: "Git", icon: GithubIcon },
 ];
 
+// Triplicate for seamless 100% infinite marquee loop
+const MARQUEE_STACK = [...STACK, ...STACK, ...STACK];
+
 export default function TechEcosystem() {
+  const [isPaused, setIsPaused] = useState(false);
+
   return (
     <section
-      aria-label="Core Technology Stack"
-      className="relative py-10 px-4 sm:px-6 max-w-7xl mx-auto border-y border-white/[0.06] overflow-hidden"
+      aria-label="Core Technology Wave"
+      className="relative py-10 px-0 max-w-7xl mx-auto border-y border-white/[0.06] overflow-hidden"
     >
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-        <div className="shrink-0 text-left">
-          <span className="text-[11px] font-mono tracking-widest text-slate-500 uppercase block">
-            CORE STACK // VERIFIED PRODUCTION
-          </span>
-          <span className="text-sm font-semibold text-slate-300">
-            Engineered with modern 2026 foundations
+      {/* Top Header Label */}
+      <div className="flex items-center justify-between px-4 sm:px-6 mb-6">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#ccff00]" />
+          <span className="text-[11px] font-mono tracking-widest text-slate-400 uppercase">
+            CORE STACK // DYNAMIC WAVE STREAM
           </span>
         </div>
+        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider hidden sm:inline">
+          Right → Left Continuous Flow
+        </span>
+      </div>
 
-        {/* Minimalist Horizontal Logo Badges */}
-        <div className="flex items-center flex-wrap gap-2.5 sm:gap-3 justify-center sm:justify-end">
-          {STACK.map((tech) => {
+      {/* Infinite Wave Marquee Track with Edge Dissolve Masks */}
+      <div
+        className="relative w-full overflow-hidden py-4"
+        style={{
+          maskImage:
+            "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+        }}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        <motion.div
+          animate={{ x: isPaused ? undefined : ["0%", "-33.333%"] }}
+          transition={{
+            x: {
+              duration: 26,
+              repeat: Infinity,
+              ease: "linear",
+            },
+          }}
+          className="flex items-center gap-4 sm:gap-6 w-max"
+        >
+          {MARQUEE_STACK.map((tech, idx) => {
             const Icon = tech.icon;
+            // Harmonic wave offset based on index to create continuous undulating sine wave
+            const waveDelay = (idx % STACK.length) * 0.35;
+
             return (
-              <div
-                key={tech.name}
+              <motion.div
+                key={`${tech.name}-${idx}`}
+                animate={{
+                  y: [-8, 8, -8],
+                  rotate: [-1.2, 1.2, -1.2],
+                }}
+                transition={{
+                  duration: 4.0,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: waveDelay,
+                }}
                 onMouseEnter={() => soundFx.playHover()}
-                className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.06] hover:border-blue-500/40 transition-all duration-300 cursor-default"
+                className="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] hover:border-blue-400/50 transition-colors duration-300 shadow-lg shadow-black/40 backdrop-blur-md cursor-default shrink-0 select-none"
               >
                 <div className="text-slate-400 group-hover:text-blue-400 transition-colors">
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-4 h-4" />
                 </div>
-                <span className="text-xs font-mono text-slate-300 group-hover:text-white transition-colors">
+                <span className="text-xs font-mono font-medium text-slate-300 group-hover:text-white transition-colors">
                   {tech.name}
                 </span>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
