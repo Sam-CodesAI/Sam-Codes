@@ -11,9 +11,6 @@ import {
   FolderOpen,
   Folder,
   Send,
-  Zap,
-  Cpu,
-  Layers,
   ChevronDown,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -34,27 +31,27 @@ interface FolderService {
 const SERVICE_FOLDERS: FolderService[] = [
   {
     id: "folder-freelance",
-    folderCode: "DIR://01_TECH_FREELANCE_LIBRARY",
-    title: "Engineering Micro-Fixes & Fast Integrations",
-    tagline: "Micro-fixes, Python scrapers, third-party API/webhooks, & Next.js performance tuning.",
+    folderCode: "01 // FAST INTEGRATIONS & FIXES",
+    title: "Engineering Micro-Fixes & Integrations",
+    tagline: "Python scrapers, webhook cascades, API bridges, & Next.js performance tuning.",
     turnaround: "24 – 48 Hours",
     priceUsd: "$120 – $280",
     priceInr: "₹9,999 – ₹22,999",
-    highlight: "SPEED & IMMEDIATE REPAIR",
+    highlight: "SPEED & PRECISION",
     description:
-      "Rapid turnaround engineering for business owners and teams blocked by fragile scrapers, broken webhook deliveries, sluggish page loads, or complex third-party API schemas. Fixed cleanly with zero fluff.",
+      "Rapid turnaround engineering for teams blocked by fragile scrapers, broken webhook deliveries, sluggish page loads, or complex third-party API schemas. Fixed cleanly with zero fluff.",
     deliverables: [
       {
         title: "Resilient Web Scraping Pipelines",
-        desc: "Python Asyncio + Playwright scrapers with schema validation, proxy rotation, and automated Google Sheets sync.",
+        desc: "Python Asyncio + Playwright scrapers with schema validation, proxy rotation, and automated sync.",
       },
       {
         title: "Third-Party API & Webhook Bridges",
-        desc: "Edge webhook receivers with HMAC verification, retry cascades, and instant Telegram/Discord CRM alerts.",
+        desc: "Edge webhook receivers with HMAC verification, retry cascades, and instant notifications.",
       },
       {
         title: "Next.js & Frontend Performance Tuning",
-        desc: "Lighthouse optimization, Core Web Vitals audit (LCP < 2s, zero CLS), and bundle pruning.",
+        desc: "Core Web Vitals audit (LCP < 2s, zero CLS), hydration fixes, and bundle pruning.",
       },
       {
         title: "Surgical Code Repairs & Debugging",
@@ -64,13 +61,13 @@ const SERVICE_FOLDERS: FolderService[] = [
   },
   {
     id: "folder-ai-systems",
-    folderCode: "DIR://02_SPECIALIZED_AI_SYSTEMS",
+    folderCode: "02 // SPECIALIZED AI & MVPS",
     title: "Specialized AI Systems & Full-Stack MVPs",
-    tagline: "AI Voice Agents, Custom Vector RAG, Autonomous Lead/CRM bots, & Rapid Full-Stack MVPs.",
+    tagline: "Real-time AI voice pipelines, custom vector RAG, autonomous bots, & Bento web apps.",
     turnaround: "3 – 7 Days",
     priceUsd: "$450 – $1,250",
     priceInr: "₹37,500 – ₹99,000",
-    highlight: "DEEP FIRST-PRINCIPLES CRAFT",
+    highlight: "FIRST-PRINCIPLES CRAFT",
     description:
       "Full-scope production architectures built from the ground up: sub-300ms edge telephony agents, clean-room hybrid vector search engines, autonomous CRM qualification bots, and modern 2026 Bento web applications.",
     deliverables: [
@@ -117,24 +114,24 @@ export default function ServicesSection({
     <section
       id="services"
       aria-label="Services & Systems"
-      className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-7xl mx-auto border-t border-[#1e293b]"
+      className="relative py-28 sm:py-36 px-4 sm:px-6 max-w-7xl mx-auto border-t border-white/[0.06]"
     >
       <MotionReveal className="flex flex-col items-center text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#080d1a] border border-[#1e293b] text-xs font-mono text-blue-400 mb-4 uppercase tracking-wider">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-blue-400 mb-4 uppercase tracking-wider backdrop-blur-md">
           <Wrench size={13} className="text-[#ccff00]" />
-          <span>Services // 2-Folder Interactive Cartridges</span>
+          <span>Services // Direct Collaboration</span>
         </div>
 
-        <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-4">
+        <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-4">
           Services &amp; Systems
         </h2>
 
-        <p className="text-base sm:text-lg text-slate-300 max-w-2xl font-normal leading-relaxed">
-          Direct collaboration with Samarth. Select a folder to inspect deliverables, pricing, and turnarounds.
+        <p className="text-base sm:text-lg text-slate-400 max-w-2xl font-normal leading-relaxed">
+          Direct engineering partnership with Samarth. Select a drawer to inspect deliverables and turnarounds.
         </p>
 
         {/* Currency Switcher */}
-        <div className="inline-flex items-center p-1 rounded-full bg-[#080d1a] border border-[#1e293b] mt-6 backdrop-blur-md">
+        <div className="inline-flex items-center p-1 rounded-full bg-white/[0.04] border border-white/[0.08] mt-6 backdrop-blur-md">
           <button
             type="button"
             onClick={() => {
@@ -143,7 +140,7 @@ export default function ServicesSection({
             }}
             className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
               currency === "USD"
-                ? "bg-blue-600 text-white font-bold shadow-md shadow-blue-600/30"
+                ? "bg-blue-600/30 text-white font-semibold border border-blue-500/50 shadow-md shadow-blue-600/20"
                 : "text-slate-400 hover:text-white"
             }`}
           >
@@ -157,7 +154,7 @@ export default function ServicesSection({
             }}
             className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
               currency === "INR"
-                ? "bg-blue-600 text-white font-bold shadow-md shadow-blue-600/30"
+                ? "bg-blue-600/30 text-white font-semibold border border-blue-500/50 shadow-md shadow-blue-600/20"
                 : "text-slate-400 hover:text-white"
             }`}
           >
@@ -166,151 +163,146 @@ export default function ServicesSection({
         </div>
       </MotionReveal>
 
-      {/* 2-Folder Interactive Accordion Cartridges */}
+      {/* 2-Folder Interactive Accordion Drawers with Archival Tabs */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {SERVICE_FOLDERS.map((folder) => {
           const isOpen = !!openFolders[folder.id];
 
           return (
-            <div
-              key={folder.id}
-              className="rounded-3xl bg-[#080d1a] border border-[#1e293b] hover:border-blue-500/40 transition-all duration-300 shadow-xl overflow-hidden backdrop-blur-xl relative"
-            >
-              {/* Folder Header Banner (Clickable Accordion) */}
-              <button
-                type="button"
-                onClick={() => toggleFolder(folder.id)}
-                className="w-full p-6 sm:p-8 text-left flex items-start justify-between gap-4 cursor-pointer focus:outline-none group border-b border-[#1e293b]"
-              >
-                <div>
-                  <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                    <div className="chamfer-tab bg-blue-600/20 border-l-2 border-t border-b border-blue-500/40 px-3.5 py-1 flex items-center gap-2">
-                      {isOpen ? (
-                        <FolderOpen size={16} className="text-[#ccff00]" />
-                      ) : (
-                        <Folder size={16} className="text-blue-400" />
-                      )}
-                      <span className="text-xs font-mono font-bold text-blue-400 group-hover:text-blue-300 transition-colors">
-                        {folder.folderCode}
+            <div key={folder.id} className="flex flex-col group">
+              {/* Archival Folder Tab */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 self-start rounded-t-xl bg-[#0c1424] border-t border-x border-white/[0.08] group-hover:border-blue-500/40 group-hover:bg-[#101b33] transition-all text-[11px] font-mono text-slate-400 group-hover:text-blue-300">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:bg-[#ccff00] transition-colors" />
+                <span>{folder.folderCode}</span>
+              </div>
+
+              {/* Folder Drawer Container */}
+              <div className="rounded-b-2xl rounded-tr-2xl bg-[#080d1a] border border-white/[0.08] group-hover:border-blue-500/40 transition-all duration-300 shadow-xl overflow-hidden backdrop-blur-xl">
+                {/* Folder Header Banner */}
+                <button
+                  type="button"
+                  onClick={() => toggleFolder(folder.id)}
+                  className="w-full p-6 sm:p-8 text-left flex items-start justify-between gap-4 cursor-pointer focus:outline-none group/btn border-b border-white/[0.06]"
+                >
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2.5 mb-3">
+                      <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-semibold">
+                        {folder.highlight}
                       </span>
                     </div>
 
-                    <span className="chamfer-tag text-[10px] font-mono px-2.5 py-1 bg-blue-600/10 text-blue-400 border border-blue-500/20 font-semibold">
-                      {folder.highlight}
-                    </span>
+                    <h3 className="text-xl sm:text-2xl font-bold text-white group-hover/btn:text-blue-200 transition-colors">
+                      {folder.title}
+                    </h3>
+
+                    <p className="text-xs sm:text-sm text-slate-300 mt-2 font-normal">
+                      {folder.tagline}
+                    </p>
                   </div>
 
-                  <h3 className="text-xl sm:text-2xl font-black text-white group-hover:text-blue-200 transition-colors">
-                    {folder.title}
-                  </h3>
+                  <div className="p-2 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-400 group-hover/btn:text-white shrink-0 mt-1">
+                    <ChevronDown
+                      size={16}
+                      className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-blue-400" : ""}`}
+                    />
+                  </div>
+                </button>
 
-                  <p className="text-xs sm:text-sm text-slate-300 mt-2 font-normal">
-                    {folder.tagline}
-                  </p>
-                </div>
-
-                <div className="p-2 rounded-full bg-[#0f172a] border border-[#1e293b] text-slate-400 group-hover:text-white shrink-0 mt-1">
-                  <ChevronDown
-                    size={16}
-                    className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-blue-400" : ""}`}
-                  />
-                </div>
-              </button>
-
-              {/* Accordion Drawer Content */}
-              <AnimatePresence initial={false}>
-                {isOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                    className="overflow-hidden"
-                  >
-                    <div className="p-6 sm:p-8 space-y-6">
-                      {/* Price & Turnaround Badge Strip */}
-                      <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-[#030509] border border-[#1e293b] font-mono text-xs">
-                        <div>
-                          <span className="text-slate-500 text-[10px] uppercase block">
-                            Estimated Investment
-                          </span>
-                          <span className="text-lg font-black text-[#ccff00]">
-                            {currency === "USD" ? folder.priceUsd : folder.priceInr}
-                          </span>
+                {/* Accordion Drawer Content */}
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-6 sm:p-8 space-y-6">
+                        {/* Price & Turnaround Strip */}
+                        <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] font-mono text-xs">
+                          <div>
+                            <span className="text-slate-500 text-[10px] uppercase block">
+                              Estimated Investment
+                            </span>
+                            <span className="text-lg font-bold text-[#ccff00]">
+                              {currency === "USD" ? folder.priceUsd : folder.priceInr}
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-slate-500 text-[10px] uppercase block">
+                              Typical Turnaround
+                            </span>
+                            <span className="text-white font-semibold">
+                              ⏱ {folder.turnaround}
+                            </span>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <span className="text-slate-500 text-[10px] uppercase block">
-                            Typical Turnaround
-                          </span>
-                          <span className="text-white font-bold">
-                            ⏱ {folder.turnaround}
-                          </span>
-                        </div>
-                      </div>
 
-                      {/* Description */}
-                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                        {folder.description}
-                      </p>
+                        {/* Description */}
+                        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                          {folder.description}
+                        </p>
 
-                      {/* Deliverables List */}
-                      <div className="space-y-3">
-                        <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block font-bold">
-                          Core Deliverables:
-                        </span>
-                        <div className="space-y-2.5">
-                          {folder.deliverables.map((item, dIdx) => (
-                            <div
-                              key={dIdx}
-                              className="p-3.5 rounded-xl bg-[#0f172a]/70 border border-[#1e293b] flex items-start gap-3"
-                            >
-                              <Check
-                                size={15}
-                                className="text-[#ccff00] shrink-0 mt-0.5"
-                              />
-                              <div>
-                                <h4 className="text-xs font-bold text-white mb-0.5">
-                                  {item.title}
-                                </h4>
-                                <p className="text-[11px] text-slate-400 leading-relaxed font-mono">
-                                  {item.desc}
-                                </p>
+                        {/* Deliverables List */}
+                        <div className="space-y-3">
+                          <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block font-bold">
+                            Core Deliverables:
+                          </span>
+                          <div className="space-y-2">
+                            {folder.deliverables.map((item, dIdx) => (
+                              <div
+                                key={dIdx}
+                                className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-start gap-3"
+                              >
+                                <Check
+                                  size={15}
+                                  className="text-[#ccff00] shrink-0 mt-0.5"
+                                />
+                                <div>
+                                  <h4 className="text-xs font-bold text-white mb-0.5">
+                                    {item.title}
+                                  </h4>
+                                  <p className="text-[11px] text-slate-400 leading-relaxed font-mono">
+                                    {item.desc}
+                                  </p>
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Bottom Actions */}
+                        <div className="pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3">
+                          <span className="text-[11px] font-mono text-slate-500">
+                            Direct collaboration with Samarth
+                          </span>
+
+                          <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <a
+                              href="https://t.me/Samarth1306"
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex-1 sm:flex-none px-4 py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-md shadow-blue-600/20 cursor-pointer min-h-[44px]"
+                            >
+                              <Send size={13} />
+                              <span>Talk on Telegram</span>
+                            </a>
+
+                            <Link
+                              href="/contact"
+                              className="flex-1 sm:flex-none px-4 py-2.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-200 hover:text-white font-mono text-xs font-semibold flex items-center justify-center gap-1 transition-all cursor-pointer min-h-[44px]"
+                            >
+                              <span>Open Brief</span>
+                              <ArrowUpRight size={13} />
+                            </Link>
+                          </div>
                         </div>
                       </div>
-
-                      {/* Bottom Actions */}
-                      <div className="pt-4 border-t border-[#1e293b] flex flex-col sm:flex-row items-center justify-between gap-3">
-                        <span className="text-[11px] font-mono text-slate-500">
-                          Direct collaboration with Samarth
-                        </span>
-
-                        <div className="flex items-center gap-2 w-full sm:w-auto">
-                          <a
-                            href="https://t.me/Samarth1306"
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex-1 sm:flex-none px-4 py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-md shadow-blue-600/20 cursor-pointer min-h-[44px]"
-                          >
-                            <Send size={13} />
-                            <span>Talk on Telegram</span>
-                          </a>
-
-                          <Link
-                            href="/contact"
-                            className="flex-1 sm:flex-none px-4 py-2.5 rounded-full bg-[#0f172a] hover:bg-[#1e293b] border border-[#1e293b] text-slate-200 hover:text-white font-mono text-xs font-semibold flex items-center justify-center gap-1 transition-all cursor-pointer min-h-[44px]"
-                          >
-                            <span>Open Brief</span>
-                            <ArrowUpRight size={13} />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           );
         })}
