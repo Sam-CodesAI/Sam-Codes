@@ -37,7 +37,7 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
     <section
       id="hero"
       aria-label="Introduction"
-      className="relative min-h-[90vh] flex flex-col justify-center px-4 sm:px-6 lg:px-12 pt-28 pb-16 max-w-7xl mx-auto overflow-hidden"
+      className="relative min-h-[90vh] flex flex-col justify-center px-4 sm:px-6 lg:px-12 pt-28 pb-16 sm:pb-24 lg:pb-32 mb-12 max-w-7xl mx-auto overflow-hidden"
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         {/* Left Side: Editorial Typography & Actions (7 cols) */}
@@ -47,10 +47,10 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md mb-8"
+            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md mb-8 max-w-full min-w-0"
           >
-            <span className="w-2 h-2 rounded-full bg-[#ccff00] shadow-[0_0_8px_#ccff00]" />
-            <span className="text-xs font-mono tracking-wider text-slate-300">
+            <span className="w-2 h-2 rounded-full bg-[#ccff00] shadow-[0_0_8px_#ccff00] shrink-0" />
+            <span className="text-xs font-mono tracking-wider text-slate-300 truncate break-all">
               Karnataka, India <span className="text-blue-500">•</span> 17yo Builder
             </span>
           </motion.div>
@@ -175,13 +175,13 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-              className="absolute -bottom-3 sm:-bottom-4 left-auto right-auto px-4 py-2 rounded-full bg-[#080d1a]/85 backdrop-blur-xl border border-white/10 shadow-2xl z-20 flex items-center gap-2.5"
+              className="absolute -bottom-3 sm:-bottom-4 left-auto right-auto px-4 py-2 rounded-full bg-[#080d1a]/85 backdrop-blur-xl border border-white/10 shadow-2xl z-20 flex items-center gap-2.5 max-w-[90%] min-w-0"
             >
-              <span className="relative flex h-2 w-2">
+              <span className="relative flex h-2 w-2 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ccff00] opacity-80" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ccff00] shadow-[0_0_8px_#ccff00]" />
               </span>
-              <span className="text-xs font-mono font-medium text-slate-200 tracking-wide">
+              <span className="text-xs font-mono font-medium text-slate-200 tracking-wide truncate break-all">
                 Available for builds &amp; systems
               </span>
             </motion.div>

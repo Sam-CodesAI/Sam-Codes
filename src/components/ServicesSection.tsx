@@ -171,9 +171,9 @@ export default function ServicesSection({
           return (
             <div key={folder.id} className="flex flex-col group">
               {/* Archival Folder Tab */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 self-start rounded-t-xl bg-[#0c1424] border-t border-x border-white/[0.08] group-hover:border-blue-500/40 group-hover:bg-[#101b33] transition-all text-[11px] font-mono text-slate-400 group-hover:text-blue-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:bg-[#ccff00] transition-colors" />
-                <span>{folder.folderCode}</span>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 self-start rounded-t-xl bg-[#0c1424] border-t border-x border-white/[0.08] group-hover:border-blue-500/40 group-hover:bg-[#101b33] transition-all text-[11px] font-mono text-slate-400 group-hover:text-blue-300 max-w-full min-w-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:bg-[#ccff00] transition-colors shrink-0" />
+                <span className="truncate break-all">{folder.folderCode}</span>
               </div>
 
               {/* Folder Drawer Container */}

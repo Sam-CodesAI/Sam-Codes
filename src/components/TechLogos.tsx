@@ -232,13 +232,13 @@ export function TechBadge({
     <span
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`relative inline-flex items-center rounded-lg bg-[#080d1a] border border-[#1e293b] text-slate-300 transition-all font-mono select-none ${sizeClasses} ${
+      className={`relative inline-flex items-center rounded-lg bg-[#080d1a] border border-[#1e293b] text-slate-300 transition-all font-mono select-none max-w-full min-w-0 ${sizeClasses} ${
         hovered ? "border-blue-500/60 text-white shadow-sm shadow-blue-500/20" : "hover:border-slate-700"
       }`}
     >
       {IconComponent && (
         <span
-          className="transition-transform duration-300"
+          className="transition-transform duration-300 shrink-0"
           style={{
             transform: hovered ? "scale(1.15)" : "scale(1)",
             color: hovered ? (logoInfo?.glowColor || "#38bdf8") : "currentColor",
@@ -247,7 +247,7 @@ export function TechBadge({
           <IconComponent className={size === "xs" ? "w-3 h-3" : "w-3.5 h-3.5"} />
         </span>
       )}
-      <span>{name}</span>
+      <span className="truncate break-all">{name}</span>
 
       {/* Micro-tooltip */}
       {hovered && logoInfo && (

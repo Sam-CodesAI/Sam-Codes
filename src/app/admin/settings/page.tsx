@@ -608,7 +608,7 @@ export default function AdminSettingsPage() {
                 {geminiStatus?.maskedKey && (
                   <div className="text-[11px] font-mono text-slate-400 flex items-center gap-2">
                     <span className="text-slate-500">Key:</span>
-                    <code className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.1] text-sky-300">
+                    <code className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.1] text-sky-300 break-all truncate">
                       {geminiStatus.maskedKey}
                     </code>
                     {geminiStatus.source === "database" && (

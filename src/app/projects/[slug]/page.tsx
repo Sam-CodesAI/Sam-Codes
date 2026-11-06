@@ -86,8 +86,8 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
 
         {/* Hero Header Cartridge */}
         <header className="p-8 sm:p-12 rounded-3xl bg-[#080d1a]/85 border border-[#1e293b] backdrop-blur-xl space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-            <span className="px-3 py-1 rounded-md bg-blue-600/20 text-blue-400 border border-blue-500/30 font-bold tracking-wider">
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono min-w-0">
+            <span className="px-3 py-1 rounded-md bg-blue-600/20 text-blue-400 border border-blue-500/30 font-bold tracking-wider truncate break-all max-w-full">
               {project.cartridgeCode}
             </span>
             <div className="flex items-center gap-2 text-slate-400">

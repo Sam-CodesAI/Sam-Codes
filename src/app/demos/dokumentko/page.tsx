@@ -151,19 +151,19 @@ import DokumentkoCheckoutModal from "./DokumentkoCheckoutModal";
                 <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-1.5">
                   <span className="font-bold text-white text-sm">1. Removed Invoice Wall</span>
                   <p>
-                    Replaced the mandatory pre-checkout <code className="text-indigo-300 font-mono">BillingProfileModal</code> that demanded physical street addresses and tax IDs before Stripe opened.
+                    Replaced the mandatory pre-checkout <code className="text-indigo-300 font-mono break-all truncate">BillingProfileModal</code> that demanded physical street addresses and tax IDs before Stripe opened.
                   </p>
                 </div>
                 <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-1.5">
                   <span className="font-bold text-white text-sm">2. Monthly Pricing by Default</span>
                   <p>
-                    Replaced <code className="text-indigo-300 font-mono">useState(&quot;annual&quot;)</code> with monthly default so users clicking €3.99 ads are not shocked by a ~€24 - €48 annual lump sum.
+                    Replaced <code className="text-indigo-300 font-mono break-all truncate">useState(&quot;annual&quot;)</code> with monthly default so users clicking €3.99 ads are not shocked by a ~€24 - €48 annual lump sum.
                   </p>
                 </div>
                 <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-1.5">
                   <span className="font-bold text-white text-sm">3. Dynamic Locale Support</span>
                   <p>
-                    Bypassed hardcoded <code className="text-indigo-300 font-mono">&lt;html lang=&quot;sl&quot;&gt;</code> defaults with auto-detecting English/Slovenian toggle for global ad traffic.
+                    Bypassed hardcoded <code className="text-indigo-300 font-mono break-all truncate">&lt;html lang=&quot;sl&quot;&gt;</code> defaults with auto-detecting English/Slovenian toggle for global ad traffic.
                   </p>
                 </div>
                 <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-1.5">
@@ -204,7 +204,7 @@ import DokumentkoCheckoutModal from "./DokumentkoCheckoutModal";
                 </div>
                 <h2 className="text-xl font-bold mb-2">Self-Service Handoff</h2>
                 <p className="text-xs text-white/60 leading-relaxed mb-4">
-                  If you have a developer on your team or build via Lovable/Vite, you can take the standalone component file <code className="text-indigo-300">DokumentkoCheckoutModal.tsx</code> and drop it into your repository for free.
+                  If you have a developer on your team or build via Lovable/Vite, you can take the standalone component file <code className="text-indigo-300 font-mono break-all truncate">DokumentkoCheckoutModal.tsx</code> and drop it into your repository for free.
                 </p>
                 <ul className="text-xs text-white/70 space-y-2 mb-6">
                   <li className="flex items-center gap-2">

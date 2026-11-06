@@ -125,9 +125,9 @@ export default function LabSection({
             className="flex flex-col group"
           >
             {/* Archival Folder Tab (Sticking out above the main folder) */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 self-start rounded-t-xl bg-[#0c1424] border-t border-x border-white/[0.08] group-hover:border-blue-500/40 group-hover:bg-[#101b33] transition-all text-[11px] font-mono text-slate-400 group-hover:text-blue-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:bg-[#ccff00] transition-colors" />
-              <span className="tracking-wider">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 self-start rounded-t-xl bg-[#0c1424] border-t border-x border-white/[0.08] group-hover:border-blue-500/40 group-hover:bg-[#101b33] transition-all text-[11px] font-mono text-slate-400 group-hover:text-blue-300 max-w-full min-w-0">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:bg-[#ccff00] transition-colors shrink-0" />
+              <span className="tracking-wider truncate break-all">
                 {`0${idx + 1} // ${proj.slug.toUpperCase()}`}
               </span>
             </div>
@@ -163,12 +163,12 @@ export default function LabSection({
 
               {/* Footer: Tech Stack Badges + Warp Trigger */}
               <div>
-                <div className="flex flex-wrap gap-1.5 mb-5">
+                <div className="flex flex-wrap gap-1.5 mb-5 min-w-0">
                   {proj.technologies.slice(0, 3).map((tech) => (
                     <TechBadge key={tech} name={tech} size="xs" />
                   ))}
                   {proj.technologies.length > 3 && (
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white/[0.03] text-slate-400 border border-white/[0.08]">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-white/[0.03] text-slate-400 border border-white/[0.08] shrink-0 truncate break-all">
                       +{proj.technologies.length - 3}
                     </span>
                   )}
@@ -216,11 +216,11 @@ export default function LabSection({
               <p className="text-xs text-slate-400 leading-relaxed mb-3">
                 {exp.description}
               </p>
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1 min-w-0">
                 {exp.techStack.map((tech) => (
                   <span
                     key={tech}
-                    className="text-[9px] font-mono px-2 py-0.5 rounded bg-white/[0.03] text-slate-400 border border-white/[0.06]"
+                    className="text-[9px] font-mono px-2 py-0.5 rounded bg-white/[0.03] text-slate-400 border border-white/[0.06] truncate break-all max-w-full"
                   >
                     {tech}
                   </span>
