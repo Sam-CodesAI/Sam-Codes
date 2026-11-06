@@ -34,24 +34,18 @@ export default function Footer() {
         </div>
 
         {/* Quick Nav Links */}
-        <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] uppercase tracking-wider text-slate-400">
-          <a href="#capabilities" className="hover:text-white transition-colors">
-            Capabilities
-          </a>
-          <a href="#lab" className="hover:text-white transition-colors">
+        <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] uppercase tracking-wider text-slate-400">
+          <a href="/#lab" className="hover:text-white transition-colors">
             The Lab
           </a>
-          <a href="#process" className="hover:text-white transition-colors">
-            Process
-          </a>
-          <a href="#about" className="hover:text-white transition-colors">
+          <a href="/#about" className="hover:text-white transition-colors">
             About
           </a>
-          <a href="#services" className="hover:text-white transition-colors">
+          <a href="/#services" className="hover:text-white transition-colors">
             Services
           </a>
-          <Link href="/contact" className="text-blue-400 hover:text-white transition-colors">
-            Contact Portal
+          <Link href="/contact" className="text-[#ccff00] hover:text-white transition-colors">
+            Reach Me [Portal]
           </Link>
         </div>
 

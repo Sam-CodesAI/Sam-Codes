@@ -5,12 +5,10 @@ import { Volume2, VolumeX, Sparkles, Menu, X } from "lucide-react";
 import { soundFx } from "@/utils/sound";
 
 const NAV_LINKS = [
-  { label: "Capabilities", href: "#capabilities" },
-  { label: "The Lab", href: "#lab" },
-  { label: "Process", href: "#process" },
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Contact", href: "#contact" },
+  { label: "The Lab", href: "/#lab" },
+  { label: "About", href: "/#about" },
+  { label: "Services", href: "/#services" },
+  { label: "Reach Me", href: "/contact" },
 ];
 
 export default function Navbar() {

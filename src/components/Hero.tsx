@@ -124,16 +124,14 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
 
             <MagneticButton pullFactor={0.2}>
               <motion.a
-                href="https://t.me/Samarth1306"
-                target="_blank"
-                rel="noreferrer"
+                href="/contact"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => soundFx.playChime(640, 0.08)}
                 className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-[#080d1a] hover:bg-[#0f172a] border border-[#1e293b] hover:border-blue-500/40 text-slate-200 hover:text-white font-medium text-sm transition-all flex items-center justify-center gap-2 backdrop-blur-md cursor-pointer"
               >
-                <Send size={15} className="text-blue-400" />
-                <span>Talk on Telegram</span>
+                <Send size={15} className="text-[#ccff00]" />
+                <span>Reach Me (Portal)</span>
               </motion.a>
             </MagneticButton>
           </motion.div>

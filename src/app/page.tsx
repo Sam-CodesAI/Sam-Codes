@@ -2,83 +2,60 @@ import React from "react";
 import CinematicIntro from "@/components/CinematicIntro";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Statement from "@/components/Statement";
-import CapabilitiesSection from "@/components/CapabilitiesSection";
+import TechEcosystem from "@/components/TechEcosystem";
 import LabSection from "@/components/LabSection";
-import ProcessSection from "@/components/ProcessSection";
 import AboutSection from "@/components/AboutSection";
-import ExploringSection from "@/components/ExploringSection";
-import MilestonesSection from "@/components/MilestonesSection";
 import ServicesSection from "@/components/ServicesSection";
-import ContactSection from "@/components/ContactSection";
+import ReachCTA from "@/components/ReachCTA";
 import Footer from "@/components/Footer";
 import AskSamAssistant from "@/components/AskSamAssistant";
 import EasterEggs from "@/components/EasterEggs";
-import {
-  getProfile,
-  getProjects,
-  getServices,
-  getExploringTopics,
-  getCapabilities,
-  getSocialLinks,
-  getAssistantKnowledge,
-} from "@/lib/data-service";
 import { profileData } from "@/data/profile";
-import { projectsData, experimentsData, Project } from "@/data/projects";
-import { servicesData } from "@/data/services";
-import { exploringData } from "@/data/exploring";
-import { buildingWithStack, exploringStack, coreCapabilities } from "@/data/capabilities";
-import { socialsData } from "@/data/socials";
+import { projectsData, experimentsData } from "@/data/projects";
 import { assistantKnowledgeBase } from "@/data/assistantKnowledge";
+import { getProfile, getAssistantKnowledge } from "@/lib/data-service";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [profile, projects, services, exploringTopics, capabilities, socials, knowledge] =
-    await Promise.all([
-      getProfile().catch(() => profileData),
-      getProjects(false).catch(() => []),
-      getServices().catch(() => servicesData),
-      getExploringTopics().catch(() => exploringData),
-      getCapabilities().catch(() => ({
-        buildingWith: buildingWithStack,
-        exploringStack,
-        coreCapabilities,
-      })),
-      getSocialLinks().catch(() => socialsData),
-      getAssistantKnowledge().catch(() => assistantKnowledgeBase),
-    ]);
+  const [profile, knowledge] = await Promise.all([
+    getProfile().catch(() => profileData),
+    getAssistantKnowledge().catch(() => assistantKnowledgeBase),
+  ]);
 
   return (
     <>
-      {/* Opening sequence for first-time session arrivals */}
+      {/* 1. Opening anime diagnostic bootloader sequence */}
       <CinematicIntro />
 
-      {/* Floating navigation header */}
+      {/* 2. Floating navigation bar */}
       <Navbar />
 
-      {/* Core Portfolio Page Flow */}
+      {/* 3. Core Portfolio Flow */}
       <main className="flex-1 flex flex-col">
+        {/* Minimalist Hero with dynamic roles, founder portrait, and 3D Vector Core */}
         <Hero profile={profile} />
-        <Statement profile={profile} />
-        <CapabilitiesSection
-          capabilities={capabilities.coreCapabilities}
-          buildingWith={capabilities.buildingWith}
-          exploring={capabilities.exploringStack}
-        />
+
+        {/* Tech Stack Ecosystem Bar with clickable monochrome glass logos */}
+        <TechEcosystem />
+
+        {/* The Lab: Flagship Anime Cyber-Folder Cartridges -> Anime portal warp to /projects/[slug] */}
         <LabSection
-          projects={projects.length > 0 ? (projects as unknown as Project[]) : projectsData}
+          projects={projectsData}
           experiments={experimentsData}
         />
-        <ProcessSection />
-        <AboutSection profile={profile} />
-        <ExploringSection exploringTopics={exploringTopics} />
-        <MilestonesSection />
-        <ServicesSection services={services} />
-        <ContactSection socials={socials} />
+
+        {/* About Me: Sticky Pinned Founder Portrait with 70% Dark Fade & Narrative Scrolling Over It */}
+        <AboutSection />
+
+        {/* Services: 2-Folder Interactive System (Freelance Library & Specialized AI) */}
+        <ServicesSection />
+
+        {/* Reach Me: Terminal CTA directing to the dedicated /contact 3D Cyber Highway */}
+        <ReachCTA />
       </main>
 
-      {/* Footer credits and links */}
+      {/* Footer credits and quick links */}
       <Footer />
 
       {/* Floating Interactive Assistant */}
