@@ -35,8 +35,8 @@ backups/
 app-store.json
 *.tsbuildinfo
 # Subprojects and external cloned repos
-projects/
-SutraDB/
+/projects/
+/SutraDB/
 .repos/
 sam-codeai-manager/
 .reddit-tokens.json
