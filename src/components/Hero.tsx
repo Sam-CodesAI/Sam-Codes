@@ -2,25 +2,18 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import dynamic from "next/dynamic";
-import { ArrowDownRight, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowDownRight, ArrowRight } from "lucide-react";
 import { profileData, ProfileData } from "@/data/profile";
 import { soundFx } from "@/utils/sound";
 import { motion, AnimatePresence } from "motion/react";
 import MagneticButton from "@/components/MagneticButton";
-
-// Dynamically load 3D Vector Core to guarantee sub-2s initial load and zero SSR issues
-const VectorCore3D = dynamic(() => import("@/components/3d/VectorCore3D"), {
-  ssr: false,
-  loading: () => null,
-});
 
 const ROLES = [
   "Web Designer",
   "AI Systems Engineer",
   "Creative Developer",
   "Vector Engine Creator",
-  "Autonomous Agent Builder",
+  "AI Agent Architect",
 ] as const;
 
 export default function Hero({ profile = profileData }: { profile?: ProfileData }) {
@@ -55,7 +48,7 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
             </span>
           </motion.div>
 
-          {/* Minimalist Headline with Smooth Dynamic Ticker */}
+          {/* Minimalist Headline with Stable Dynamic Ticker */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -63,18 +56,18 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
             className="mb-6 w-full"
           >
             <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tight text-white leading-tight">
-              <span>Hi, I am Samarth.</span>
-              <div className="text-slate-400 font-medium text-2xl sm:text-4xl md:text-5xl xl:text-6xl mt-2 flex flex-wrap items-baseline gap-x-3">
+              <span className="block">Hi, I am Samarth.</span>
+              <div className="text-slate-400 font-medium text-xl sm:text-2xl md:text-3xl lg:text-[2rem] mt-2 sm:mt-3 flex items-center gap-x-2 sm:gap-x-3 h-[1.35em] overflow-hidden">
                 <span className="text-slate-400 shrink-0">I am a</span>
-                <div className="relative inline-block min-h-[1.3em]">
-                  <AnimatePresence mode="wait">
+                <div className="relative flex-1 min-w-0 h-[1.35em] overflow-hidden">
+                  <AnimatePresence mode="popLayout" initial={false}>
                     <motion.span
                       key={roleIndex}
-                      initial={{ y: 15, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -15, opacity: 0 }}
-                      transition={{ duration: 0.28, ease: "easeOut" }}
-                      className="inline-block whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-blue-100 font-extrabold drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+                      initial={{ y: "100%", opacity: 0 }}
+                      animate={{ y: "0%", opacity: 1 }}
+                      exit={{ y: "-100%", opacity: 0 }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      className="absolute inset-0 flex items-center whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-blue-100 font-extrabold"
                     >
                       {ROLES[roleIndex]}
                     </motion.span>
@@ -131,17 +124,6 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
 
         {/* Right Side: Editorial Founder Portrait (5 cols) */}
         <div className="lg:col-span-5 relative flex items-center justify-center">
-          {/* Subtle Warm & Electric Blue Ambient Rim Glow */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 w-full h-full rounded-full bg-blue-600/20 blur-[100px] pointer-events-none -z-10"
-          />
-
-          {/* 3D WebGL Vector Core floating gently behind portrait */}
-          <div className="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-50">
-            <VectorCore3D />
-          </div>
-
           {/* Editorial Founder Portrait */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
