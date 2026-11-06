@@ -80,13 +80,13 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Audio FX Toggle */}
+          {/* Audio FX Toggle (Hidden on narrow mobile to prevent navbar width overflow) */}
           <button
             type="button"
             onClick={handleSoundToggle}
             aria-label={soundEnabled ? "Mute interactive audio" : "Enable interactive audio"}
             title={soundEnabled ? "Audio FX Active (Click to mute)" : "Enable subtle Audio FX"}
-            className={`p-2 rounded-full border transition-all text-xs flex items-center justify-center cursor-pointer min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] ${
+            className={`hidden sm:flex p-2 rounded-full border transition-all text-xs items-center justify-center cursor-pointer min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] ${
               soundEnabled
                 ? "bg-blue-600/15 border-blue-500/40 text-blue-400 shadow-[0_0_12px_rgba(37,99,235,0.3)]"
                 : "bg-white/[0.03] border-white/[0.08] text-slate-400 hover:text-slate-200"

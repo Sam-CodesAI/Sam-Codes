@@ -38,10 +38,10 @@ export default function TechEcosystem() {
   return (
     <section
       aria-label="Core Technology Wave"
-      className="relative py-10 px-0 max-w-7xl mx-auto border-y border-white/[0.06] overflow-hidden"
+      className="relative py-10 px-0 w-full max-w-full overflow-hidden border-y border-white/[0.06]"
     >
       {/* Top Header Label */}
-      <div className="flex items-center justify-between px-4 sm:px-6 mb-6">
+      <div className="flex items-center justify-between px-4 sm:px-6 mb-6 max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#ccff00]" />
           <span className="text-[11px] font-mono tracking-widest text-slate-400 uppercase">
@@ -55,7 +55,7 @@ export default function TechEcosystem() {
 
       {/* Infinite Wave Marquee Track with Edge Dissolve Masks */}
       <div
-        className="relative w-full overflow-hidden py-4"
+        className="relative w-full max-w-full overflow-hidden py-4"
         style={{
           maskImage:
             "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",

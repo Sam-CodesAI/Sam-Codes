@@ -132,32 +132,32 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="dark scroll-smooth max-w-full overflow-x-hidden">
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="relative bg-[#030509] text-slate-100 antialiased selection:bg-blue-600/35 selection:text-white min-h-screen">
+      <body className="relative bg-[#030509] text-slate-100 antialiased selection:bg-blue-600/35 selection:text-white min-h-screen max-w-full overflow-x-hidden">
         {/* Background Neural Canvas */}
         <NeuralField />
 
         {/* Global Privacy Telemetry */}
         <AnalyticsTracker />
 
-        {/* Ambient Top Glow Orbs - Electric Cobalt & Acid Lime */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none fixed top-[-15vw] left-[10vw] w-[55vw] h-[45vw] rounded-full glow-orb-cobalt blur-[130px] opacity-40 z-0"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none fixed top-[45vh] right-[-15vw] w-[40vw] h-[40vw] rounded-full glow-orb-lime blur-[150px] opacity-20 z-0"
-        />
+        {/* Ambient Top Glow Orbs - Contained with overflow-hidden to prevent horizontal page expansion */}
+        <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden z-0">
+          <div
+            className="absolute top-[-15vw] left-[10vw] w-[55vw] h-[45vw] rounded-full glow-orb-cobalt blur-[130px] opacity-40"
+          />
+          <div
+            className="absolute top-[45vh] right-[-15vw] w-[40vw] h-[40vw] rounded-full glow-orb-lime blur-[150px] opacity-20"
+          />
+        </div>
 
         {/* Main Content Hierarchy */}
-        <div className="relative z-10 flex min-h-screen flex-col">
+        <div className="relative z-10 flex min-h-screen flex-col w-full max-w-full overflow-x-hidden">
           {children}
         </div>
       </body>

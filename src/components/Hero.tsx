@@ -67,13 +67,13 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
               <div className="text-slate-400 font-medium text-2xl sm:text-4xl md:text-5xl xl:text-6xl mt-2 flex flex-wrap items-baseline gap-x-3">
                 <span className="text-slate-400 shrink-0">I am a</span>
                 <div className="relative inline-block min-h-[1.3em]">
-                  <AnimatePresence mode="popLayout" initial={false}>
+                  <AnimatePresence mode="wait">
                     <motion.span
                       key={roleIndex}
-                      initial={{ y: "60%", opacity: 0 }}
-                      animate={{ y: "0%", opacity: 1 }}
-                      exit={{ y: "-60%", opacity: 0 }}
-                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      initial={{ y: 15, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -15, opacity: 0 }}
+                      transition={{ duration: 0.28, ease: "easeOut" }}
                       className="inline-block whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-blue-100 font-extrabold drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]"
                     >
                       {ROLES[roleIndex]}
