@@ -73,16 +73,16 @@ export default function LabSection({
     >
       {/* Section Header */}
       <MotionReveal className="flex flex-col items-center text-center mb-14">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1D24] border border-white/[0.08] text-xs font-mono text-[#4D7CFE] mb-4 uppercase tracking-wider backdrop-blur-md">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1A1D24] border border-white/[0.08] text-[11px] sm:text-xs md:text-[13px] font-mono text-[#4D7CFE] mb-4 uppercase tracking-wider backdrop-blur-md">
           <FlaskConical size={13} className="text-[#ccff00]" />
           <span>The Lab // Shipped Systems</span>
         </div>
 
-        <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#E8EAF0] mb-4">
+        <h2 className="text-[32px] sm:text-[38px] md:text-[44px] font-heading font-black tracking-tight text-[#E8EAF0] mb-4">
           Flagship Projects
         </h2>
 
-        <p className="text-base sm:text-lg text-[#9299A8] max-w-2xl font-normal leading-relaxed">
+        <p className="text-base sm:text-[17px] md:text-lg text-[#9299A8] max-w-2xl font-sans font-normal leading-relaxed">
           Full-scale architectures built from first principles. Zero hypothetical mocks.
         </p>
       </MotionReveal>
@@ -96,7 +96,7 @@ export default function LabSection({
               key={category}
               type="button"
               onClick={() => handleTabChange(category)}
-              className="relative px-4 py-2 rounded-full text-xs font-mono transition-colors cursor-pointer text-[#9299A8] hover:text-[#E8EAF0] min-h-[44px] flex items-center justify-center"
+              className="relative px-4 py-2 rounded-full text-[11px] sm:text-xs md:text-[13px] font-mono transition-colors cursor-pointer text-[#9299A8] hover:text-[#E8EAF0] min-h-[44px] flex items-center justify-center"
             >
               {isSelected && (
                 <motion.div
@@ -151,12 +151,12 @@ export default function LabSection({
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl sm:text-2xl font-bold text-[#E8EAF0] mb-2.5 group-hover:text-[#4D7CFE] transition-colors leading-snug">
+                <h3 className="text-xl sm:text-2xl font-heading font-bold text-[#E8EAF0] mb-2.5 group-hover:text-[#4D7CFE] transition-colors leading-snug">
                   {proj.title}
                 </h3>
 
                 {/* Punchy 1-line outcome story */}
-                <p className="text-xs sm:text-sm text-[#9299A8] leading-relaxed font-normal mb-6 line-clamp-3">
+                <p className="text-sm sm:text-base text-[#9299A8] leading-relaxed font-sans font-normal mb-6 line-clamp-3">
                   {proj.punchyOutcome || proj.shortDescription}
                 </p>
               </div>

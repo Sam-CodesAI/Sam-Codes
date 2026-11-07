@@ -3,15 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { soundFx } from "@/utils/sound";
 import { motion, AnimatePresence } from "motion/react";
-import { Terminal, Shield, Zap, Sparkles } from "lucide-react";
 
 const BOOT_LOGS = [
-  { text: "INITIALIZING SAM_CODES NEURAL ARCHITECTURE v2.0...", status: "OK", color: "text-blue-400" },
-  { text: "SUTRA_KERNEL: MOUNTED [0.36ms SIMD HYBRID VECTOR BLAS]", status: "ONLINE", color: "text-[#ccff00]" },
-  { text: "VANI_EDGE: FULL-DUPLEX WEBRTC TELEPHONY SYNCHRONIZED", status: "ACTIVE", color: "text-blue-400" },
-  { text: "AEGIS_AGENT: AST10 VERIFICATION & SELF-HEALING ARMED", status: "SECURE", color: "text-[#ccff00]" },
-  { text: "TELEFLOW_ROUTER: 24/7 AUTONOMOUS WEBHOOK RUNTIME", status: "ONLINE", color: "text-blue-400" },
-  { text: "PORTAL APERTURE: ENGAGED [APERTURE BURST READY]", status: "BURST", color: "text-[#ccff00]" },
+  { text: "INITIALIZING SAM_CODES NEURAL ARCHITECTURE v2.0...", status: "OK", color: "text-[#4D7CFE]" },
+  { text: "SUTRA_KERNEL: MOUNTED [0.36ms SIMD HYBRID VECTOR BLAS]", status: "ONLINE", color: "text-[#85A6FF]" },
+  { text: "VANI_EDGE: FULL-DUPLEX WEBRTC TELEPHONY SYNCHRONIZED", status: "ACTIVE", color: "text-[#4D7CFE]" },
+  { text: "AEGIS_AGENT: AST10 VERIFICATION & SELF-HEALING ARMED", status: "SECURE", color: "text-[#85A6FF]" },
+  { text: "TELEFLOW_ROUTER: 24/7 AUTONOMOUS WEBHOOK RUNTIME", status: "ONLINE", color: "text-[#4D7CFE]" },
+  { text: "PORTAL APERTURE: ENGAGED [APERTURE BURST READY]", status: "BURST", color: "text-[#85A6FF]" },
 ];
 
 export default function CinematicIntro() {
@@ -98,11 +97,11 @@ export default function CinematicIntro() {
         <div className="flex items-center justify-between pb-4 mb-5 border-b border-white/[0.08]">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#4D7CFE] shadow-[0_0_8px_#4D7CFE] animate-pulse" />
-            <span className="text-[#E8EAF0] font-bold tracking-wider text-xs sm:text-sm">
+            <span className="text-[#E8EAF0] font-heading font-bold tracking-wider text-xs sm:text-sm">
               SAM_CODES // CYBER_BOOT
             </span>
           </div>
-          <span className="text-[10px] text-[#ccff00] px-2 py-0.5 rounded bg-[#ccff00]/10 border border-[#ccff00]/30 font-bold">
+          <span className="text-[10px] text-[#4D7CFE] px-2 py-0.5 rounded bg-[#4D7CFE]/10 border border-[#4D7CFE]/30 font-bold">
             NEURAL_CORE
           </span>
         </div>
@@ -119,9 +118,9 @@ export default function CinematicIntro() {
             >
               <div className="flex items-center gap-2 min-w-0">
                 <span className="text-[#4D7CFE] text-[10px]">&gt;&gt;</span>
-                <span className="truncate text-[11px] sm:text-xs text-[#9299A8]">{log.text}</span>
+                <span className="truncate text-[11px] sm:text-xs text-[#9299A8] font-mono">{log.text}</span>
               </div>
-              <span className={`text-[10px] font-bold shrink-0 font-mono ${log.color === "text-blue-400" ? "text-[#4D7CFE]" : log.color}`}>
+              <span className={`text-[10px] font-bold shrink-0 font-mono ${log.color}`}>
                 [{log.status}]
               </span>
             </motion.div>
@@ -131,8 +130,8 @@ export default function CinematicIntro() {
         {/* Bottom Status & Skip Action */}
         <div className="flex items-center justify-between pt-4 border-t border-white/[0.08] text-[11px] text-[#9299A8]">
           <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#ccff00] animate-ping" />
-            <span className="font-mono text-[#9299A8]">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#4D7CFE] animate-ping" />
+            <span className="font-mono text-[#9299A8] text-[11px]">
               {currentLine === BOOT_LOGS.length - 1 ? "PORTAL READY" : "LOADING SYSTEMS..."}
             </span>
           </div>
@@ -140,7 +139,7 @@ export default function CinematicIntro() {
           <button
             type="button"
             onClick={dismiss}
-            className="px-3 py-1 rounded bg-[#222630] hover:bg-[#4D7CFE]/20 text-[#9299A8] hover:text-[#E8EAF0] border border-white/[0.08] hover:border-[#4D7CFE]/40 transition-colors font-mono cursor-pointer"
+            className="px-3 py-1 rounded bg-[#222630] hover:bg-[#4D7CFE]/20 text-[#9299A8] hover:text-[#E8EAF0] border border-white/[0.08] hover:border-[#4D7CFE]/40 transition-colors font-mono cursor-pointer text-[11px]"
           >
             SKIP [ESC]
           </button>
@@ -167,14 +166,14 @@ export default function CinematicIntro() {
                 strokeDasharray="4 2"
               />
               {/* Middle Aperture Ring */}
-              <circle cx="50" cy="50" r="30" fill="none" stroke="#ccff00" strokeWidth="1" opacity="0.8" />
+              <circle cx="50" cy="50" r="30" fill="none" stroke="#4D7CFE" strokeWidth="1" opacity="0.8" />
               {/* Inner Portal Core */}
               <circle cx="50" cy="50" r="14" fill="#4D7CFE" opacity="0.4" />
-              <circle cx="50" cy="50" r="4" fill="#ccff00" />
+              <circle cx="50" cy="50" r="4" fill="#85A6FF" />
               <defs>
                 <linearGradient id="portalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#4D7CFE" />
-                  <stop offset="50%" stopColor="#ccff00" />
+                  <stop offset="50%" stopColor="#85A6FF" />
                   <stop offset="100%" stopColor="#3D6DEE" />
                 </linearGradient>
               </defs>

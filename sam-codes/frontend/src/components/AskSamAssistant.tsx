@@ -139,7 +139,7 @@ export default function AskSamAssistant({
         title="Ask Sam AI Assistant"
         className="hidden md:flex fixed bottom-6 right-6 z-40 p-3 rounded-full bg-[#1A1D24]/85 hover:bg-[#4D7CFE] border border-white/10 hover:border-[#4D7CFE]/50 text-[#9299A8] hover:text-[#E8EAF0] shadow-2xl shadow-black/80 transition-all duration-300 hover:scale-110 cursor-pointer backdrop-blur-xl group items-center justify-center min-h-[44px] min-w-[44px]"
       >
-        <Sparkles size={17} className="text-[#ccff00] group-hover:text-white transition-colors" />
+        <Sparkles size={17} className="text-[#4D7CFE] group-hover:text-white transition-colors" />
         <span className="sr-only">Ask Sam</span>
       </button>
 
@@ -159,13 +159,13 @@ export default function AskSamAssistant({
                   <Bot size={18} />
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-[#E8EAF0] flex items-center gap-2">
+                  <div className="text-sm sm:text-base font-heading font-bold text-[#E8EAF0] flex items-center gap-2">
                     <span>Ask Sam</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#ccff00]/10 text-[#ccff00] border border-[#ccff00]/30 font-semibold">
+                    <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#4D7CFE]/10 text-[#4D7CFE] border border-[#4D7CFE]/30 font-semibold">
                       Zero Hallucination
                     </span>
                   </div>
-                  <div className="text-[11px] font-mono text-[#9299A8]">
+                  <div className="text-[11px] sm:text-xs font-mono text-[#9299A8]">
                     Grounded Knowledge Agent
                   </div>
                 </div>
@@ -193,7 +193,7 @@ export default function AskSamAssistant({
             </div>
 
             {/* Chat Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 font-mono text-xs">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
               {messages.map((m) => (
                 <div
                   key={m.id}
@@ -210,8 +210,8 @@ export default function AskSamAssistant({
                   <div
                     className={`max-w-[82%] p-3.5 rounded-2xl leading-relaxed ${
                       m.sender === "user"
-                        ? "bg-[#4D7CFE] text-[#E8EAF0] rounded-tr-none font-sans text-xs sm:text-sm shadow-md shadow-[#4D7CFE]/20"
-                        : "bg-[#222630] border border-white/[0.08] text-[#E8EAF0] rounded-tl-none font-sans text-xs sm:text-sm"
+                        ? "bg-[#4D7CFE] text-[#E8EAF0] rounded-tr-none font-sans text-sm sm:text-base shadow-md shadow-[#4D7CFE]/20"
+                        : "bg-[#222630] border border-white/[0.08] text-[#E8EAF0] rounded-tl-none font-sans text-sm sm:text-base"
                     }`}
                   >
                     {m.text}
@@ -226,7 +226,7 @@ export default function AskSamAssistant({
               ))}
 
               {isTyping && (
-                <div className="flex gap-3 items-center text-[#9299A8] font-mono text-xs">
+                <div className="flex gap-3 items-center text-[#9299A8] font-mono text-[11px] sm:text-xs">
                   <div className="w-7 h-7 rounded-lg bg-[#4D7CFE]/15 border border-[#4D7CFE]/30 flex items-center justify-center text-[#4D7CFE] shrink-0">
                     <Bot size={14} />
                   </div>
@@ -244,7 +244,7 @@ export default function AskSamAssistant({
                   key={idx}
                   type="button"
                   onClick={() => handleSend(chip)}
-                  className="px-2.5 py-1 rounded-full bg-[#1A1D24] hover:bg-[#222630] border border-white/[0.08] hover:border-[#4D7CFE]/40 text-[11px] text-[#9299A8] hover:text-[#E8EAF0] transition-colors whitespace-nowrap cursor-pointer shrink-0"
+                  className="px-2.5 py-1 rounded-full bg-[#1A1D24] hover:bg-[#222630] border border-white/[0.08] hover:border-[#4D7CFE]/40 text-[11px] sm:text-xs font-mono text-[#9299A8] hover:text-[#E8EAF0] transition-colors whitespace-nowrap cursor-pointer shrink-0"
                 >
                   {chip}
                 </button>
@@ -264,14 +264,14 @@ export default function AskSamAssistant({
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Ask about turnaround, scoping, or how Sam builds..."
-                className="flex-1 px-4 py-3 rounded-xl bg-[#101216] border border-white/[0.08] text-[#E8EAF0] placeholder-[#9299A8]/60 text-xs sm:text-sm focus:outline-none focus:border-[#4D7CFE] transition-colors min-h-[44px]"
+                className="flex-1 px-4 py-3 rounded-xl bg-[#101216] border border-white/[0.08] text-[#E8EAF0] placeholder-[#9299A8]/60 font-sans text-sm sm:text-base focus:outline-none focus:border-[#4D7CFE] transition-colors min-h-[44px]"
               />
 
               <button
                 type="submit"
                 disabled={!inputValue.trim()}
                 aria-label="Send question"
-                className="p-3 rounded-xl bg-[#4D7CFE] hover:bg-[#3D6DEE] disabled:opacity-40 disabled:pointer-events-none text-[#E8EAF0] font-bold transition-all cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center shadow-md shadow-[#4D7CFE]/30"
+                className="p-3 rounded-xl bg-[#4D7CFE] hover:bg-[#3D6DEE] disabled:opacity-40 disabled:pointer-events-none text-[#E8EAF0] font-sans font-medium transition-all cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center shadow-md shadow-[#4D7CFE]/30"
               >
                 <Send size={16} />
               </button>

@@ -23,18 +23,18 @@ export default function Footer() {
         {/* Brand & Location */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left gap-1">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#ccff00] shadow-[0_0_8px_#ccff00]" />
-            <span className="font-black text-[#E8EAF0] tracking-wider">SAM CODES</span>
+            <span className="w-2 h-2 rounded-full bg-[#4D7CFE] shadow-[0_0_8px_#4D7CFE]" />
+            <span className="font-heading font-black text-[#E8EAF0] tracking-wider text-sm sm:text-base">SAM CODES</span>
             <span className="text-white/20">/</span>
-            <span className="text-[#9299A8]">{profileData.fullName}</span>
+            <span className="text-[#9299A8] font-mono text-xs sm:text-[13px]">{profileData.fullName}</span>
           </div>
-          <div className="text-[11px] text-[#9299A8]">
+          <div className="text-[11px] sm:text-xs font-mono text-[#9299A8]">
             {profileData.location} · 17yo AI Systems Builder
           </div>
         </div>
 
-        {/* Quick Nav Links */}
-        <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] uppercase tracking-wider text-[#9299A8]">
+        {/* Quick Nav Links (Inter for Navigation) */}
+        <div className="flex flex-wrap items-center justify-center gap-5 text-xs sm:text-[13px] font-sans font-medium uppercase tracking-wider text-[#9299A8]">
           <a href="/#lab" className="hover:text-[#E8EAF0] transition-colors">
             The Lab
           </a>
@@ -44,7 +44,7 @@ export default function Footer() {
           <a href="/#services" className="hover:text-[#E8EAF0] transition-colors">
             Services
           </a>
-          <Link href="/contact" className="text-[#ccff00] hover:text-[#E8EAF0] transition-colors">
+          <Link href="/contact" className="text-[#4D7CFE] hover:text-[#E8EAF0] font-semibold transition-colors">
             Reach Me [Portal]
           </Link>
         </div>
@@ -55,7 +55,7 @@ export default function Footer() {
             href="https://t.me/Samarth1306"
             target="_blank"
             rel="noreferrer"
-            className="px-3 py-1.5 rounded-lg bg-[#4D7CFE]/15 border border-[#4D7CFE]/30 text-[#E8EAF0] hover:text-white text-[11px] flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="px-3 py-1.5 rounded-lg bg-[#4D7CFE]/15 border border-[#4D7CFE]/30 text-[#E8EAF0] hover:text-white text-[11px] sm:text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <Send size={12} />
             <span>@Samarth1306</span>
@@ -65,7 +65,7 @@ export default function Footer() {
             type="button"
             onClick={triggerTelemetry}
             title="Toggle Developer Telemetry (Shift + D)"
-            className="px-2.5 py-1.5 rounded-lg bg-[#1A1D24] hover:bg-[#222630] border border-white/[0.08] text-[#9299A8] hover:text-[#4D7CFE] text-[10px] flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="px-2.5 py-1.5 rounded-lg bg-[#1A1D24] hover:bg-[#222630] border border-white/[0.08] text-[#9299A8] hover:text-[#4D7CFE] text-[11px] sm:text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <Terminal size={12} />
             <span>Shift+D</span>
@@ -82,7 +82,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto mt-8 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#9299A8] gap-2">
+      <div className="max-w-7xl mx-auto mt-8 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between text-[11px] sm:text-xs font-mono text-[#9299A8] gap-2">
         <div>
           © {new Date().getFullYear()} {profileData.brandName}. Zero hypothetical claims. Verified production code.
         </div>

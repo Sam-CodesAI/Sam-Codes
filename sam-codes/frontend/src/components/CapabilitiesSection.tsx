@@ -64,16 +64,16 @@ export default function CapabilitiesSection({
       className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-7xl mx-auto border-t border-white/[0.08]"
     >
       <MotionReveal className="flex flex-col items-center text-center mb-12">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1D24] border border-white/[0.08] text-xs font-mono text-[#4D7CFE] mb-4 uppercase tracking-wider">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1A1D24] border border-white/[0.08] text-[11px] sm:text-xs md:text-[13px] font-mono text-[#4D7CFE] mb-4 uppercase tracking-wider">
           <Cpu size={13} className="text-[#4D7CFE]" />
           <span>Build Environment &amp; Capabilities</span>
         </div>
 
-        <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-[#E8EAF0] mb-4">
+        <h2 className="text-[32px] sm:text-[38px] md:text-[44px] font-heading font-black tracking-tight text-[#E8EAF0] mb-4">
           Technologies I Work With
         </h2>
 
-        <p className="text-base sm:text-lg text-[#9299A8] max-w-2xl leading-relaxed">
+        <p className="text-base sm:text-[17px] md:text-lg text-[#9299A8] max-w-2xl font-sans font-normal leading-relaxed">
           Production systems engineered from first principles alongside frontier tools actively researched.
         </p>
 
@@ -82,7 +82,7 @@ export default function CapabilitiesSection({
           <button
             type="button"
             onClick={() => handleTabChange("capabilities")}
-            className="relative px-5 py-2 rounded-full text-xs font-mono transition-colors cursor-pointer"
+            className="relative px-5 py-2 rounded-full text-[11px] sm:text-xs md:text-[13px] font-mono transition-colors cursor-pointer"
           >
             {activeTab === "capabilities" && (
               <motion.div
@@ -103,7 +103,7 @@ export default function CapabilitiesSection({
           <button
             type="button"
             onClick={() => handleTabChange("stack")}
-            className="relative px-5 py-2 rounded-full text-xs font-mono transition-colors cursor-pointer"
+            className="relative px-5 py-2 rounded-full text-[11px] sm:text-xs md:text-[13px] font-mono transition-colors cursor-pointer"
           >
             {activeTab === "stack" && (
               <motion.div

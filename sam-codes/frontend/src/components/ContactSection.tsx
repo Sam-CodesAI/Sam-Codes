@@ -216,22 +216,22 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
       className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]"
     >
       <MotionReveal className="flex flex-col items-center text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1D24] border border-white/[0.08] text-xs font-mono text-[#4D7CFE] mb-4 uppercase tracking-wider">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1A1D24] border border-white/[0.08] text-[11px] sm:text-xs md:text-[13px] font-mono text-[#4D7CFE] mb-4 uppercase tracking-wider">
           <MessageSquare size={13} className="text-[#4D7CFE]" />
           <span>Start a Conversation</span>
         </div>
 
-        <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#E8EAF0] mb-4">
+        <h2 className="text-[32px] sm:text-[38px] md:text-[44px] font-heading font-black tracking-tight text-[#E8EAF0] mb-4">
           Have Something Worth Building?
         </h2>
 
-        <p className="text-base sm:text-lg text-[#9299A8] max-w-2xl font-normal leading-relaxed mb-6">
+        <p className="text-base sm:text-[17px] md:text-lg text-[#9299A8] max-w-2xl font-sans font-normal leading-relaxed mb-6">
           The fastest way to reach me is directly on Telegram (@Samarth1306) or via our 3D WebGL transmission portal. For project specifications or formal briefs, send an inquiry below.
         </p>
 
         <a
           href="/contact"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#4D7CFE]/15 hover:bg-[#4D7CFE] border border-[#4D7CFE]/40 text-[#E8EAF0] font-mono text-xs transition-all shadow-lg shadow-[#4D7CFE]/20"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#4D7CFE]/15 hover:bg-[#4D7CFE] border border-[#4D7CFE]/40 text-[#E8EAF0] font-mono text-xs sm:text-[13px] transition-all shadow-lg shadow-[#4D7CFE]/20"
         >
           <Sparkles size={14} className="text-[#4D7CFE]" />
           <span>Launch 3D Cyber Highway Contact Portal ↗</span>

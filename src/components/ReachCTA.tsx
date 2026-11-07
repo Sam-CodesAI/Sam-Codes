@@ -28,18 +28,18 @@ export default function ReachCTA() {
 
         <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center text-center">
           {/* Eyebrow */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1A1D24] border border-white/[0.08] text-xs font-mono text-[#4D7CFE] mb-6 uppercase tracking-wider backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1A1D24] border border-white/[0.08] text-[11px] sm:text-xs md:text-[13px] font-mono text-[#4D7CFE] mb-6 uppercase tracking-wider backdrop-blur-md">
             <Send size={13} className="text-[#ccff00]" />
             <span>Direct Dispatch // Zero Friction</span>
           </div>
 
           {/* Heading */}
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#E8EAF0] mb-6 leading-tight">
+          <h2 className="text-[32px] sm:text-[38px] md:text-[44px] font-heading font-black tracking-tight text-[#E8EAF0] mb-6 leading-tight">
             Have a system to build or a problem to solve?
           </h2>
 
           {/* Description */}
-          <p className="text-base sm:text-lg text-[#9299A8] leading-relaxed font-normal mb-10 max-w-2xl">
+          <p className="text-base sm:text-[17px] md:text-lg text-[#9299A8] leading-relaxed font-sans font-normal mb-10 max-w-2xl">
             Direct collaboration with Samarth. Send a brief directly through the dedicated reach portal or connect instantly on <strong className="text-[#E8EAF0]">Telegram</strong> and <strong className="text-[#E8EAF0]">Gmail</strong>.
           </p>
 

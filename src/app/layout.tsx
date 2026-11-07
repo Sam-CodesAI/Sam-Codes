@@ -1,7 +1,29 @@
 import type { Metadata, Viewport } from "next";
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import NeuralField from "@/components/NeuralField";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -132,14 +154,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth max-w-full overflow-x-hidden">
+    <html
+      lang="en"
+      className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} dark scroll-smooth max-w-full overflow-x-hidden`}
+    >
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="relative bg-[#101216] text-[#E8EAF0] antialiased selection:bg-[#4D7CFE]/35 selection:text-white min-h-screen max-w-full overflow-x-hidden">
+      <body className="relative bg-[#101216] text-[#E8EAF0] antialiased selection:bg-[#4D7CFE]/35 selection:text-white min-h-screen max-w-full overflow-x-hidden font-sans">
         {/* Background Neural Canvas */}
         <NeuralField />
 

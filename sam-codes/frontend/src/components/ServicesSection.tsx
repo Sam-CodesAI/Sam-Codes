@@ -117,16 +117,16 @@ export default function ServicesSection({
       className="relative py-28 sm:py-36 px-4 sm:px-6 max-w-7xl mx-auto border-t border-white/[0.06]"
     >
       <MotionReveal className="flex flex-col items-center text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1D24] border border-white/[0.08] text-xs font-mono text-[#4D7CFE] mb-4 uppercase tracking-wider backdrop-blur-md">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1A1D24] border border-white/[0.08] text-[11px] sm:text-xs md:text-[13px] font-mono text-[#4D7CFE] mb-4 uppercase tracking-wider backdrop-blur-md">
           <Wrench size={13} className="text-[#ccff00]" />
           <span>Services // Direct Collaboration</span>
         </div>
 
-        <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#E8EAF0] mb-4">
+        <h2 className="text-[32px] sm:text-[38px] md:text-[44px] font-heading font-black tracking-tight text-[#E8EAF0] mb-4">
           Services &amp; Systems
         </h2>
 
-        <p className="text-base sm:text-lg text-[#9299A8] max-w-2xl font-normal leading-relaxed">
+        <p className="text-base sm:text-[17px] md:text-lg text-[#9299A8] max-w-2xl font-sans font-normal leading-relaxed">
           Direct engineering partnership with Samarth. Select a drawer to inspect deliverables and turnarounds.
         </p>
 
@@ -138,7 +138,7 @@ export default function ServicesSection({
               soundFx.playHover();
               setCurrency("USD");
             }}
-            className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-full text-[11px] sm:text-xs md:text-[13px] font-mono transition-all cursor-pointer ${
               currency === "USD"
                 ? "bg-[#4D7CFE]/30 text-[#E8EAF0] font-semibold border border-[#4D7CFE]/50 shadow-md shadow-[#4D7CFE]/20"
                 : "text-[#9299A8] hover:text-[#E8EAF0]"
@@ -152,7 +152,7 @@ export default function ServicesSection({
               soundFx.playHover();
               setCurrency("INR");
             }}
-            className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-full text-[11px] sm:text-xs md:text-[13px] font-mono transition-all cursor-pointer ${
               currency === "INR"
                 ? "bg-[#4D7CFE]/30 text-[#E8EAF0] font-semibold border border-[#4D7CFE]/50 shadow-md shadow-[#4D7CFE]/20"
                 : "text-[#9299A8] hover:text-[#E8EAF0]"
@@ -191,11 +191,11 @@ export default function ServicesSection({
                       </span>
                     </div>
 
-                    <h3 className="text-xl sm:text-2xl font-bold text-[#E8EAF0] group-hover/btn:text-white transition-colors">
+                    <h3 className="text-xl sm:text-2xl font-heading font-bold text-[#E8EAF0] group-hover/btn:text-white transition-colors">
                       {folder.title}
                     </h3>
 
-                    <p className="text-xs sm:text-sm text-[#9299A8] mt-2 font-normal">
+                    <p className="text-sm sm:text-base text-[#9299A8] mt-2 font-sans font-normal">
                       {folder.tagline}
                     </p>
                   </div>

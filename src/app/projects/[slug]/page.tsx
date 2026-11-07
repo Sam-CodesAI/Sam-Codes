@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { projectsData, getProjectBySlug, Project } from "@/data/projects";
+import { projectsData, getProjectBySlug } from "@/data/projects";
 import { TechBadge, GithubIcon } from "@/components/TechLogos";
 import {
   ArrowLeft,
@@ -72,40 +72,40 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
         <div className="flex items-center justify-between">
           <Link
             href="/#lab"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1A1D24] border border-white/[0.08] hover:border-[#4D7CFE]/50 text-[#9299A8] hover:text-[#E8EAF0] text-xs font-mono transition-all group"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1A1D24] border border-white/[0.08] hover:border-[#4D7CFE]/50 text-[#9299A8] hover:text-[#E8EAF0] text-[11px] sm:text-xs md:text-[13px] font-mono transition-all group"
           >
             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform text-[#4D7CFE]" />
             <span>Return to The Lab</span>
           </Link>
 
-          <span className="text-[11px] font-mono text-[#ccff00] px-3 py-1 rounded-full bg-[#ccff00]/10 border border-[#ccff00]/30 font-bold flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#ccff00] animate-pulse" />
+          <span className="text-[11px] sm:text-xs md:text-[13px] font-mono text-[#4D7CFE] px-3 py-1 rounded-full bg-[#4D7CFE]/10 border border-[#4D7CFE]/30 font-bold flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4D7CFE] animate-pulse" />
             <span>STANDALONE CASE STUDY</span>
           </span>
         </div>
 
         {/* Hero Header Cartridge */}
         <header className="p-8 sm:p-12 rounded-3xl bg-[#1A1D24]/85 border border-white/[0.08] backdrop-blur-xl space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono min-w-0">
+          <div className="flex flex-wrap items-center justify-between gap-3 text-[11px] sm:text-xs md:text-[13px] font-mono min-w-0">
             <span className="px-3 py-1 rounded-md bg-[#4D7CFE]/20 text-[#4D7CFE] border border-[#4D7CFE]/30 font-bold tracking-wider truncate break-all max-w-full">
               {project.cartridgeCode}
             </span>
             <div className="flex items-center gap-2 text-[#9299A8]">
               <span className="uppercase">{project.category}</span>
               <span>//</span>
-              <span className="text-[#ccff00] font-semibold">{project.status}</span>
+              <span className="text-[#4D7CFE] font-semibold">{project.status}</span>
             </div>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-[#E8EAF0] leading-tight">
+          <h1 className="text-[32px] sm:text-[38px] md:text-[44px] font-heading font-black tracking-tight text-[#E8EAF0] leading-tight">
             {project.title}
           </h1>
 
-          <p className="text-lg sm:text-xl text-[#85A6FF] font-medium leading-relaxed max-w-3xl">
+          <p className="text-lg sm:text-xl font-heading font-semibold text-[#85A6FF] leading-relaxed max-w-3xl">
             {project.punchyOutcome}
           </p>
 
-          <p className="text-sm sm:text-base text-[#9299A8] leading-relaxed font-normal max-w-3xl">
+          <p className="text-base sm:text-[17px] md:text-lg text-[#9299A8] font-sans font-normal leading-relaxed max-w-3xl">
             {project.fullDescription}
           </p>
 
@@ -116,7 +116,7 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
                 href={project.liveUrl}
                 target={project.liveUrl.startsWith("http") ? "_blank" : undefined}
                 rel="noreferrer"
-                className="px-6 py-3 rounded-full bg-[#4D7CFE] hover:bg-[#3D6DEE] text-[#E8EAF0] font-medium text-xs font-mono transition-all flex items-center gap-2 shadow-lg shadow-[#4D7CFE]/30 cursor-pointer"
+                className="px-6 py-3 rounded-full bg-[#4D7CFE] hover:bg-[#3D6DEE] text-[#E8EAF0] font-sans font-medium text-sm sm:text-base transition-all flex items-center gap-2 shadow-lg shadow-[#4D7CFE]/30 cursor-pointer"
               >
                 <span>Launch System / Demo</span>
                 <ExternalLink size={14} />
@@ -128,7 +128,7 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
                 href={project.githubUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="px-6 py-3 rounded-full bg-[#222630] hover:bg-[#282d39] border border-white/[0.08] text-[#E8EAF0] hover:text-white font-medium text-xs font-mono transition-all flex items-center gap-2 cursor-pointer"
+                className="px-6 py-3 rounded-full bg-[#222630] hover:bg-[#282d39] border border-white/[0.08] text-[#E8EAF0] hover:text-white font-sans font-medium text-sm sm:text-base transition-all flex items-center gap-2 cursor-pointer"
               >
                 <GithubIcon className="w-3.5 h-3.5 text-[#9299A8]" />
                 <span>View Source Repository</span>
@@ -139,16 +139,16 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
               href="https://t.me/Samarth1306"
               target="_blank"
               rel="noreferrer"
-              className="px-6 py-3 rounded-full bg-[#1A1D24] hover:bg-[#222630] border border-white/[0.08] hover:border-[#ccff00]/40 text-[#E8EAF0] hover:text-[#ccff00] font-medium text-xs font-mono transition-all flex items-center gap-2 ml-auto cursor-pointer"
+              className="px-6 py-3 rounded-full bg-[#1A1D24] hover:bg-[#222630] border border-white/[0.08] hover:border-[#4D7CFE]/40 text-[#E8EAF0] hover:text-[#4D7CFE] font-sans font-medium text-sm sm:text-base transition-all flex items-center gap-2 ml-auto cursor-pointer"
             >
-              <Send size={14} className="text-[#ccff00]" />
+              <Send size={14} className="text-[#4D7CFE]" />
               <span>Discuss Architecture on Telegram</span>
             </a>
           </div>
 
           {/* Tech Stack Silhouettes */}
           <div className="pt-4 flex flex-wrap gap-2 items-center">
-            <span className="text-[11px] font-mono text-[#9299A8] mr-2 uppercase">Core Tech:</span>
+            <span className="text-[11px] sm:text-xs md:text-[13px] font-mono text-[#9299A8] mr-2 uppercase">Core Tech:</span>
             {project.technologies.map((tech) => (
               <TechBadge key={tech} name={tech} size="sm" />
             ))}
@@ -159,13 +159,13 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
         {project.architecturePipeline && project.architecturePipeline.length > 0 && (
           <section className="p-8 sm:p-10 rounded-3xl bg-[#1A1D24]/85 border border-white/[0.08] backdrop-blur-xl space-y-8">
             <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
-              <div className="flex items-center gap-2 text-xs font-mono text-[#4D7CFE]">
+              <div className="flex items-center gap-2 text-[11px] sm:text-xs md:text-[13px] font-mono text-[#4D7CFE]">
                 <Layers size={16} />
                 <span className="font-bold uppercase tracking-wider">
                   SYSTEM ARCHITECTURE // HIGH-RES DATAFLOW PIPELINE
                 </span>
               </div>
-              <span className="text-[10px] font-mono text-[#9299A8] uppercase">
+              <span className="text-[11px] sm:text-xs font-mono text-[#9299A8] uppercase">
                 Hardware &amp; Logic Stages
               </span>
             </div>
@@ -178,20 +178,20 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
                     {/* Node Card */}
                     <div className="w-full p-4 rounded-2xl bg-[#222630]/90 border border-white/[0.08] hover:border-[#4D7CFE]/50 transition-all flex flex-col justify-between h-full group">
                       <div>
-                        <div className="text-[10px] font-mono text-[#4D7CFE] font-bold mb-1">
+                        <div className="text-[11px] font-mono text-[#4D7CFE] font-bold mb-1">
                           {node.title}
                         </div>
-                        <div className="text-xs font-mono font-bold text-[#E8EAF0] mb-2 group-hover:text-[#ccff00] transition-colors">
+                        <div className="text-sm sm:text-base font-heading font-bold text-[#E8EAF0] mb-2 group-hover:text-[#4D7CFE] transition-colors">
                           {node.role}
                         </div>
-                        <p className="text-[11px] text-[#9299A8] leading-relaxed font-mono">
+                        <p className="text-[11px] sm:text-xs text-[#9299A8] leading-relaxed font-mono">
                           {node.detail}
                         </p>
                       </div>
 
-                      <div className="mt-3 pt-2 border-t border-white/[0.06] flex items-center justify-between text-[9px] font-mono text-[#9299A8]">
+                      <div className="mt-3 pt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] font-mono text-[#9299A8]">
                         <span>STAGE_0{idx + 1}</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#4D7CFE] group-hover:bg-[#ccff00] transition-colors" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#4D7CFE] group-hover:bg-[#85A6FF] transition-colors" />
                       </div>
                     </div>
 
@@ -213,7 +213,7 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
                   <linearGradient id="pipeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stopColor="#4D7CFE" />
                     <stop offset="50%" stopColor="#85A6FF" />
-                    <stop offset="100%" stopColor="#ccff00" />
+                    <stop offset="100%" stopColor="#4D7CFE" />
                   </linearGradient>
                 </defs>
                 <path
@@ -225,8 +225,8 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
                 <circle cx="50" cy="30" r="8" fill="#1A1D24" stroke="#4D7CFE" strokeWidth="3" />
                 <circle cx="225" cy="30" r="8" fill="#1A1D24" stroke="#85A6FF" strokeWidth="3" />
                 <circle cx="400" cy="30" r="8" fill="#1A1D24" stroke="#85A6FF" strokeWidth="3" />
-                <circle cx="575" cy="30" r="8" fill="#1A1D24" stroke="#a3e635" strokeWidth="3" />
-                <circle cx="750" cy="30" r="8" fill="#1A1D24" stroke="#ccff00" strokeWidth="3" />
+                <circle cx="575" cy="30" r="8" fill="#1A1D24" stroke="#4D7CFE" strokeWidth="3" />
+                <circle cx="750" cy="30" r="8" fill="#1A1D24" stroke="#4D7CFE" strokeWidth="3" />
               </svg>
             </div>
           </section>
@@ -236,24 +236,24 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Problem */}
           <div className="p-8 rounded-3xl bg-[#1A1D24]/85 border border-white/[0.08] space-y-4">
-            <div className="flex items-center gap-2 text-xs font-mono text-rose-400 font-bold uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-[11px] sm:text-xs md:text-[13px] font-mono text-rose-400 font-bold uppercase tracking-wider">
               <Zap size={15} />
               <span>The Operational Bottleneck</span>
             </div>
-            <h2 className="text-xl font-bold text-[#E8EAF0]">Why It Had to Be Built</h2>
-            <p className="text-sm text-[#9299A8] leading-relaxed font-normal">
+            <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#E8EAF0]">Why It Had to Be Built</h2>
+            <p className="text-base sm:text-[17px] md:text-lg text-[#9299A8] font-sans font-normal leading-relaxed">
               {project.problem}
             </p>
           </div>
 
           {/* Approach */}
           <div className="p-8 rounded-3xl bg-[#1A1D24]/85 border border-white/[0.08] space-y-4">
-            <div className="flex items-center gap-2 text-xs font-mono text-[#ccff00] font-bold uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-[11px] sm:text-xs md:text-[13px] font-mono text-[#4D7CFE] font-bold uppercase tracking-wider">
               <Cpu size={15} />
               <span>Clean-Room First Principles</span>
             </div>
-            <h2 className="text-xl font-bold text-[#E8EAF0]">The Engineering Solution</h2>
-            <p className="text-sm text-[#9299A8] leading-relaxed font-normal">
+            <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#E8EAF0]">The Engineering Solution</h2>
+            <p className="text-base sm:text-[17px] md:text-lg text-[#9299A8] font-sans font-normal leading-relaxed">
               {project.approach}
             </p>
           </div>
@@ -263,11 +263,11 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
         {project.metrics && project.metrics.length > 0 && (
           <section className="p-8 sm:p-10 rounded-3xl bg-[#1A1D24]/85 border border-white/[0.08] space-y-6">
             <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
-              <div className="flex items-center gap-2 text-xs font-mono text-[#ccff00] font-bold uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-[11px] sm:text-xs md:text-[13px] font-mono text-[#4D7CFE] font-bold uppercase tracking-wider">
                 <CheckCircle2 size={16} />
                 <span>Verified Telemetry &amp; Evidence</span>
               </div>
-              <span className="text-[10px] font-mono text-[#9299A8]">
+              <span className="text-[11px] sm:text-xs font-mono text-[#9299A8]">
                 100% Empirically Tested
               </span>
             </div>
@@ -278,12 +278,12 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
                   key={idx}
                   className="p-5 rounded-2xl bg-[#222630] border border-white/[0.08] font-mono space-y-1"
                 >
-                  <div className="text-[10px] text-[#9299A8] uppercase tracking-wider">
+                  <div className="text-[11px] sm:text-xs text-[#9299A8] uppercase tracking-wider font-mono">
                     {metric.label}
                   </div>
-                  <div className="text-2xl font-black text-[#E8EAF0]">{metric.value}</div>
+                  <div className="text-2xl sm:text-3xl font-heading font-black text-[#E8EAF0]">{metric.value}</div>
                   {metric.evidenceNotes && (
-                    <div className="text-[10px] text-[#85A6FF] pt-1 leading-snug">
+                    <div className="text-[11px] sm:text-xs text-[#85A6FF] pt-1 leading-snug font-mono">
                       {metric.evidenceNotes}
                     </div>
                   )}
@@ -295,17 +295,17 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
 
         {/* Architectural Principles & Lessons Learned */}
         <section className="p-8 sm:p-10 rounded-3xl bg-[#1A1D24]/85 border border-white/[0.08] space-y-6">
-          <div className="flex items-center gap-2 text-xs font-mono text-[#4D7CFE] font-bold uppercase tracking-wider border-b border-white/[0.08] pb-4">
+          <div className="flex items-center gap-2 text-[11px] sm:text-xs md:text-[13px] font-mono text-[#4D7CFE] font-bold uppercase tracking-wider border-b border-white/[0.08] pb-4">
             <Shield size={16} />
             <span>Key Architectural Invariants &amp; Lessons</span>
           </div>
 
-          <p className="text-sm sm:text-base text-[#9299A8] leading-relaxed">
+          <p className="text-base sm:text-[17px] md:text-lg text-[#9299A8] font-sans font-normal leading-relaxed">
             {project.lessons}
           </p>
 
-          <div className="p-4 rounded-2xl bg-[#101216] border border-white/[0.08] text-xs font-mono text-[#9299A8] flex items-start gap-3">
-            <Sparkles size={16} className="text-[#ccff00] shrink-0 mt-0.5" />
+          <div className="p-4 rounded-2xl bg-[#101216] border border-white/[0.08] text-[11px] sm:text-xs md:text-[13px] font-mono text-[#9299A8] flex items-start gap-3">
+            <Sparkles size={16} className="text-[#4D7CFE] shrink-0 mt-0.5" />
             <span>
               Every production system in Samarth&apos;s portfolio is built with zero hypothetical claims, fully reproducible test suites, and clean-room first-principles architecture.
             </span>
@@ -314,10 +314,10 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
 
         {/* Next Step / Direct Contact Callout */}
         <section className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#1A1D24] via-[#222630] to-[#101216] border border-[#4D7CFE]/30 text-center space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#E8EAF0]">
+          <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-[#E8EAF0]">
             Need This Built or Customized for Your Team?
           </h2>
-          <p className="text-sm sm:text-base text-[#9299A8] max-w-xl mx-auto">
+          <p className="text-base sm:text-[17px] md:text-lg text-[#9299A8] font-sans font-normal max-w-xl mx-auto">
             Samarth works directly with founders and teams to build custom vector engines, edge telephony bots, and high-velocity web platforms in days.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -325,14 +325,14 @@ export default async function ProjectCaseStudyPage({ params }: Props) {
               href="https://t.me/Samarth1306"
               target="_blank"
               rel="noreferrer"
-              className="px-8 py-3.5 rounded-full bg-[#4D7CFE] hover:bg-[#3D6DEE] text-[#E8EAF0] font-medium text-xs font-mono transition-all flex items-center gap-2 shadow-lg shadow-[#4D7CFE]/30 cursor-pointer"
+              className="px-8 py-3.5 rounded-full bg-[#4D7CFE] hover:bg-[#3D6DEE] text-[#E8EAF0] font-sans font-medium text-sm sm:text-base transition-all flex items-center gap-2 shadow-lg shadow-[#4D7CFE]/30 cursor-pointer"
             >
               <Send size={15} />
               <span>Talk on Telegram (@Samarth1306)</span>
             </a>
             <Link
               href="/contact"
-              className="px-8 py-3.5 rounded-full bg-[#1A1D24] hover:bg-[#222630] border border-white/[0.08] text-[#E8EAF0] hover:text-white font-medium text-xs font-mono transition-all flex items-center gap-2 cursor-pointer"
+              className="px-8 py-3.5 rounded-full bg-[#1A1D24] hover:bg-[#222630] border border-white/[0.08] text-[#E8EAF0] hover:text-white font-sans font-medium text-sm sm:text-base transition-all flex items-center gap-2 cursor-pointer"
             >
               <span>Submit Project Specification</span>
             </Link>

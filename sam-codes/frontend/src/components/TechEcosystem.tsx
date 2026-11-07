@@ -87,7 +87,7 @@ export default function TechEcosystem() {
                 <div className="text-[#9299A8] group-hover:text-[#4D7CFE] transition-colors">
                   <Icon className="w-4 h-4" />
                 </div>
-                <span className="text-xs font-mono font-medium text-[#9299A8] group-hover:text-[#E8EAF0] transition-colors">
+                <span className="text-[11px] sm:text-xs md:text-[13px] font-mono font-medium text-[#9299A8] group-hover:text-[#E8EAF0] transition-colors">
                   {tech.name}
                 </span>
               </motion.div>

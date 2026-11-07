@@ -40,12 +40,12 @@ export default function MilestonesSection() {
       className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.08]"
     >
       <div className="flex flex-col items-center text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1D24] border border-white/[0.08] text-xs font-mono text-[#4D7CFE] mb-4 uppercase tracking-wider">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1A1D24] border border-white/[0.08] text-[11px] sm:text-xs md:text-[13px] font-mono text-[#4D7CFE] mb-4 uppercase tracking-wider">
           <Award size={13} className="text-[#4D7CFE]" />
           <span>Track Record</span>
         </div>
 
-        <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-[#E8EAF0] mb-4">
+        <h2 className="text-[32px] sm:text-[38px] md:text-[44px] font-heading font-black tracking-tight text-[#E8EAF0] mb-4">
           Milestones &amp; Progression
         </h2>
       </div>
@@ -58,7 +58,7 @@ export default function MilestonesSection() {
             className="p-6 rounded-2xl bg-[#1A1D24] border border-white/[0.08] hover:border-[#4D7CFE]/40 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
           >
             <div>
-              <div className="flex items-center gap-2 text-[11px] font-mono text-[#9299A8] mb-1">
+              <div className="flex items-center gap-2 text-[11px] sm:text-xs font-mono text-[#9299A8] mb-1">
                 <span className="text-[#4D7CFE] font-semibold">{m.category}</span>
                 <span>•</span>
                 <span className="flex items-center gap-1">
@@ -66,8 +66,8 @@ export default function MilestonesSection() {
                   {m.date}
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-[#E8EAF0] mb-1">{m.title}</h3>
-              <p className="text-xs sm:text-sm text-[#9299A8] font-normal">{m.description}</p>
+              <h3 className="text-lg sm:text-xl font-heading font-bold text-[#E8EAF0] mb-1">{m.title}</h3>
+              <p className="text-sm sm:text-base text-[#9299A8] font-sans font-normal">{m.description}</p>
             </div>
 
             {m.url && (

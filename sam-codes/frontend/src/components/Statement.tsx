@@ -17,16 +17,16 @@ export default function Statement({ profile = profileData }: { profile?: Profile
       className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-7xl mx-auto border-t border-white/[0.08]"
     >
       <MotionReveal className="flex flex-col items-center text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1D24] border border-white/[0.08] text-xs font-mono text-[#4D7CFE] mb-6 uppercase tracking-wider">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1A1D24] border border-white/[0.08] text-[11px] sm:text-xs md:text-[13px] font-mono text-[#4D7CFE] mb-6 uppercase tracking-wider">
           <Sparkles size={13} className="text-[#ccff00]" />
           <span>Approach &amp; Principles</span>
         </div>
 
-        <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-[#E8EAF0] leading-[1.15] max-w-3xl mb-4">
+        <h2 className="text-[32px] sm:text-[38px] md:text-[44px] font-heading font-black tracking-tight text-[#E8EAF0] leading-[1.15] max-w-3xl mb-4">
           {profile.statementHeadline}
         </h2>
 
-        <p className="text-base sm:text-lg text-[#9299A8] max-w-2xl font-normal leading-relaxed">
+        <p className="text-base sm:text-[17px] md:text-lg text-[#9299A8] max-w-2xl font-sans font-normal leading-relaxed">
           {profile.statementDescription}
         </p>
       </MotionReveal>
