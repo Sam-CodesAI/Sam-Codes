@@ -73,14 +73,14 @@ export default function CinematicIntro() {
       aria-label="System Initializing"
       animate={{ opacity: bursting ? 0 : 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#030509] px-6 select-none overflow-hidden"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#101216] px-6 select-none overflow-hidden"
     >
       {/* Background Matrix/Hexagon Grid Gridlines */}
       <div
         aria-hidden="true"
         className="absolute inset-0 opacity-20 pointer-events-none"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #2563eb 1px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, #4D7CFE 1px, transparent 0)`,
           backgroundSize: "32px 32px",
         }}
       />
@@ -92,13 +92,13 @@ export default function CinematicIntro() {
           scale: bursting ? 0.94 : 1,
         }}
         transition={{ duration: 0.25, ease: "easeOut" }}
-        className="relative z-10 w-full max-w-lg p-6 sm:p-8 rounded-2xl bg-[#080d1a]/95 border border-[#1e293b] shadow-2xl shadow-blue-950/80 font-mono text-xs backdrop-blur-2xl"
+        className="relative z-10 w-full max-w-lg p-6 sm:p-8 rounded-2xl bg-[#1A1D24]/95 border border-white/10 shadow-2xl shadow-black/80 font-mono text-xs backdrop-blur-2xl"
       >
         {/* Header HUD */}
-        <div className="flex items-center justify-between pb-4 mb-5 border-b border-[#1e293b]">
+        <div className="flex items-center justify-between pb-4 mb-5 border-b border-white/[0.08]">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6] animate-pulse" />
-            <span className="text-white font-bold tracking-wider text-xs sm:text-sm">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#4D7CFE] shadow-[0_0_8px_#4D7CFE] animate-pulse" />
+            <span className="text-[#E8EAF0] font-bold tracking-wider text-xs sm:text-sm">
               SAM_CODES // CYBER_BOOT
             </span>
           </div>
@@ -115,13 +115,13 @@ export default function CinematicIntro() {
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.12 }}
-              className="flex items-center justify-between gap-3 text-slate-300"
+              className="flex items-center justify-between gap-3 text-[#9299A8]"
             >
               <div className="flex items-center gap-2 min-w-0">
-                <span className="text-blue-500 text-[10px]">&gt;&gt;</span>
-                <span className="truncate text-[11px] sm:text-xs text-slate-300">{log.text}</span>
+                <span className="text-[#4D7CFE] text-[10px]">&gt;&gt;</span>
+                <span className="truncate text-[11px] sm:text-xs text-[#9299A8]">{log.text}</span>
               </div>
-              <span className={`text-[10px] font-bold shrink-0 font-mono ${log.color}`}>
+              <span className={`text-[10px] font-bold shrink-0 font-mono ${log.color === "text-blue-400" ? "text-[#4D7CFE]" : log.color}`}>
                 [{log.status}]
               </span>
             </motion.div>
@@ -129,10 +129,10 @@ export default function CinematicIntro() {
         </div>
 
         {/* Bottom Status & Skip Action */}
-        <div className="flex items-center justify-between pt-4 border-t border-[#1e293b] text-[11px] text-slate-400">
+        <div className="flex items-center justify-between pt-4 border-t border-white/[0.08] text-[11px] text-[#9299A8]">
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-[#ccff00] animate-ping" />
-            <span className="font-mono text-slate-400">
+            <span className="font-mono text-[#9299A8]">
               {currentLine === BOOT_LOGS.length - 1 ? "PORTAL READY" : "LOADING SYSTEMS..."}
             </span>
           </div>
@@ -140,7 +140,7 @@ export default function CinematicIntro() {
           <button
             type="button"
             onClick={dismiss}
-            className="px-3 py-1 rounded bg-[#0f172a] hover:bg-blue-600/20 text-slate-400 hover:text-white border border-[#1e293b] hover:border-blue-500/40 transition-colors font-mono cursor-pointer"
+            className="px-3 py-1 rounded bg-[#222630] hover:bg-[#4D7CFE]/20 text-[#9299A8] hover:text-[#E8EAF0] border border-white/[0.08] hover:border-[#4D7CFE]/40 transition-colors font-mono cursor-pointer"
           >
             SKIP [ESC]
           </button>
@@ -157,7 +157,7 @@ export default function CinematicIntro() {
             transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             className="pointer-events-none absolute z-20 w-[420px] h-[420px] sm:w-[580px] sm:h-[580px] flex items-center justify-center"
           >
-            <svg viewBox="0 0 100 100" className="w-full h-full text-blue-500 drop-shadow-[0_0_50px_#3b82f6]">
+            <svg viewBox="0 0 100 100" className="w-full h-full text-[#4D7CFE] drop-shadow-[0_0_50px_#4D7CFE]">
               {/* Outer Hexagon Aperture */}
               <polygon
                 points="50,2 93,25 93,75 50,98 7,75 7,25"
@@ -169,13 +169,13 @@ export default function CinematicIntro() {
               {/* Middle Aperture Ring */}
               <circle cx="50" cy="50" r="30" fill="none" stroke="#ccff00" strokeWidth="1" opacity="0.8" />
               {/* Inner Portal Core */}
-              <circle cx="50" cy="50" r="14" fill="#2563eb" opacity="0.4" />
+              <circle cx="50" cy="50" r="14" fill="#4D7CFE" opacity="0.4" />
               <circle cx="50" cy="50" r="4" fill="#ccff00" />
               <defs>
                 <linearGradient id="portalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#3b82f6" />
+                  <stop offset="0%" stopColor="#4D7CFE" />
                   <stop offset="50%" stopColor="#ccff00" />
-                  <stop offset="100%" stopColor="#2563eb" />
+                  <stop offset="100%" stopColor="#3D6DEE" />
                 </linearGradient>
               </defs>
             </svg>

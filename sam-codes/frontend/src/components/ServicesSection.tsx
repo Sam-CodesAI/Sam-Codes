@@ -117,21 +117,21 @@ export default function ServicesSection({
       className="relative py-28 sm:py-36 px-4 sm:px-6 max-w-7xl mx-auto border-t border-white/[0.06]"
     >
       <MotionReveal className="flex flex-col items-center text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-blue-400 mb-4 uppercase tracking-wider backdrop-blur-md">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1D24] border border-white/[0.08] text-xs font-mono text-[#4D7CFE] mb-4 uppercase tracking-wider backdrop-blur-md">
           <Wrench size={13} className="text-[#ccff00]" />
           <span>Services // Direct Collaboration</span>
         </div>
 
-        <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-4">
+        <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#E8EAF0] mb-4">
           Services &amp; Systems
         </h2>
 
-        <p className="text-base sm:text-lg text-slate-400 max-w-2xl font-normal leading-relaxed">
+        <p className="text-base sm:text-lg text-[#9299A8] max-w-2xl font-normal leading-relaxed">
           Direct engineering partnership with Samarth. Select a drawer to inspect deliverables and turnarounds.
         </p>
 
         {/* Currency Switcher */}
-        <div className="inline-flex items-center p-1 rounded-full bg-white/[0.04] border border-white/[0.08] mt-6 backdrop-blur-md">
+        <div className="inline-flex items-center p-1 rounded-full bg-[#1A1D24]/80 border border-white/[0.08] mt-6 backdrop-blur-md">
           <button
             type="button"
             onClick={() => {
@@ -140,8 +140,8 @@ export default function ServicesSection({
             }}
             className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
               currency === "USD"
-                ? "bg-blue-600/30 text-white font-semibold border border-blue-500/50 shadow-md shadow-blue-600/20"
-                : "text-slate-400 hover:text-white"
+                ? "bg-[#4D7CFE]/30 text-[#E8EAF0] font-semibold border border-[#4D7CFE]/50 shadow-md shadow-[#4D7CFE]/20"
+                : "text-[#9299A8] hover:text-[#E8EAF0]"
             }`}
           >
             USD ($)
@@ -154,8 +154,8 @@ export default function ServicesSection({
             }}
             className={`px-4 py-1.5 rounded-full text-xs font-mono transition-all cursor-pointer ${
               currency === "INR"
-                ? "bg-blue-600/30 text-white font-semibold border border-blue-500/50 shadow-md shadow-blue-600/20"
-                : "text-slate-400 hover:text-white"
+                ? "bg-[#4D7CFE]/30 text-[#E8EAF0] font-semibold border border-[#4D7CFE]/50 shadow-md shadow-[#4D7CFE]/20"
+                : "text-[#9299A8] hover:text-[#E8EAF0]"
             }`}
           >
             INR (₹)
@@ -171,13 +171,13 @@ export default function ServicesSection({
           return (
             <div key={folder.id} className="flex flex-col group">
               {/* Archival Folder Tab */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 self-start rounded-t-xl bg-[#0c1424] border-t border-x border-white/[0.08] group-hover:border-blue-500/40 group-hover:bg-[#101b33] transition-all text-[11px] font-mono text-slate-400 group-hover:text-blue-300 max-w-full min-w-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:bg-[#ccff00] transition-colors shrink-0" />
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 self-start rounded-t-xl bg-[#222630] border-t border-x border-white/[0.08] group-hover:border-[#4D7CFE]/40 group-hover:bg-[#282d39] transition-all text-[11px] font-mono text-[#9299A8] group-hover:text-[#4D7CFE] max-w-full min-w-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#4D7CFE] group-hover:bg-[#ccff00] transition-colors shrink-0" />
                 <span className="truncate break-all">{folder.folderCode}</span>
               </div>
 
               {/* Folder Drawer Container */}
-              <div className="rounded-b-2xl rounded-tr-2xl bg-[#080d1a] border border-white/[0.08] group-hover:border-blue-500/40 transition-all duration-300 shadow-xl overflow-hidden backdrop-blur-xl">
+              <div className="rounded-b-2xl rounded-tr-2xl bg-[#1A1D24] border border-white/[0.08] group-hover:border-[#4D7CFE]/40 transition-all duration-300 shadow-xl overflow-hidden backdrop-blur-xl">
                 {/* Folder Header Banner */}
                 <button
                   type="button"
@@ -186,24 +186,24 @@ export default function ServicesSection({
                 >
                   <div>
                     <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                      <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-semibold">
+                      <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-[#4D7CFE]/10 text-[#4D7CFE] border border-[#4D7CFE]/20 font-semibold">
                         {folder.highlight}
                       </span>
                     </div>
 
-                    <h3 className="text-xl sm:text-2xl font-bold text-white group-hover/btn:text-blue-200 transition-colors">
+                    <h3 className="text-xl sm:text-2xl font-bold text-[#E8EAF0] group-hover/btn:text-white transition-colors">
                       {folder.title}
                     </h3>
 
-                    <p className="text-xs sm:text-sm text-slate-300 mt-2 font-normal">
+                    <p className="text-xs sm:text-sm text-[#9299A8] mt-2 font-normal">
                       {folder.tagline}
                     </p>
                   </div>
 
-                  <div className="p-2 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-400 group-hover/btn:text-white shrink-0 mt-1">
+                  <div className="p-2 rounded-full bg-[#222630] border border-white/[0.08] text-[#9299A8] group-hover/btn:text-[#E8EAF0] shrink-0 mt-1">
                     <ChevronDown
                       size={16}
-                      className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-blue-400" : ""}`}
+                      className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-[#4D7CFE]" : ""}`}
                     />
                   </div>
                 </button>
@@ -220,9 +220,9 @@ export default function ServicesSection({
                     >
                       <div className="p-6 sm:p-8 space-y-6">
                         {/* Price & Turnaround Strip */}
-                        <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] font-mono text-xs">
+                        <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-[#222630]/60 border border-white/[0.06] font-mono text-xs">
                           <div>
-                            <span className="text-slate-500 text-[10px] uppercase block">
+                            <span className="text-[#9299A8] text-[10px] uppercase block">
                               Estimated Investment
                             </span>
                             <span className="text-lg font-bold text-[#ccff00]">
@@ -230,40 +230,40 @@ export default function ServicesSection({
                             </span>
                           </div>
                           <div className="text-right">
-                            <span className="text-slate-500 text-[10px] uppercase block">
+                            <span className="text-[#9299A8] text-[10px] uppercase block">
                               Typical Turnaround
                             </span>
-                            <span className="text-white font-semibold">
+                            <span className="text-[#E8EAF0] font-semibold">
                               ⏱ {folder.turnaround}
                             </span>
                           </div>
                         </div>
 
                         {/* Description */}
-                        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                        <p className="text-xs sm:text-sm text-[#9299A8] leading-relaxed font-normal">
                           {folder.description}
                         </p>
 
                         {/* Deliverables List */}
                         <div className="space-y-3">
-                          <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block font-bold">
+                          <span className="text-[11px] font-mono text-[#9299A8] uppercase tracking-wider block font-bold">
                             Core Deliverables:
                           </span>
                           <div className="space-y-2">
                             {folder.deliverables.map((item, dIdx) => (
                               <div
                                 key={dIdx}
-                                className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-start gap-3"
+                                className="p-3.5 rounded-xl bg-[#222630]/50 border border-white/[0.05] flex items-start gap-3"
                               >
                                 <Check
                                   size={15}
                                   className="text-[#ccff00] shrink-0 mt-0.5"
                                 />
                                 <div>
-                                  <h4 className="text-xs font-bold text-white mb-0.5">
+                                  <h4 className="text-xs font-bold text-[#E8EAF0] mb-0.5">
                                     {item.title}
                                   </h4>
-                                  <p className="text-[11px] text-slate-400 leading-relaxed font-mono">
+                                  <p className="text-[11px] text-[#9299A8] leading-relaxed font-mono">
                                     {item.desc}
                                   </p>
                                 </div>
@@ -274,7 +274,7 @@ export default function ServicesSection({
 
                         {/* Bottom Actions */}
                         <div className="pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3">
-                          <span className="text-[11px] font-mono text-slate-500">
+                          <span className="text-[11px] font-mono text-[#9299A8]">
                             Direct collaboration with Samarth
                           </span>
 
@@ -283,7 +283,7 @@ export default function ServicesSection({
                               href="https://t.me/Samarth1306"
                               target="_blank"
                               rel="noreferrer"
-                              className="flex-1 sm:flex-none px-4 py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-md shadow-blue-600/20 cursor-pointer min-h-[44px]"
+                              className="flex-1 sm:flex-none px-4 py-2.5 rounded-full bg-[#4D7CFE] hover:bg-[#3D6DEE] text-[#E8EAF0] font-mono text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-md shadow-[#4D7CFE]/20 cursor-pointer min-h-[44px]"
                             >
                               <Send size={13} />
                               <span>Talk on Telegram</span>
@@ -291,7 +291,7 @@ export default function ServicesSection({
 
                             <Link
                               href="/contact"
-                              className="flex-1 sm:flex-none px-4 py-2.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-200 hover:text-white font-mono text-xs font-semibold flex items-center justify-center gap-1 transition-all cursor-pointer min-h-[44px]"
+                              className="flex-1 sm:flex-none px-4 py-2.5 rounded-full bg-[#222630] hover:bg-[#282d39] border border-white/[0.08] text-[#E8EAF0] hover:text-white font-mono text-xs font-semibold flex items-center justify-center gap-1 transition-all cursor-pointer min-h-[44px]"
                             >
                               <span>Open Brief</span>
                               <ArrowUpRight size={13} />

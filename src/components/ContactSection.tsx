@@ -213,27 +213,27 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
     <section
       id="contact"
       aria-label="Contact Sam"
-      className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-6xl mx-auto border-t border-[#1e293b]"
+      className="relative py-24 sm:py-32 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]"
     >
       <MotionReveal className="flex flex-col items-center text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#080d1a] border border-[#1e293b] text-xs font-mono text-blue-400 mb-4 uppercase tracking-wider">
-          <MessageSquare size={13} className="text-[#ccff00]" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1D24] border border-white/[0.08] text-xs font-mono text-[#4D7CFE] mb-4 uppercase tracking-wider">
+          <MessageSquare size={13} className="text-[#4D7CFE]" />
           <span>Start a Conversation</span>
         </div>
 
-        <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
+        <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#E8EAF0] mb-4">
           Have Something Worth Building?
         </h2>
 
-        <p className="text-base sm:text-lg text-slate-300 max-w-2xl font-normal leading-relaxed mb-6">
+        <p className="text-base sm:text-lg text-[#9299A8] max-w-2xl font-normal leading-relaxed mb-6">
           The fastest way to reach me is directly on Telegram (@Samarth1306) or via our 3D WebGL transmission portal. For project specifications or formal briefs, send an inquiry below.
         </p>
 
         <a
           href="/contact"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-600/20 hover:bg-blue-600 border border-blue-500/40 text-blue-300 hover:text-white font-mono text-xs transition-all shadow-lg shadow-blue-900/20"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#4D7CFE]/15 hover:bg-[#4D7CFE] border border-[#4D7CFE]/40 text-[#E8EAF0] font-mono text-xs transition-all shadow-lg shadow-[#4D7CFE]/20"
         >
-          <Sparkles size={14} className="text-[#ccff00]" />
+          <Sparkles size={14} className="text-[#4D7CFE]" />
           <span>Launch 3D Cyber Highway Contact Portal ↗</span>
         </a>
       </MotionReveal>
@@ -241,10 +241,10 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
       {/* Primary Social Pathways Grid */}
       <div className="mb-14">
         <div className="flex items-center justify-between mb-4">
-          <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+          <span className="text-xs font-mono text-[#9299A8] uppercase tracking-wider">
             Preferred Channels (Direct Messaging &amp; Telegram)
           </span>
-          <span className="text-[11px] font-mono text-[#ccff00] flex items-center gap-1.5 font-bold">
+          <span className="text-[11px] font-mono text-[#4D7CFE] flex items-center gap-1.5 font-bold">
             <Clock size={12} />
             <span>Fast DMs on Telegram (@Samarth1306) · Direct Email</span>
           </span>
@@ -259,43 +259,43 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
               return (
                 <SpotlightCard
                   key={item.platform}
-                  spotlightColor="rgba(56, 189, 248, 0.12)"
-                  className="p-5 flex flex-col justify-between group cursor-default"
+                  spotlightColor="rgba(77, 124, 254, 0.15)"
+                  className="p-5 flex flex-col justify-between group cursor-default bg-[#1A1D24] border-white/[0.08]"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-slate-300 group-hover:text-sky-400 group-hover:bg-sky-500/10 transition-colors">
+                      <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-[#9299A8] group-hover:text-[#4D7CFE] group-hover:bg-[#4D7CFE]/10 transition-colors">
                         <Icon className="w-5 h-5" />
                       </div>
                       {item.priorityBadge && (
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#4D7CFE]/15 text-[#4D7CFE] border border-[#4D7CFE]/30">
                           {item.priorityBadge}
                         </span>
                       )}
                     </div>
 
-                    <h4 className="text-sm font-bold text-white mb-0.5">
+                    <h4 className="text-sm font-bold text-[#E8EAF0] mb-0.5">
                       {item.platform}
                     </h4>
 
-                    <div className="text-[11px] font-mono text-slate-400 mb-3 truncate">
+                    <div className="text-[11px] font-mono text-[#9299A8] mb-3 truncate">
                       {item.handleOrLabel}
                     </div>
 
                     {item.description && (
-                      <p className="text-[11px] text-slate-400 mb-4 leading-relaxed line-clamp-2">
+                      <p className="text-[11px] text-[#9299A8] mb-4 leading-relaxed line-clamp-2">
                         {item.description}
                       </p>
                     )}
                   </div>
 
-                  <div className="pt-3 border-t border-white/[0.04] flex items-center gap-2">
+                  <div className="pt-3 border-t border-white/[0.06] flex items-center gap-2">
                     <a
                       href={item.url}
                       target="_blank"
                       rel="noreferrer"
                       onClick={() => soundFx.playHover()}
-                      className="flex-1 py-2 px-3 rounded-lg bg-white/[0.05] hover:bg-white text-slate-200 hover:text-slate-950 font-mono text-[11px] text-center font-medium transition-all flex items-center justify-center gap-1 cursor-pointer min-h-[44px]"
+                      className="flex-1 py-2 px-3 rounded-lg bg-[#222630] hover:bg-[#4D7CFE] text-[#E8EAF0] font-mono text-[11px] text-center font-medium transition-all flex items-center justify-center gap-1 cursor-pointer min-h-[44px]"
                     >
                       <span>{item.directActionLabel}</span>
                       <ExternalLink size={11} />
@@ -305,7 +305,7 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
                       type="button"
                       onClick={() => handleCopyHandle(item.handleOrLabel)}
                       title={`Copy ${item.handleOrLabel}`}
-                      className="p-2.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] text-slate-400 hover:text-white transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
+                      className="p-2.5 rounded-lg bg-[#222630] hover:bg-[#4D7CFE]/20 text-[#9299A8] hover:text-[#E8EAF0] transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
                     >
                       {copiedHandle === item.handleOrLabel ? (
                         <Check size={14} className="text-emerald-400" />
@@ -324,17 +324,17 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: Direct Email & Direct Builder Transparency (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm space-y-6">
-            <h3 className="text-lg font-bold text-white">Direct Email</h3>
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+          <div className="p-8 rounded-3xl bg-[#1A1D24] border border-white/[0.08] backdrop-blur-sm space-y-6">
+            <h3 className="text-lg font-bold text-[#E8EAF0]">Direct Email</h3>
+            <p className="text-xs sm:text-sm text-[#9299A8] leading-relaxed">
               If you have a formal project specification or detailed scope, email is great. I read and reply to inquiries personally.
             </p>
 
             {/* Email Copy Card */}
-            <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-between gap-3">
+            <div className="p-4 rounded-2xl bg-[#222630] border border-white/[0.08] flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5 overflow-hidden">
-                <Mail size={16} className="text-sky-400 shrink-0" />
-                <span className="text-xs sm:text-sm font-mono text-white truncate">
+                <Mail size={16} className="text-[#4D7CFE] shrink-0" />
+                <span className="text-xs sm:text-sm font-mono text-[#E8EAF0] truncate">
                   {CONTACT_CONFIG.EMAIL_ADDRESS}
                 </span>
               </div>
@@ -343,7 +343,7 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
                 type="button"
                 onClick={handleCopyEmail}
                 aria-label="Copy email address"
-                className="px-4 py-2 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 min-h-[44px]"
+                className="px-4 py-2 rounded-lg bg-[#4D7CFE]/15 hover:bg-[#4D7CFE]/25 text-[#4D7CFE] border border-[#4D7CFE]/30 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 min-h-[44px]"
               >
                 {copiedEmail ? (
                   <>
@@ -359,8 +359,8 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
               </button>
             </div>
 
-            <div className="p-4 rounded-xl bg-sky-500/5 border border-sky-500/15 text-[11px] font-mono text-slate-400 space-y-2">
-              <div className="flex items-center gap-2 text-sky-400 font-bold">
+            <div className="p-4 rounded-xl bg-[#222630]/60 border border-white/[0.08] text-[11px] font-mono text-[#9299A8] space-y-2">
+              <div className="flex items-center gap-2 text-[#4D7CFE] font-bold">
                 <Sparkles size={14} />
                 <span>DIRECT BUILDER GUARANTEE</span>
               </div>
@@ -374,13 +374,13 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
         {/* Right Column: Project Inquiry Form (7 cols) */}
         <div className="lg:col-span-7">
           {isSubmitted ? (
-            <div className="p-8 sm:p-10 rounded-3xl bg-white/[0.02] border border-emerald-500/30 backdrop-blur-sm space-y-4 text-center">
+            <div className="p-8 sm:p-10 rounded-3xl bg-[#1A1D24] border border-emerald-500/30 backdrop-blur-sm space-y-4 text-center">
               <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto">
                 <CheckCircle2 size={24} />
               </div>
-              <h3 className="text-xl font-bold text-white">Inquiry Dispatched Successfully</h3>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
-                Thank you, <span className="text-white font-semibold">{formState.name}</span>. Your project brief has been logged in the Command Center. Sam will review your scope and follow up directly to <span className="text-sky-400 font-mono">{formState.email}</span> within 24 hours.
+              <h3 className="text-xl font-bold text-[#E8EAF0]">Inquiry Dispatched Successfully</h3>
+              <p className="text-xs sm:text-sm text-[#9299A8] max-w-md mx-auto leading-relaxed">
+                Thank you, <span className="text-[#E8EAF0] font-semibold">{formState.name}</span>. Your project brief has been logged in the Command Center. Sam will review your scope and follow up directly to <span className="text-[#4D7CFE] font-mono">{formState.email}</span> within 24 hours.
               </p>
               <button
                 type="button"
@@ -393,7 +393,7 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
                     message: "",
                   });
                 }}
-                className="mt-4 px-6 py-2.5 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-xs font-mono text-slate-300 hover:text-white transition-colors cursor-pointer min-h-[44px]"
+                className="mt-4 px-6 py-2.5 rounded-full bg-[#222630] hover:bg-white/[0.1] text-xs font-mono text-[#E8EAF0] transition-colors cursor-pointer min-h-[44px]"
               >
                 Send Another Message
               </button>
@@ -401,9 +401,9 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
           ) : (
             <form
               onSubmit={handleFormSubmit}
-              className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm space-y-5"
+              className="p-8 rounded-3xl bg-[#1A1D24] border border-white/[0.08] backdrop-blur-sm space-y-5"
             >
-              <h3 className="text-lg font-bold text-white mb-2">Send a Message</h3>
+              <h3 className="text-lg font-bold text-[#E8EAF0] mb-2">Send a Message</h3>
 
               {submissionError && (
                 <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs font-mono flex items-center gap-2.5">
@@ -426,7 +426,7 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="name" className="block text-xs font-mono text-slate-400 mb-1.5">
+                  <label htmlFor="name" className="block text-xs font-mono text-[#9299A8] mb-1.5">
                     YOUR NAME
                   </label>
                   <input
@@ -436,12 +436,12 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
                     placeholder="Your Name"
                     value={formState.name}
                     onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors min-h-[44px]"
+                    className="w-full px-4 py-3 rounded-xl bg-[#101216] border border-white/[0.08] text-[#E8EAF0] placeholder-[#9299A8]/60 text-xs sm:text-sm focus:outline-none focus:border-[#4D7CFE] transition-colors min-h-[44px]"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-xs font-mono text-slate-400 mb-1.5">
+                  <label htmlFor="email" className="block text-xs font-mono text-[#9299A8] mb-1.5">
                     YOUR EMAIL
                   </label>
                   <input
@@ -451,20 +451,20 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
                     placeholder="your.email@example.com"
                     value={formState.email}
                     onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors min-h-[44px]"
+                    className="w-full px-4 py-3 rounded-xl bg-[#101216] border border-white/[0.08] text-[#E8EAF0] placeholder-[#9299A8]/60 text-xs sm:text-sm focus:outline-none focus:border-[#4D7CFE] transition-colors min-h-[44px]"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="service" className="block text-xs font-mono text-slate-400 mb-1.5">
+                <label htmlFor="service" className="block text-xs font-mono text-[#9299A8] mb-1.5">
                   WHAT DO YOU WANT TO BUILD OR AUTOMATE?
                 </label>
                 <select
                   id="service"
                   value={formState.service}
                   onChange={(e) => setFormState({ ...formState, service: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-[#090d1a] border border-white/[0.08] text-white text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors cursor-pointer min-h-[44px]"
+                  className="w-full px-4 py-3 rounded-xl bg-[#101216] border border-white/[0.08] text-[#E8EAF0] text-xs sm:text-sm focus:outline-none focus:border-[#4D7CFE] transition-colors cursor-pointer min-h-[44px]"
                 >
                   <option value="AI Chatbots & Assistants">AI Chatbot or Customer Assistant</option>
                   <option value="Workflow & Business Automation">Workflow &amp; Business Process Automation</option>
@@ -475,7 +475,7 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-xs font-mono text-slate-400 mb-1.5">
+                <label htmlFor="message" className="block text-xs font-mono text-[#9299A8] mb-1.5">
                   BRIEF DETAILS
                 </label>
                 <textarea
@@ -485,14 +485,14 @@ export default function ContactSection({ socials = socialsData }: { socials?: So
                   placeholder="Describe what needs to work, what you're trying to solve, or what you want to build..."
                   value={formState.message}
                   onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-white placeholder-slate-600 text-xs sm:text-sm focus:outline-none focus:border-sky-400 transition-colors resize-none"
+                  className="w-full px-4 py-3 rounded-xl bg-[#101216] border border-white/[0.08] text-[#E8EAF0] placeholder-[#9299A8]/60 text-xs sm:text-sm focus:outline-none focus:border-[#4D7CFE] transition-colors resize-none"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 px-6 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-sky-500/20 cursor-pointer min-h-[48px] disabled:opacity-70"
+                className="w-full py-4 px-6 rounded-full bg-[#4D7CFE] hover:bg-[#3D6DEE] text-[#E8EAF0] font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#4D7CFE]/25 cursor-pointer min-h-[48px] disabled:opacity-70"
               >
                 {isSubmitting ? (
                   <>

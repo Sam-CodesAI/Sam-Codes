@@ -90,9 +90,9 @@ export default function NeuralField() {
         height * 0.5,
         width * 0.8
       );
-      gradient.addColorStop(0, "rgba(37, 99, 235, 0.05)");
+      gradient.addColorStop(0, "rgba(77, 124, 254, 0.06)");
       gradient.addColorStop(0.5, "rgba(204, 255, 0, 0.015)");
-      gradient.addColorStop(1, "rgba(3, 5, 9, 0)");
+      gradient.addColorStop(1, "rgba(16, 18, 22, 0)");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, width, height);
 
@@ -136,9 +136,9 @@ export default function NeuralField() {
             ctx.moveTo(nodeA.x, nodeA.y);
             ctx.lineTo(nodeB.x, nodeB.y);
 
-            // Subtle luminous pulse along lines (Electric Cobalt)
+            // Subtle luminous pulse along lines (Electric Blue #4D7CFE)
             const pulse = (Math.sin(frame * 0.03 + i + j) + 1) * 0.5;
-            ctx.strokeStyle = `rgba(59, 130, 246, ${alpha * (0.7 + pulse * 0.3)})`;
+            ctx.strokeStyle = `rgba(77, 124, 254, ${alpha * (0.7 + pulse * 0.3)})`;
             ctx.lineWidth = 0.8;
             ctx.stroke();
 
@@ -155,11 +155,11 @@ export default function NeuralField() {
           }
         }
 
-        // Draw node points
+        // Draw node points (Soft White #E8EAF0)
         const pulseRadius = nodeA.baseRadius + Math.sin(frame * 0.04 + nodeA.pulsePhase) * 0.4;
         ctx.beginPath();
         ctx.arc(nodeA.x, nodeA.y, Math.max(0.6, pulseRadius), 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(224, 231, 255, ${0.4 + Math.sin(frame * 0.03 + i) * 0.2})`;
+        ctx.fillStyle = `rgba(232, 234, 240, ${0.4 + Math.sin(frame * 0.03 + i) * 0.2})`;
         ctx.fill();
       }
 

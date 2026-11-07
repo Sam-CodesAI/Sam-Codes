@@ -40,11 +40,11 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md mb-8 max-w-full min-w-0"
+            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#1A1D24]/80 border border-white/[0.08] backdrop-blur-md mb-8 max-w-full min-w-0"
           >
             <span className="w-2 h-2 rounded-full bg-[#ccff00] shadow-[0_0_8px_#ccff00] shrink-0" />
-            <span className="text-xs font-mono tracking-wider text-slate-300 truncate break-all">
-              Karnataka, India <span className="text-blue-500">•</span> 17yo Builder
+            <span className="text-xs font-mono tracking-wider text-[#9299A8] truncate break-all">
+              Karnataka, India <span className="text-[#4D7CFE]">•</span> 17yo Builder
             </span>
           </motion.div>
 
@@ -55,10 +55,10 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="mb-8 sm:mb-10 w-full"
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tight text-white leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tight text-[#E8EAF0] leading-tight">
               <span className="block">Hi, I am Samarth.</span>
-              <div className="text-slate-400 font-medium text-xl sm:text-2xl md:text-3xl lg:text-[2rem] mt-2 sm:mt-3 flex items-center gap-x-2 sm:gap-x-3 h-[1.35em] overflow-hidden">
-                <span className="text-slate-400 shrink-0">I am a</span>
+              <div className="text-[#9299A8] font-medium text-xl sm:text-2xl md:text-3xl lg:text-[2rem] mt-2 sm:mt-3 flex items-center gap-x-2 sm:gap-x-3 h-[1.35em] overflow-hidden">
+                <span className="text-[#9299A8] shrink-0">I am a</span>
                 <div className="relative flex-1 min-w-0 h-[1.35em] overflow-hidden">
                   <AnimatePresence mode="popLayout" initial={false}>
                     <motion.span
@@ -67,7 +67,7 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
                       animate={{ y: "0%", opacity: 1 }}
                       exit={{ y: "-100%", opacity: 0 }}
                       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                      className="absolute inset-0 flex items-center whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-blue-100 font-extrabold"
+                      className="absolute inset-0 flex items-center whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-[#4D7CFE] via-[#85A6FF] to-[#E8EAF0] font-extrabold"
                     >
                       {ROLES[roleIndex]}
                     </motion.span>
@@ -90,10 +90,10 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => soundFx.playChime(520, 0.08)}
-                className="w-full sm:w-auto px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-all shadow-xl shadow-blue-600/30 hover:shadow-blue-500/50 flex items-center justify-center gap-2 cursor-pointer border border-blue-400/40"
+                className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#4D7CFE] hover:bg-[#3D6DEE] text-[#E8EAF0] font-medium text-sm transition-all shadow-xl shadow-[#4D7CFE]/25 hover:shadow-[#4D7CFE]/45 flex items-center justify-center gap-2 cursor-pointer border border-[#4D7CFE]/50"
               >
                 <span>Explore Projects</span>
-                <ArrowDownRight size={16} className="text-blue-200" />
+                <ArrowDownRight size={16} className="text-[#E8EAF0]" />
               </motion.a>
             </MagneticButton>
 
@@ -103,7 +103,7 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => soundFx.playChime(640, 0.08)}
-                className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.12] hover:border-white/[0.25] text-slate-200 hover:text-white font-medium text-sm transition-all flex items-center justify-center gap-2 backdrop-blur-md cursor-pointer"
+                className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#1A1D24] hover:bg-[#222630] border border-white/[0.12] hover:border-[#4D7CFE]/40 text-[#E8EAF0] hover:text-white font-medium text-sm transition-all flex items-center justify-center gap-2 backdrop-blur-md cursor-pointer"
               >
                 <span>Reach Me</span>
                 <ArrowRight size={15} className="text-[#ccff00]" />
@@ -147,13 +147,13 @@ export default function Hero({ profile = profileData }: { profile?: ProfileData 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-              className="absolute -bottom-3 sm:-bottom-4 left-auto right-auto px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#080d1a]/85 backdrop-blur-xl border border-white/10 shadow-2xl z-20 flex items-center gap-2 max-w-[95%] min-w-0"
+              className="absolute -bottom-3 sm:-bottom-4 left-auto right-auto px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#1A1D24]/90 backdrop-blur-xl border border-white/10 shadow-2xl z-20 flex items-center gap-2 max-w-[95%] min-w-0"
             >
               <span className="relative flex h-2 w-2 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ccff00] opacity-80" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ccff00] shadow-[0_0_8px_#ccff00]" />
               </span>
-              <span className="text-[11px] sm:text-xs font-mono font-medium text-slate-200 tracking-tight sm:tracking-wide whitespace-nowrap">
+              <span className="text-[11px] sm:text-xs font-mono font-medium text-[#E8EAF0] tracking-tight sm:tracking-wide whitespace-nowrap">
                 Available for builds &amp; systems
               </span>
             </motion.div>

@@ -232,8 +232,8 @@ export function TechBadge({
     <span
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`relative inline-flex items-center rounded-lg bg-[#080d1a] border border-[#1e293b] text-slate-300 transition-all font-mono select-none max-w-full min-w-0 ${sizeClasses} ${
-        hovered ? "border-blue-500/60 text-white shadow-sm shadow-blue-500/20" : "hover:border-slate-700"
+      className={`relative inline-flex items-center rounded-lg bg-[#1A1D24] border border-white/[0.08] text-[#9299A8] transition-all font-mono select-none max-w-full min-w-0 ${sizeClasses} ${
+        hovered ? "border-[#4D7CFE]/60 text-[#E8EAF0] shadow-sm shadow-[#4D7CFE]/20" : "hover:border-white/20"
       }`}
     >
       {IconComponent && (
@@ -241,7 +241,7 @@ export function TechBadge({
           className="transition-transform duration-300 shrink-0"
           style={{
             transform: hovered ? "scale(1.15)" : "scale(1)",
-            color: hovered ? (logoInfo?.glowColor || "#38bdf8") : "currentColor",
+            color: hovered ? (logoInfo?.glowColor || "#4D7CFE") : "currentColor",
           }}
         >
           <IconComponent className={size === "xs" ? "w-3 h-3" : "w-3.5 h-3.5"} />
@@ -251,7 +251,7 @@ export function TechBadge({
 
       {/* Micro-tooltip */}
       {hovered && logoInfo && (
-        <span className="absolute -top-7 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-[#0f172a] border border-blue-500/40 text-[9px] font-mono text-blue-300 whitespace-nowrap shadow-lg pointer-events-none z-30 animate-fade-in">
+        <span className="absolute -top-7 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-[#222630] border border-[#4D7CFE]/40 text-[9px] font-mono text-[#4D7CFE] whitespace-nowrap shadow-lg pointer-events-none z-30 animate-fade-in">
           {logoInfo.label}
         </span>
       )}

@@ -82,12 +82,12 @@ export default function TechEcosystem() {
                   delay: waveDelay,
                 }}
                 onMouseEnter={() => soundFx.playHover()}
-                className="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] hover:border-blue-400/50 transition-colors duration-300 shadow-lg shadow-black/40 backdrop-blur-md cursor-default shrink-0 select-none"
+                className="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#1A1D24]/70 hover:bg-[#1A1D24] border border-white/[0.08] hover:border-[#4D7CFE]/50 transition-colors duration-300 shadow-lg shadow-black/40 backdrop-blur-md cursor-default shrink-0 select-none"
               >
-                <div className="text-slate-400 group-hover:text-blue-400 transition-colors">
+                <div className="text-[#9299A8] group-hover:text-[#4D7CFE] transition-colors">
                   <Icon className="w-4 h-4" />
                 </div>
-                <span className="text-xs font-mono font-medium text-slate-300 group-hover:text-white transition-colors">
+                <span className="text-xs font-mono font-medium text-[#9299A8] group-hover:text-[#E8EAF0] transition-colors">
                   {tech.name}
                 </span>
               </motion.div>

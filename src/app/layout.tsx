@@ -60,7 +60,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#030509",
+  themeColor: "#101216",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -139,7 +139,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="relative bg-[#030509] text-slate-100 antialiased selection:bg-blue-600/35 selection:text-white min-h-screen max-w-full overflow-x-hidden">
+      <body className="relative bg-[#101216] text-[#E8EAF0] antialiased selection:bg-[#4D7CFE]/35 selection:text-white min-h-screen max-w-full overflow-x-hidden">
         {/* Background Neural Canvas */}
         <NeuralField />
 

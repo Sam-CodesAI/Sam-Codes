@@ -18,7 +18,7 @@ export default function AdminErrorBoundary({
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center p-4">
-      <div className="max-w-md w-full p-6 sm:p-8 rounded-3xl bg-[#0b0f19] border border-rose-500/20 shadow-2xl backdrop-blur-xl relative overflow-hidden font-mono text-center">
+      <div className="max-w-md w-full p-6 sm:p-8 rounded-3xl bg-[#1A1D24] border border-rose-500/20 shadow-2xl backdrop-blur-xl relative overflow-hidden font-mono text-center">
         {/* Ambient Glow */}
         <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-rose-500/10 blur-[80px] pointer-events-none" />
 
@@ -33,25 +33,25 @@ export default function AdminErrorBoundary({
           <span>Execution Interrupted</span>
         </div>
 
-        <h1 className="text-xl font-black text-white tracking-tight mb-2">
+        <h1 className="text-xl font-black text-[#E8EAF0] tracking-tight mb-2">
           Administrative Fault Caught
         </h1>
 
-        <p className="text-xs text-slate-400 leading-relaxed mb-6 font-sans">
+        <p className="text-xs text-[#9299A8] leading-relaxed mb-6 font-sans">
           The administrative control plane encountered an unexpected runtime exception. All system data and credentials remain safeguarded.
         </p>
 
         {/* Technical Error Box */}
         <div className="p-3.5 rounded-xl bg-black/50 border border-white/[0.06] text-left mb-6 space-y-1 text-[11px] overflow-x-auto">
-          <div className="text-slate-500 font-mono flex items-center gap-1.5">
-            <Terminal size={12} className="text-slate-400" />
+          <div className="text-[#9299A8] font-mono flex items-center gap-1.5">
+            <Terminal size={12} className="text-[#9299A8]" />
             <span>Fault Message:</span>
           </div>
           <p className="text-rose-300 font-mono break-all font-medium">
             {error.message || "An unspecified application error occurred."}
           </p>
           {error.digest && (
-            <p className="text-[10px] text-slate-500 font-mono pt-1 border-t border-white/[0.04]">
+            <p className="text-[10px] text-[#9299A8]/70 font-mono pt-1 border-t border-white/[0.04]">
               Digest Ref: {error.digest}
             </p>
           )}
@@ -62,7 +62,7 @@ export default function AdminErrorBoundary({
           <button
             type="button"
             onClick={() => reset()}
-            className="w-full py-3 px-4 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-lg shadow-sky-500/20 min-h-[44px]"
+            className="w-full py-3 px-4 rounded-xl bg-[#4D7CFE] hover:bg-[#3D6DEE] text-[#E8EAF0] font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-lg shadow-[#4D7CFE]/25 min-h-[44px]"
           >
             <RotateCcw size={14} />
             <span>Reset & Retry</span>
@@ -70,7 +70,7 @@ export default function AdminErrorBoundary({
 
           <Link
             href="/admin"
-            className="w-full py-3 px-4 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-white font-medium text-xs flex items-center justify-center gap-2 transition-all min-h-[44px]"
+            className="w-full py-3 px-4 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-[#E8EAF0] font-medium text-xs flex items-center justify-center gap-2 transition-all min-h-[44px]"
           >
             <Home size={14} />
             <span>Overview</span>
