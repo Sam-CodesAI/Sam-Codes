@@ -1,0 +1,107 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createInquiry } from "@/lib/data-service";
+import { notifyAdminOnTelegram } from "@/lib/telegram/client";
+import { getClientIp, checkRateLimit, recordFailure } from "@/lib/rate-limiter";
+
+const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+export async function POST(req: NextRequest) {
+  const ip = getClientIp(req);
+  const rateLimitKey = `contact_${ip}`;
+
+  // Rate limit: max 5 contact inquiries per 10 minutes per IP
+  const rateStatus = checkRateLimit(rateLimitKey, 5, 10 * 60 * 1000);
+  if (!rateStatus.allowed) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: `Submission rate limit exceeded. Please wait ${Math.ceil(rateStatus.resetSeconds / 60)} minutes before sending another inquiry.`,
+      },
+      {
+        status: 429,
+        headers: { "Retry-After": rateStatus.resetSeconds.toString() },
+      }
+    );
+  }
+
+  try {
+    const body = await req.json();
+
+    // Honeypot anti-spam check
+    if (body.website_trap || body._gotcha || body.user_anti_spam_field) {
+      return NextResponse.json({ success: true, message: "Inquiry received." });
+    }
+
+    const { name, email, contactMethod, serviceRequested, message } = body;
+
+    // Validate name
+    if (!name || typeof name !== "string" || name.trim().length < 2) {
+      recordFailure(rateLimitKey, 10 * 60 * 1000);
+      return NextResponse.json({ success: false, error: "Please provide your name (at least 2 characters)." }, { status: 400 });
+    }
+
+    // Validate email if provided
+    const cleanEmail = typeof email === "string" && email.trim() ? email.trim() : undefined;
+    if (cleanEmail && !EMAIL_REGEX.test(cleanEmail)) {
+      recordFailure(rateLimitKey, 10 * 60 * 1000);
+      return NextResponse.json({ success: false, error: "Please provide a valid email address." }, { status: 400 });
+    }
+
+    // Validate message
+    if (!message || typeof message !== "string" || message.trim().length < 5) {
+      recordFailure(rateLimitKey, 10 * 60 * 1000);
+      return NextResponse.json({ success: false, error: "Please provide a descriptive message (at least 5 characters)." }, { status: 400 });
+    }
+
+    recordFailure(rateLimitKey, 10 * 60 * 1000);
+
+    const savedInquiry = await createInquiry({
+      name: name.trim().slice(0, 150),
+      email: cleanEmail ? cleanEmail.slice(0, 150) : undefined,
+      contactMethod: contactMethod && typeof contactMethod === "string" ? contactMethod.trim().slice(0, 100) : "Direct Form",
+      serviceRequested: serviceRequested && typeof serviceRequested === "string" ? serviceRequested.trim().slice(0, 150) : "General Inquiry",
+      message: message.trim().slice(0, 5000),
+    });
+
+    // Notify Samarth instantly on his Telegram chat
+    void notifyAdminOnTelegram({
+      id: savedInquiry.id,
+      name: savedInquiry.name,
+      service: savedInquiry.serviceRequested,
+      contact: savedInquiry.email || savedInquiry.contactMethod,
+      brief: savedInquiry.message,
+    });
+
+    // Dispatch email notification to samarthknimangre@gmail.com
+    const targetEmail = "samarthknimangre@gmail.com";
+    if (process.env.RESEND_API_KEY) {
+      void fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "SAM CODES <inquiries@sam-codes.vercel.app>",
+          to: [targetEmail],
+          subject: `[SAM CODES] New Inquiry: ${savedInquiry.serviceRequested} (${savedInquiry.name})`,
+          text: `New inquiry received from ${savedInquiry.name} (${savedInquiry.email || savedInquiry.contactMethod}):\n\nService: ${savedInquiry.serviceRequested}\n\nBrief:\n${savedInquiry.message}\n\nInquiry ID: ${savedInquiry.id}`,
+        }),
+      }).catch((e) => console.error("[Contact API] Email dispatch error:", e));
+    } else {
+      console.log(`[Contact API] Direct inquiry queued for notification to ${targetEmail} (Inquiry ID: ${savedInquiry.id})`);
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Thank you, Sam has received your message and will review it shortly.",
+      inquiryId: savedInquiry.id,
+    });
+  } catch (err) {
+    console.error("[Contact API] Error submitting inquiry:", err);
+    return NextResponse.json(
+      { success: false, error: "Unable to process inquiry at this moment. Please reach out directly." },
+      { status: 500 }
+    );
+  }
+}
