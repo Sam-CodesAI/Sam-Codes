@@ -21,6 +21,7 @@ env/
 
 # Node / Build artifacts
 node_modules/
+.pnpm-store/
 .next/
 out/
 build/

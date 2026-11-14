@@ -1,5 +1,5 @@
 import React from "react";
-import CinematicIntro from "@/components/CinematicIntro";
+import QuantumPreloader from "@/components/preloader/QuantumPreloader";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import TechEcosystem from "@/components/TechEcosystem";
@@ -25,8 +25,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* 1. Opening anime diagnostic bootloader sequence */}
-      <CinematicIntro />
+      {/* 1. SAM CODES Quantum Core System Preloader */}
+      <QuantumPreloader />
 
       {/* 2. Floating navigation bar */}
       <Navbar />

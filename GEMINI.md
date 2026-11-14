@@ -31,3 +31,17 @@
 - **Physical Platform Block:** The user's Reddit account (`u/SamarthBuilds_`) is fresh (<30 karma) and physically blocked by Reddit from initiating direct chats or invites (*"You need a more established account to send chat invites"*). On X, cold DMs are paywalled or restricted.
 - **Absolute Prohibition on Outbound DM Instructions:** NEVER instruct, suggest, or assume the user can initiate cold DMs or chat requests. Any strategy relying on outbound private messaging is dead on arrival.
 - **The Inbound Flip Standard:** All proposals, sample code, and proofs must be embedded directly inside the **public comment thread** on the client's post. This solves the problem publicly, earns upvotes for comment karma, and drives the client to initiate contact directly or reach out via Telegram (`@Samarth1306`).
+
+## 8. Autonomous Skill Orchestration & Multi-Skill Synergy
+- **The Anti-Slop Design Stack:** When designing, building, or refining user interfaces, never default to generic AI layouts. Automatically synthesize:
+  1. `design-taste-frontend`: Mandate intentional art direction, asymmetric rhythm, high typography contrast, and real photographic assets instead of generic placeholders.
+  2. `impeccable`: Run heuristic design critiques, accessibility audits, and design token adherence checks (`/impeccable critique`, `/impeccable audit`) before declaring UI complete.
+  3. `ui-ux-pro-max`: Query local style presets (Bento Grid, Glassmorphism, Brutalism) and technology-specific guidelines (React, Next.js, Tailwind v4).
+- **Token-Efficient Browser QA via `agent-browser`:** For automated browser verification, UI testing, screenshot inspection, and web scraping, prioritize `agent-browser` (compact snapshot + `@e1` ref loop) over raw DOM dumps to preserve context window capacity.
+- **Pre-Flight Requirements Stress-Testing (`grill-me`):** For ambiguous, subjective, or high-blast-radius feature requests, proactively interview the user with targeted clarifying questions before executing code modifications.
+
+## 9. Agent Skills Management Invariants
+- **Non-Interactive Skill Additions:** All automated skill installations must specify `--all` (e.g. `npx --yes skills add <repo> --all`) to prevent interactive TTY blocking.
+- **Repository Exact Resolution:** Always verify upstream organization and repository casing before cloning (e.g., `anthropics/skills` [plural org], `Leonxlnx/taste-skill` [singular repo]).
+- **Lockfile Synchronization:** When installing new capabilities, run `npx --yes skills update -y` to keep `skills-lock.json` synchronized across all supported agents (Antigravity CLI, Gemini CLI, Claude Code, GitHub Copilot).
+

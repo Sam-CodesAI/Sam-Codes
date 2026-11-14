@@ -1,0 +1,56 @@
+/* SAM CODES — Quantum Core Brand Design Tokens */
+:root {
+  --qc-bg: #101216;
+  --qc-surface: #1A1D24;
+  --qc-surface-elevated: #20252E;
+  --qc-border: #292E38;
+  --qc-primary-accent: #4D7CFE;
+  --qc-accent-hover: #6990FF;
+  --qc-text-primary: #E8EAF0;
+  --qc-text-secondary: #9299A8;
+  --qc-text-muted: #6F7786;
+}
+
+.quantum-preloader {
+  background-color: var(--qc-bg);
+  color: var(--qc-text-primary);
+  font-family: var(--font-inter, system-ui, -apple-system, sans-serif);
+}
+
+.quantum-hud-text {
+  font-family: var(--font-jetbrains, 'JetBrains Mono', monospace);
+}
+
+.quantum-brand-text {
+  font-family: var(--font-space, 'Space Grotesk', sans-serif);
+}
+
+/* Subtle optical scanline */
+.quantum-scanline {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%,
+    rgba(0, 0, 0, 0.25)
+  );
+  background-size: 100% 4px;
+}
+
+/* Corner bracket diagnostics */
+.quantum-corner-tl {
+  border-top: 1px solid var(--qc-primary-accent);
+  border-left: 1px solid var(--qc-primary-accent);
+}
+.quantum-corner-tr {
+  border-top: 1px solid var(--qc-primary-accent);
+  border-right: 1px solid var(--qc-primary-accent);
+}
+.quantum-corner-bl {
+  border-bottom: 1px solid var(--qc-primary-accent);
+  border-left: 1px solid var(--qc-primary-accent);
+}
+.quantum-corner-br {
+  border-bottom: 1px solid var(--qc-primary-accent);
+  border-right: 1px solid var(--qc-primary-accent);
+}
