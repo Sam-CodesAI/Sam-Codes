@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "motion/react";
 import DiagnosticHUD from "./DiagnosticHUD";
@@ -12,11 +12,11 @@ const QuantumScene = dynamic(() => import("./QuantumScene"), {
 });
 
 const PHASES = [
-  { number: "PHASE 01", label: "AWAKENING", threshold: 20 },
-  { number: "PHASE 02", label: "PARTICLE GENESIS", threshold: 45 },
+  { number: "PHASE 01", label: "AWAKENING", threshold: 25 },
+  { number: "PHASE 02", label: "PARTICLE GENESIS", threshold: 50 },
   { number: "PHASE 03", label: "REACTOR ACTIVATION", threshold: 75 },
-  { number: "PHASE 04", label: "SYSTEM DIAGNOSTICS", threshold: 92 },
-  { number: "PHASE 05", label: "CORE SYNCHRONIZED", threshold: 100 },
+  { number: "PHASE 04", label: "SYSTEM CALIBRATION", threshold: 92 },
+  { number: "PHASE 05", label: "SYNCHRONIZED", threshold: 100 },
 ];
 
 export default function QuantumPreloader() {
@@ -25,11 +25,41 @@ export default function QuantumPreloader() {
   const [progress, setProgress] = useState(0);
   const [currentPhase, setCurrentPhase] = useState(PHASES[0]);
   const [renderEngine, setRenderEngine] = useState("INITIALIZING...");
-  const [fps, setFps] = useState(60);
+  const [fps, setFps] = useState<number | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [webGLFailed, setWebGLFailed] = useState(false);
 
   const exitingRef = useRef(false);
+  const domReadyRef = useRef(false);
+  const fontsReadyRef = useRef(false);
+  const rendererReadyRef = useRef(false);
+  const webGLFailedRef = useRef(false);
+
+  // 1. Stabilize callback identities so QuantumScene never reinitializes
+  const handleFpsUpdate = useCallback((fpsValue: number) => {
+    setFps(fpsValue);
+  }, []);
+
+  const handleRendererReady = useCallback((name: string) => {
+    rendererReadyRef.current = true;
+    setRenderEngine(name);
+  }, []);
+
+  const handleWebGLFail = useCallback(() => {
+    webGLFailedRef.current = true;
+    setWebGLFailed(true);
+  }, []);
+
+  const dismiss = useCallback(() => {
+    if (exitingRef.current) return;
+    exitingRef.current = true;
+    sessionStorage.setItem("sam_codes_quantum_init", "true");
+    setIsReady(true);
+    setProgress(100);
+    setTimeout(() => {
+      setVisible(false);
+    }, 450);
+  }, []);
 
   useEffect(() => {
     // 1. Client-Side Session Storage Gate (Only on initial entry)
@@ -50,78 +80,88 @@ export default function QuantumPreloader() {
     setShouldRender(true);
 
     // 3. Track Actual Application Readiness
-    let domReady = document.readyState === "complete";
-    let fontsReady = false;
+    domReadyRef.current = document.readyState === "complete";
 
-    const checkDomReady = () => {
-      domReady = true;
+    const onWindowLoad = () => {
+      domReadyRef.current = true;
     };
 
-    if (!domReady) {
-      window.addEventListener("load", checkDomReady);
+    if (!domReadyRef.current) {
+      window.addEventListener("load", onWindowLoad, { once: true });
     }
 
     if (document.fonts) {
       document.fonts.ready.then(() => {
-        fontsReady = true;
+        fontsReadyRef.current = true;
       });
     } else {
-      fontsReady = true;
+      fontsReadyRef.current = true;
     }
 
-    // 4. Smooth Coordinated Progress Loop
+    // 4. Deterministic Progress Curve Connected to Real Readiness
+    // Requirements:
+    // - Zero random increments
+    // - Paced across minimum visual duration (1400ms)
+    // - Capped at 85% until actual readiness (DOM + Fonts + Renderer) is satisfied
+    // - Fail-safe maximum duration (3800ms) prevents infinite loading
     const startTime = performance.now();
-    const minDuration = 1800; // Pacing target to allow reactor to initialize smoothly without jarring jump
-    const maxFailSafeDuration = 4000; // Fail-safe ceiling
+    const MIN_VISUAL_DURATION = 1400; // Pacing target to allow reactor to initialize smoothly
+    const MAX_FAILSAFE_DURATION = 3800; // Fail-safe ceiling
 
     const interval = setInterval(() => {
+      if (exitingRef.current) return;
+
       const elapsed = performance.now() - startTime;
-      const actualReady = domReady && fontsReady;
+      const isActualReady =
+        domReadyRef.current &&
+        fontsReadyRef.current &&
+        (rendererReadyRef.current || webGLFailedRef.current);
 
-      setProgress((prev) => {
-        let increment = 1.8 + Math.random() * 2.2;
-        if (actualReady && elapsed > minDuration) {
-          increment = 5.0 + Math.random() * 4.0;
+      let nextProgress: number;
+
+      if (!isActualReady) {
+        // While waiting for real readiness conditions, smoothly progress up to 85% cap
+        nextProgress = Math.min(85, (elapsed / MIN_VISUAL_DURATION) * 85);
+      } else {
+        // Real readiness conditions are satisfied
+        if (elapsed < MIN_VISUAL_DURATION) {
+          // Progress smoothly towards 90% until visual pacing is achieved
+          nextProgress = (elapsed / MIN_VISUAL_DURATION) * 90;
+        } else {
+          // Smoothly advance from 90% to 100% over 250ms
+          const completionFactor = Math.min(1, (elapsed - MIN_VISUAL_DURATION) / 250);
+          nextProgress = 90 + completionFactor * 10;
         }
+      }
 
-        const next = Math.min(100, prev + increment);
+      setProgress(nextProgress);
 
-        // Update Phase
-        const matchedPhase =
-          PHASES.find((p) => next <= p.threshold) || PHASES[PHASES.length - 1];
-        setCurrentPhase(matchedPhase);
+      // Update Phase deterministically
+      const matchedPhase =
+        PHASES.find((p) => nextProgress <= p.threshold) || PHASES[PHASES.length - 1];
+      setCurrentPhase(matchedPhase);
 
-        if (next >= 100 && !exitingRef.current) {
-          exitingRef.current = true;
-          setIsReady(true);
-          clearInterval(interval);
+      if (nextProgress >= 100) {
+        clearInterval(interval);
+        dismiss();
+      }
+    }, 35);
 
-          sessionStorage.setItem("sam_codes_quantum_init", "true");
-
-          // Premium exit transition delay
-          setTimeout(() => {
-            setVisible(false);
-          }, 450);
-        }
-
-        return next;
-      });
-    }, 45);
-
-    // 5. Absolute Safety Fail-safe (Guarantees user is never blocked)
+    // 5. Fail-Safe Timeout (Guarantees user is never trapped)
     const failSafeTimeout = setTimeout(() => {
       if (!exitingRef.current) {
-        exitingRef.current = true;
-        sessionStorage.setItem("sam_codes_quantum_init", "true");
-        setVisible(false);
+        clearInterval(interval);
+        dismiss();
       }
-    }, maxFailSafeDuration);
+    }, MAX_FAILSAFE_DURATION);
 
-    // 6. Keyboard dismiss shortcut
+    // 6. Keyboard dismiss shortcut (Escape stops all timers and exits)
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
-        sessionStorage.setItem("sam_codes_quantum_init", "true");
-        setVisible(false);
+      if (e.key === "Escape") {
+        e.preventDefault();
+        clearInterval(interval);
+        clearTimeout(failSafeTimeout);
+        dismiss();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -129,10 +169,10 @@ export default function QuantumPreloader() {
     return () => {
       clearInterval(interval);
       clearTimeout(failSafeTimeout);
-      window.removeEventListener("load", checkDomReady);
+      window.removeEventListener("load", onWindowLoad);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [dismiss]);
 
   if (!shouldRender || !visible) return null;
 
@@ -153,9 +193,9 @@ export default function QuantumPreloader() {
         {!webGLFailed ? (
           <QuantumScene
             progress={progress}
-            onFpsUpdate={(fpsValue) => setFps(fpsValue)}
-            onRendererReady={(name) => setRenderEngine(name)}
-            onWebGLFail={() => setWebGLFailed(true)}
+            onFpsUpdate={handleFpsUpdate}
+            onRendererReady={handleRendererReady}
+            onWebGLFail={handleWebGLFail}
           />
         ) : (
           <div aria-hidden="true" className="relative flex items-center justify-center w-64 h-64 z-0">
@@ -172,10 +212,11 @@ export default function QuantumPreloader() {
           phase={currentPhase.label}
           phaseNumber={currentPhase.number}
           renderEngine={renderEngine}
-          assetCount={55}
-          coreStatus="OPERATIONAL"
+          pipelineStatus={webGLFailed ? "2D FALLBACK" : "3D HARDWARE"}
+          systemStatus={isReady ? "SYNCHRONIZED" : progress >= 85 ? "VERIFYING" : "INITIALIZING"}
           fps={fps}
           isReady={isReady}
+          onSkip={dismiss}
         />
       </motion.div>
     </AnimatePresence>

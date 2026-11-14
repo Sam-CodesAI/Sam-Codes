@@ -7,22 +7,24 @@ export interface DiagnosticProps {
   progress: number; // 0 to 100
   phase: string;
   renderEngine: string;
-  assetCount: number;
-  coreStatus: string;
-  fps: number;
+  pipelineStatus: string;
+  systemStatus: string;
+  fps: number | null;
   phaseNumber: string;
   isReady: boolean;
+  onSkip?: () => void;
 }
 
 export default function DiagnosticHUD({
   progress,
   phase,
   renderEngine,
-  assetCount,
-  coreStatus,
+  pipelineStatus,
+  systemStatus,
   fps,
   phaseNumber,
   isReady,
+  onSkip,
 }: DiagnosticProps) {
   return (
     <div
@@ -45,14 +47,27 @@ export default function DiagnosticHUD({
           </span>
         </div>
 
-        {/* Top-Right: System Model */}
-        <div className="flex items-center gap-2.5">
-          <span className="quantum-hud-text text-[11px] font-medium text-[#4D7CFE]">
-            QUANTUM CORE SYSTEM
-          </span>
-          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#1A1D24] border border-[#292E38] text-[#9299A8]">
-            v2.6.4
-          </span>
+        {/* Top-Right: System Model & Accessible Skip */}
+        <div className="flex items-center gap-3">
+          <div className="hidden xs:flex items-center gap-2">
+            <span className="quantum-hud-text text-[11px] font-medium text-[#4D7CFE]">
+              QUANTUM CORE SYSTEM
+            </span>
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#1A1D24] border border-[#292E38] text-[#9299A8]">
+              v2.6.4
+            </span>
+          </div>
+          {onSkip && (
+            <button
+              type="button"
+              onClick={onSkip}
+              className="pointer-events-auto flex items-center gap-1.5 px-2 py-1 rounded border border-[#292E38] bg-[#1A1D24]/90 hover:bg-[#20252E] hover:border-[#4D7CFE] text-[10px] font-mono text-[#9299A8] hover:text-[#E8EAF0] transition-colors cursor-pointer"
+              aria-label="Skip preloader animation"
+            >
+              <span>SKIP</span>
+              <span className="hidden sm:inline text-[#6F7786] text-[9px]">[ESC]</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -69,19 +84,23 @@ export default function DiagnosticHUD({
             <div className="space-y-1.5 quantum-hud-text text-[11px]">
               <div className="flex items-center justify-between gap-4">
                 <span className="text-[#6F7786]">ENGINE</span>
-                <span className="text-[#E8EAF0] font-medium truncate">{renderEngine}</span>
+                <span className="text-[#E8EAF0] font-medium truncate max-w-[130px]">{renderEngine}</span>
               </div>
               <div className="flex items-center justify-between gap-4">
-                <span className="text-[#6F7786]">ROUTES</span>
-                <span className="text-[#E8EAF0] font-mono">{assetCount} VERIFIED</span>
+                <span className="text-[#6F7786]">PIPELINE</span>
+                <span className="text-[#E8EAF0] font-mono">{pipelineStatus}</span>
               </div>
               <div className="flex items-center justify-between gap-4">
-                <span className="text-[#6F7786]">CORE</span>
-                <span className="text-[#4D7CFE] font-bold">{coreStatus}</span>
+                <span className="text-[#6F7786]">STATUS</span>
+                <span className={`font-semibold ${isReady ? "text-emerald-400" : "text-[#4D7CFE]"}`}>
+                  {systemStatus}
+                </span>
               </div>
               <div className="flex items-center justify-between gap-4">
                 <span className="text-[#6F7786]">FPS</span>
-                <span className="text-[#9299A8] font-mono">{fps > 0 ? fps : 60}</span>
+                <span className="text-[#9299A8] font-mono">
+                  {typeof fps === "number" && fps > 0 ? `${fps}` : "--"}
+                </span>
               </div>
             </div>
           </div>

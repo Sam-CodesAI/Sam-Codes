@@ -7,12 +7,12 @@ import { ParticleField } from "./ParticleField";
 
 interface QuantumSceneProps {
   progress: number;
-  onFpsUpdate: (fps: number) => void;
-  onRendererReady: (rendererName: string) => void;
-  onWebGLFail: () => void;
+  onFpsUpdate?: (fps: number) => void;
+  onRendererReady?: (rendererName: string) => void;
+  onWebGLFail?: () => void;
 }
 
-export default function QuantumScene({
+function QuantumSceneComponent({
   progress,
   onFpsUpdate,
   onRendererReady,
@@ -22,6 +22,18 @@ export default function QuantumScene({
   const progressRef = useRef(progress);
   progressRef.current = progress;
 
+  // 1. Stabilize callback identities using refs to eliminate effect churn
+  const onFpsUpdateRef = useRef(onFpsUpdate);
+  const onRendererReadyRef = useRef(onRendererReady);
+  const onWebGLFailRef = useRef(onWebGLFail);
+
+  useEffect(() => {
+    onFpsUpdateRef.current = onFpsUpdate;
+    onRendererReadyRef.current = onRendererReady;
+    onWebGLFailRef.current = onWebGLFail;
+  });
+
+  // 2. Ensure Three.js renderer initializes exactly ONCE per scene lifecycle
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
@@ -40,7 +52,7 @@ export default function QuantumScene({
     };
 
     if (!checkWebGL()) {
-      onWebGLFail();
+      onWebGLFailRef.current?.();
       return;
     }
 
@@ -48,7 +60,7 @@ export default function QuantumScene({
     const height = container.clientHeight || window.innerHeight;
     const isMobile = width < 640;
 
-    // 1. Scene & Camera Setup
+    // A. Scene & Camera Setup
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x101216); // Obsidian #101216
 
@@ -60,7 +72,7 @@ export default function QuantumScene({
     );
     camera.position.z = isMobile ? 6.5 : 5.4;
 
-    // 2. High-Performance WebGL Renderer
+    // B. High-Performance WebGL Renderer
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({
@@ -78,44 +90,53 @@ export default function QuantumScene({
         ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
         : "WebGL2 Hardware";
       const shortGpu = gpuName.split("/")[0].slice(0, 22);
-      onRendererReady(shortGpu || "Three.js WebGL2");
+      onRendererReadyRef.current?.(shortGpu || "Three.js WebGL2");
     } catch {
-      onWebGLFail();
+      onWebGLFailRef.current?.();
       return;
     }
 
-    // 3. Ambient Baseline Illumination
+    // C. WebGL Context Failure Safe Handler
+    const handleContextLost = (event: Event) => {
+      event.preventDefault();
+      onWebGLFailRef.current?.();
+    };
+    renderer.domElement.addEventListener("webglcontextlost", handleContextLost, false);
+
+    // D. Ambient Baseline Illumination
     const ambientLight = new THREE.AmbientLight(0x1a1d24, 0.9);
     scene.add(ambientLight);
 
-    // 4. Instantiate Quantum Reactor & Particle Field
+    // E. Instantiate Quantum Reactor & Particle Field
     const reactor = new ReactorCore();
     scene.add(reactor.group);
 
     const particles = new ParticleField(isMobile);
     scene.add(particles.points);
 
-    // 5. Animation Loop with FPS & Progress Tracking
+    // F. Protected Animation Loop (prevents duplicate loops or post-cleanup frames)
+    let isDestroyed = false;
     let animationFrameId: number;
     let lastTime = performance.now();
     let frameCount = 0;
     let lastFpsTime = performance.now();
 
     const animate = (currentTime: number) => {
+      if (isDestroyed) return;
       animationFrameId = requestAnimationFrame(animate);
 
       const delta = Math.min((currentTime - lastTime) / 1000, 0.1);
       lastTime = currentTime;
 
-      // Track FPS
+      // Track authentic measured FPS
       frameCount++;
       if (currentTime - lastFpsTime >= 1000) {
-        onFpsUpdate(frameCount);
+        onFpsUpdateRef.current?.(frameCount);
         frameCount = 0;
         lastFpsTime = currentTime;
       }
 
-      // Update Subsystems
+      // Update Subsystems using stable progress ref (no re-renders triggered)
       const factor = progressRef.current / 100;
       reactor.update(delta, factor);
       particles.update(delta, factor);
@@ -125,9 +146,9 @@ export default function QuantumScene({
 
     animationFrameId = requestAnimationFrame(animate);
 
-    // 6. Responsive Resize Handling
+    // G. Responsive Resize Handling
     const handleResize = () => {
-      if (!container) return;
+      if (isDestroyed || !container) return;
       const w = container.clientWidth || window.innerWidth;
       const h = container.clientHeight || window.innerHeight;
       camera.aspect = w / h;
@@ -139,10 +160,14 @@ export default function QuantumScene({
 
     window.addEventListener("resize", handleResize);
 
-    // 7. Strict Memory & WebGL Disposal Cleanup
+    // H. Strict Memory & WebGL Disposal Cleanup
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      isDestroyed = true;
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
       window.removeEventListener("resize", handleResize);
+      renderer.domElement?.removeEventListener("webglcontextlost", handleContextLost);
 
       reactor.dispose();
       particles.dispose();
@@ -152,7 +177,9 @@ export default function QuantumScene({
         container.removeChild(renderer.domElement);
       }
     };
-  }, [onFpsUpdate, onRendererReady, onWebGLFail]);
+  }, []); // Empty dependency array ensures WebGL initializes ONCE per lifecycle
 
   return <div ref={mountRef} className="absolute inset-0 w-full h-full z-0 overflow-hidden" />;
 }
+
+export default React.memo(QuantumSceneComponent);
