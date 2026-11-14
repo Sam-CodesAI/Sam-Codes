@@ -29,50 +29,106 @@ export default function QuantumPreloader() {
   const [isReady, setIsReady] = useState(false);
   const [webGLFailed, setWebGLFailed] = useState(false);
 
+  // Lifecyle and Timer Tracking Refs
+  const isMountedRef = useRef(true);
   const exitingRef = useRef(false);
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const failSafeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const exitAnimationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const domReadyRef = useRef(false);
   const fontsReadyRef = useRef(false);
   const rendererReadyRef = useRef(false);
   const webGLFailedRef = useRef(false);
 
-  // 1. Stabilize callback identities so QuantumScene never reinitializes
+  // Helper to clear active progress and fail-safe timers immediately
+  const clearActiveTimers = useCallback(() => {
+    if (progressIntervalRef.current !== null) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+    if (failSafeTimeoutRef.current !== null) {
+      clearTimeout(failSafeTimeoutRef.current);
+      failSafeTimeoutRef.current = null;
+    }
+  }, []);
+
+  // Stabilize callback identities so QuantumScene never reinitializes
   const handleFpsUpdate = useCallback((fpsValue: number) => {
-    setFps(fpsValue);
+    if (isMountedRef.current) {
+      setFps(fpsValue);
+    }
   }, []);
 
   const handleRendererReady = useCallback((name: string) => {
     rendererReadyRef.current = true;
-    setRenderEngine(name);
+    if (isMountedRef.current) {
+      setRenderEngine(name);
+    }
   }, []);
 
   const handleWebGLFail = useCallback(() => {
     webGLFailedRef.current = true;
-    setWebGLFailed(true);
+    if (isMountedRef.current) {
+      setWebGLFailed(true);
+    }
   }, []);
 
+  // Central dismissal handler: clears all active timers immediately,
+  // prevents duplicate dismissals, and manages exit animation safely
   const dismiss = useCallback(() => {
     if (exitingRef.current) return;
     exitingRef.current = true;
-    sessionStorage.setItem("sam_codes_quantum_init", "true");
-    setIsReady(true);
-    setProgress(100);
-    setTimeout(() => {
-      setVisible(false);
+
+    // 1. Immediately cancel active timers
+    clearActiveTimers();
+
+    // 2. Persist session token to suppress preloader on reload
+    try {
+      sessionStorage.setItem("sam_codes_quantum_init", "true");
+    } catch {
+      // Ignore storage restrictions
+    }
+
+    // 3. Mark ready and cap progress to 100%
+    if (isMountedRef.current) {
+      setIsReady(true);
+      setProgress(100);
+    }
+
+    // 4. Safely schedule exit transition
+    if (exitAnimationTimeoutRef.current !== null) {
+      clearTimeout(exitAnimationTimeoutRef.current);
+    }
+
+    exitAnimationTimeoutRef.current = setTimeout(() => {
+      exitAnimationTimeoutRef.current = null;
+      if (isMountedRef.current) {
+        setVisible(false);
+      }
     }, 450);
-  }, []);
+  }, [clearActiveTimers]);
 
   useEffect(() => {
+    isMountedRef.current = true;
+
     // 1. Client-Side Session Storage Gate (Only on initial entry)
-    const hasLoaded = sessionStorage.getItem("sam_codes_quantum_init");
-    if (hasLoaded) {
-      setShouldRender(false);
-      return;
+    try {
+      const hasLoaded = sessionStorage.getItem("sam_codes_quantum_init");
+      if (hasLoaded) {
+        setShouldRender(false);
+        return;
+      }
+    } catch {
+      // Ignore storage read failures
     }
 
     // 2. Prefers-Reduced-Motion Accessibility Check
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion) {
-      sessionStorage.setItem("sam_codes_quantum_init", "true");
+      try {
+        sessionStorage.setItem("sam_codes_quantum_init", "true");
+      } catch {}
       setShouldRender(false);
       return;
     }
@@ -108,8 +164,8 @@ export default function QuantumPreloader() {
     const MIN_VISUAL_DURATION = 1400; // Pacing target to allow reactor to initialize smoothly
     const MAX_FAILSAFE_DURATION = 3800; // Fail-safe ceiling
 
-    const interval = setInterval(() => {
-      if (exitingRef.current) return;
+    progressIntervalRef.current = setInterval(() => {
+      if (exitingRef.current || !isMountedRef.current) return;
 
       const elapsed = performance.now() - startTime;
       const isActualReady =
@@ -134,23 +190,23 @@ export default function QuantumPreloader() {
         }
       }
 
-      setProgress(nextProgress);
+      if (isMountedRef.current) {
+        setProgress(nextProgress);
 
-      // Update Phase deterministically
-      const matchedPhase =
-        PHASES.find((p) => nextProgress <= p.threshold) || PHASES[PHASES.length - 1];
-      setCurrentPhase(matchedPhase);
+        // Update Phase deterministically
+        const matchedPhase =
+          PHASES.find((p) => nextProgress <= p.threshold) || PHASES[PHASES.length - 1];
+        setCurrentPhase(matchedPhase);
+      }
 
       if (nextProgress >= 100) {
-        clearInterval(interval);
         dismiss();
       }
     }, 35);
 
     // 5. Fail-Safe Timeout (Guarantees user is never trapped)
-    const failSafeTimeout = setTimeout(() => {
+    failSafeTimeoutRef.current = setTimeout(() => {
       if (!exitingRef.current) {
-        clearInterval(interval);
         dismiss();
       }
     }, MAX_FAILSAFE_DURATION);
@@ -159,20 +215,26 @@ export default function QuantumPreloader() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
-        clearInterval(interval);
-        clearTimeout(failSafeTimeout);
         dismiss();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      clearInterval(interval);
-      clearTimeout(failSafeTimeout);
+      isMountedRef.current = false;
+
+      // Clean up all timers on unmount
+      clearActiveTimers();
+
+      if (exitAnimationTimeoutRef.current !== null) {
+        clearTimeout(exitAnimationTimeoutRef.current);
+        exitAnimationTimeoutRef.current = null;
+      }
+
       window.removeEventListener("load", onWindowLoad);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [dismiss]);
+  }, [clearActiveTimers, dismiss]);
 
   if (!shouldRender || !visible) return null;
 
