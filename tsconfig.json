@@ -38,8 +38,10 @@
   ],
   "exclude": [
     "node_modules",
-    "projects",
+    "teleflow-agent",
     "SutraDB",
+    "projects",
+    "GhostTrack",
     ".next"
   ]
 }

@@ -1,6 +1,3 @@
-packages:
-  - '.'
-
 allowBuilds:
   '@whiskeysockets/baileys': true
   protobufjs: true
